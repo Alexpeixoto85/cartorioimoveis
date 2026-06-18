@@ -1,0 +1,2458 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartório de Imóveis — Portal de Corretores</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   DESIGN TOKENS
+   ============================================================ */
+:root {
+  /* paleta */
+  --ink: #1C1E1D;
+  --paper: #FAF8F4;
+  --paper-dim: #F0ECE3;
+  --line: #D8D2C4;
+  --line-soft: #E8E3D7;
+  --terracotta: #B5512A;
+  --terracotta-deep: #8F3F1F;
+  --olive: #5C6650;
+  --olive-deep: #444C3B;
+  --rust: #9C3B2E;
+  --amber: #B7872E;
+  --ink-soft: #5A5650;
+
+  /* tipografia */
+  --font-display: 'Fraunces', serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+
+  /* layout */
+  --radius: 2px;
+  --shadow-card: 0 1px 0 rgba(28,30,29,0.04), 0 8px 24px -12px rgba(28,30,29,0.18);
+  --shadow-modal: 0 24px 64px -16px rgba(28,30,29,0.35);
+}
+
+* { box-sizing: border-box; }
+html, body {
+  margin: 0; padding: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+body { min-height: 100vh; }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+a { color: var(--terracotta-deep); }
+::selection { background: var(--terracotta); color: var(--paper); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+}
+
+:focus-visible {
+  outline: 2px solid var(--terracotta);
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   VIEW SWITCHING
+   ============================================================ */
+.view { display: none; }
+.view.active { display: block; }
+.view-app.active { display: grid; grid-template-columns: 248px 1fr; min-height: 100vh; }
+
+/* ============================================================
+   AUTH SCREEN
+   ============================================================ */
+.view-auth.active {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+.auth-wrap {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  min-height: 100vh;
+}
+.auth-brand {
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5vw 4.5rem;
+  position: relative;
+  overflow: hidden;
+}
+.auth-brand::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, transparent, transparent 39px, rgba(250,248,244,0.035) 39px, rgba(250,248,244,0.035) 40px);
+  pointer-events: none;
+}
+.auth-stamp {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.18em;
+  color: var(--terracotta);
+  border: 1px solid var(--terracotta);
+  display: inline-block;
+  padding: 0.5rem 0.75rem;
+  width: fit-content;
+  margin-bottom: 2.5rem;
+  transform: rotate(-2deg);
+  line-height: 1.4;
+}
+.auth-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2.6rem, 5vw, 4rem);
+  line-height: 1.02;
+  margin: 0 0 1rem;
+}
+.auth-title-accent {
+  display: block;
+  font-style: italic;
+  font-weight: 500;
+  color: var(--terracotta);
+}
+.auth-sub {
+  font-size: 1.05rem;
+  color: #C9C4B8;
+  max-width: 22rem;
+  line-height: 1.5;
+}
+.auth-card {
+  background: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 5vw 4.5rem;
+}
+.auth-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--line);
+  margin-bottom: 2rem;
+}
+.auth-tab {
+  background: none;
+  border: none;
+  padding: 0.85rem 0.25rem;
+  margin-right: 2rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  border-bottom: 2px solid transparent;
+  position: relative;
+  top: 1px;
+}
+.auth-tab.active {
+  color: var(--ink);
+  border-bottom-color: var(--terracotta);
+}
+.auth-form { display: none; flex-direction: column; gap: 1.1rem; max-width: 24rem; }
+.auth-form.active { display: flex; }
+
+/* ============================================================
+   FORM ELEMENTS
+   ============================================================ */
+.field { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
+.field-grow { flex: 2; }
+.field-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.field input, .field select, .field textarea {
+  border: 1px solid var(--line);
+  background: #fff;
+  border-radius: var(--radius);
+  padding: 0.7rem 0.8rem;
+  font-size: 0.95rem;
+  color: var(--ink);
+  transition: border-color 0.15s;
+}
+.field input:focus, .field select:focus, .field textarea:focus {
+  border-color: var(--terracotta);
+}
+.field textarea { resize: vertical; font-family: var(--font-body); }
+.field-error {
+  color: var(--rust);
+  font-size: 0.85rem;
+  margin: -0.4rem 0 0;
+  min-height: 1em;
+}
+.form-row { display: flex; gap: 1rem; }
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+.btn {
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.75rem 1.3rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  transition: transform 0.1s, opacity 0.15s, background 0.15s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--ink); color: var(--paper); }
+.btn-primary:hover { background: #2E302E; }
+.btn-secondary { background: transparent; color: var(--ink); border: 1px solid var(--line); }
+.btn-secondary:hover { border-color: var(--ink); }
+.btn-danger { background: transparent; color: var(--rust); border: 1px solid var(--rust); }
+.btn-danger:hover { background: var(--rust); color: var(--paper); }
+.btn-text { background: none; color: var(--terracotta-deep); padding: 0.4rem 0; text-decoration: underline; text-underline-offset: 3px; }
+.btn-block { width: 100%; }
+.btn-sm { padding: 0.55rem 1rem; font-size: 0.85rem; }
+
+/* ============================================================
+   APP SHELL — SIDEBAR
+   ============================================================ */
+.sidebar {
+  background: var(--ink);
+  color: var(--paper);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.75rem 1.25rem;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+}
+.brand-mini { display: flex; align-items: center; gap: 0.6rem; margin-bottom: 2.5rem; padding: 0 0.5rem; }
+.brand-mini-stamp {
+  width: 32px; height: 32px;
+  border: 1px solid var(--terracotta);
+  color: var(--terracotta);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+.brand-mini-text { font-family: var(--font-display); font-size: 0.85rem; line-height: 1.15; font-weight: 600; }
+
+.nav { display: flex; flex-direction: column; gap: 0.2rem; }
+.nav-item {
+  background: none; border: none; color: #C9C4B8;
+  text-align: left;
+  padding: 0.7rem 0.6rem;
+  border-radius: var(--radius);
+  font-size: 0.9rem; font-weight: 500;
+  display: flex; align-items: center; gap: 0.6rem;
+  position: relative;
+}
+.nav-item:hover { background: rgba(250,248,244,0.06); color: var(--paper); }
+.nav-item.active { background: rgba(250,248,244,0.1); color: var(--paper); }
+.nav-icon { font-size: 1rem; width: 1.2rem; text-align: center; }
+.nav-pill {
+  margin-left: auto;
+  background: var(--terracotta);
+  color: var(--paper);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+}
+
+.sidebar-bottom { display: flex; flex-direction: column; gap: 0.75rem; }
+.broker-card {
+  border: 1px solid rgba(250,248,244,0.15);
+  border-radius: var(--radius);
+  padding: 0.85rem;
+  font-size: 0.82rem;
+}
+.broker-card-name { font-weight: 600; color: var(--paper); display: block; margin-bottom: 0.15rem; }
+.broker-card-creci { color: #9D988C; font-family: var(--font-mono); font-size: 0.75rem; }
+.btn-logout {
+  background: none; border: 1px solid rgba(250,248,244,0.15); color: #C9C4B8;
+  border-radius: var(--radius); padding: 0.6rem; font-size: 0.85rem;
+}
+.btn-logout:hover { border-color: var(--terracotta); color: var(--paper); }
+
+/* ============================================================
+   MAIN CONTENT
+   ============================================================ */
+.main { padding: 2.5rem 3rem; overflow-y: auto; height: 100vh; }
+.screen { display: none; }
+.screen.active { display: block; }
+
+.screen-header {
+  display: flex; justify-content: space-between; align-items: flex-end;
+  margin-bottom: 1.75rem;
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--terracotta-deep);
+  margin: 0 0 0.3rem;
+}
+.screen-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.filter-bar { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; flex-wrap: wrap; align-items: center; }
+.filter-chip {
+  background: none; border: 1px solid var(--line);
+  padding: 0.45rem 0.9rem; border-radius: 999px;
+  font-size: 0.85rem; font-weight: 500; color: var(--ink-soft);
+}
+.filter-chip:hover { border-color: var(--ink); }
+.filter-chip.active { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.search-input {
+  border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 0.55rem 0.9rem; font-size: 0.88rem; min-width: 18rem; background: #fff;
+}
+.search-input-sm { min-width: 0; width: 100%; }
+
+/* ============================================================
+   PROPERTY GRID & CARDS
+   ============================================================ */
+.grid-properties {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+}
+.property-card {
+  background: #fff;
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+  display: flex; flex-direction: column;
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.property-card:hover { transform: translateY(-2px); }
+.property-photo {
+  height: 180px; background: var(--paper-dim);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.property-photo img { width: 100%; height: 100%; object-fit: cover; }
+.property-photo-placeholder { color: #B5AD9C; font-size: 0.8rem; font-family: var(--font-mono); }
+
+.property-stamp {
+  position: absolute; top: 0.7rem; right: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+  padding: 0.3rem 0.55rem;
+  border: 1.5px solid currentColor;
+  border-radius: var(--radius);
+  transform: rotate(4deg);
+  background: rgba(255,255,255,0.88);
+}
+.stamp-disponivel { color: var(--olive-deep); }
+.stamp-vendido { color: var(--rust); }
+.stamp-alugado { color: var(--amber); }
+.stamp-reservado { color: var(--ink-soft); }
+
+.property-visibility-flag {
+  position: absolute; top: 0.7rem; left: 0.7rem;
+  font-size: 0.65rem; font-weight: 700; font-family: var(--font-mono);
+  padding: 0.25rem 0.5rem; border-radius: var(--radius);
+  background: rgba(28,30,29,0.78); color: var(--paper);
+}
+
+.property-body { padding: 1rem 1.1rem 1.1rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
+.property-price { font-family: var(--font-display); font-size: 1.3rem; font-weight: 600; }
+.property-price-period { font-size: 0.75rem; color: var(--ink-soft); font-weight: 400; }
+.property-title { font-size: 0.95rem; font-weight: 600; line-height: 1.3; }
+.property-location { font-size: 0.82rem; color: var(--ink-soft); }
+.property-specs {
+  display: flex; gap: 0.85rem; margin-top: 0.3rem;
+  font-size: 0.78rem; color: var(--ink-soft); font-family: var(--font-mono);
+}
+.property-broker-tag {
+  margin-top: 0.4rem; padding-top: 0.6rem; border-top: 1px solid var(--line-soft);
+  font-size: 0.78rem; color: var(--terracotta-deep); font-weight: 600;
+}
+
+/* ============================================================
+   EMPTY STATES
+   ============================================================ */
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 4rem 2rem; text-align: center; color: var(--ink-soft); gap: 1rem;
+}
+.empty-stamp {
+  font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700;
+  letter-spacing: 0.1em; border: 1.5px dashed var(--line); padding: 0.5rem 1rem;
+  transform: rotate(-3deg); color: var(--ink-soft);
+}
+
+/* ============================================================
+   MODALS
+   ============================================================ */
+.modal-overlay {
+  display: none;
+  position: fixed; inset: 0; background: rgba(28,30,29,0.5);
+  align-items: center; justify-content: center; z-index: 100;
+  padding: 2rem;
+}
+.modal-overlay.active { display: flex; }
+.modal {
+  background: var(--paper);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-modal);
+  width: 100%; max-width: 30rem;
+  max-height: 90vh;
+  display: flex; flex-direction: column;
+}
+.modal-lg { max-width: 46rem; }
+.modal-head {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--line);
+}
+.modal-head h3 { font-family: var(--font-display); font-size: 1.3rem; margin: 0; font-weight: 600; }
+.modal-close { background: none; border: none; font-size: 1.6rem; color: var(--ink-soft); line-height: 1; padding: 0; }
+.modal-close:hover { color: var(--ink); }
+.modal-body { padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; gap: 1.1rem; }
+.modal-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem; }
+.modal-actions-right { display: flex; gap: 0.7rem; margin-left: auto; }
+
+/* photo upload */
+.photo-preview-grid { display: flex; gap: 0.6rem; flex-wrap: wrap; margin-top: 0.6rem; }
+.photo-preview-item { position: relative; width: 80px; height: 80px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
+.photo-preview-item img { width: 100%; height: 100%; object-fit: cover; }
+.photo-preview-remove {
+  position: absolute; top: 2px; right: 2px; background: rgba(28,30,29,0.75); color: #fff;
+  border: none; width: 18px; height: 18px; font-size: 0.7rem; border-radius: 999px; line-height: 1;
+}
+
+/* visibility toggle */
+.visibility-toggle {
+  display: flex; justify-content: space-between; align-items: center; gap: 1rem;
+  background: var(--paper-dim); border-radius: var(--radius); padding: 0.9rem 1.1rem;
+}
+.visibility-title { font-weight: 600; font-size: 0.9rem; display: block; }
+.visibility-desc { font-size: 0.8rem; color: var(--ink-soft); display: block; margin-top: 0.15rem; }
+.switch { position: relative; display: inline-block; width: 44px; height: 26px; flex-shrink: 0; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.switch-track {
+  position: absolute; inset: 0; background: var(--line); border-radius: 999px; transition: background 0.2s; cursor: pointer;
+}
+.switch-thumb {
+  position: absolute; top: 3px; left: 3px; width: 20px; height: 20px;
+  background: #fff; border-radius: 50%; transition: transform 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+}
+.switch input:checked + .switch-track { background: var(--olive); }
+.switch input:checked + .switch-track .switch-thumb { transform: translateX(18px); }
+
+/* ============================================================
+   PROPERTY DETAIL VIEW (modal)
+   ============================================================ */
+.detail-photos { display: flex; gap: 0.5rem; overflow-x: auto; border-radius: var(--radius); }
+.detail-photos img { height: 220px; border-radius: var(--radius); object-fit: cover; flex-shrink: 0; }
+.detail-photos-empty {
+  height: 180px; background: var(--paper-dim); border-radius: var(--radius);
+  display: flex; align-items: center; justify-content: center; color: #B5AD9C; font-family: var(--font-mono); font-size: 0.85rem;
+}
+.detail-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
+.detail-price { font-family: var(--font-display); font-size: 1.9rem; font-weight: 600; }
+.detail-title { font-size: 1.1rem; font-weight: 600; margin-top: 0.2rem; }
+.detail-location { color: var(--ink-soft); font-size: 0.9rem; margin-top: 0.2rem; }
+.detail-spec-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.8rem;
+  background: var(--paper-dim); border-radius: var(--radius); padding: 1rem;
+}
+.detail-spec { text-align: center; }
+.detail-spec-value { font-family: var(--font-display); font-size: 1.2rem; font-weight: 600; display: block; }
+.detail-spec-label { font-size: 0.72rem; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
+.detail-description { font-size: 0.92rem; line-height: 1.6; color: #3A3833; }
+.detail-financials { display: flex; gap: 1.5rem; font-size: 0.85rem; color: var(--ink-soft); }
+.detail-financials strong { color: var(--ink); }
+.detail-broker-row {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 1px solid var(--line); padding-top: 1rem; font-size: 0.88rem;
+}
+
+/* ============================================================
+   SHARE SCREEN
+   ============================================================ */
+.share-card {
+  background: #fff; border: 1px solid var(--line-soft); border-radius: var(--radius);
+  padding: 2rem; max-width: 38rem; position: relative; box-shadow: var(--shadow-card);
+}
+.share-stamp {
+  position: absolute; top: 1.5rem; right: 1.5rem;
+  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.08em;
+  border: 1.5px solid var(--olive); color: var(--olive-deep); padding: 0.3rem 0.6rem;
+  transform: rotate(3deg);
+}
+.share-desc { font-size: 0.92rem; line-height: 1.6; color: #3A3833; margin: 0.5rem 0 1.5rem; max-width: 30rem; }
+.share-link-row { display: flex; gap: 0.6rem; }
+.share-link-row input {
+  flex: 1; border: 1px solid var(--line); border-radius: var(--radius);
+  padding: 0.7rem 0.9rem; font-family: var(--font-mono); font-size: 0.85rem; background: var(--paper-dim);
+}
+.share-preview { margin-top: 1.25rem; }
+
+/* ============================================================
+   CHAT
+   ============================================================ */
+.chat-layout {
+  display: grid; grid-template-columns: 280px 1fr;
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
+  height: calc(100vh - 9rem); background: #fff; box-shadow: var(--shadow-card); overflow: hidden;
+}
+.chat-contacts { border-right: 1px solid var(--line-soft); display: flex; flex-direction: column; }
+.chat-contacts-head { padding: 1rem; border-bottom: 1px solid var(--line-soft); display: flex; flex-direction: column; gap: 0.6rem; }
+.chat-contacts-list { overflow-y: auto; flex: 1; }
+.chat-contact {
+  display: flex; align-items: center; gap: 0.7rem; padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--line-soft); cursor: pointer; position: relative;
+}
+.chat-contact:hover { background: var(--paper-dim); }
+.chat-contact.active { background: var(--paper-dim); border-left: 3px solid var(--terracotta); }
+.chat-contact-avatar {
+  width: 36px; height: 36px; border-radius: 50%; background: var(--ink); color: var(--paper);
+  display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 0.85rem; flex-shrink: 0;
+}
+.chat-contact-info { overflow: hidden; flex: 1; }
+.chat-contact-name { font-weight: 600; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-contact-preview { font-size: 0.78rem; color: var(--ink-soft); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-contact-unread {
+  background: var(--terracotta); color: #fff; font-size: 0.68rem; font-weight: 700;
+  border-radius: 999px; padding: 0.1rem 0.4rem; flex-shrink: 0;
+}
+
+.chat-conversation { display: flex; flex-direction: column; position: relative; }
+.chat-empty-state {
+  position: absolute; inset: 0; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1rem; color: var(--ink-soft);
+}
+.chat-active { display: flex; flex-direction: column; height: 100%; }
+.chat-active-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; gap: 0.6rem; }
+.chat-active-name { font-weight: 600; }
+.chat-active-status { font-size: 0.75rem; color: var(--olive-deep); font-family: var(--font-mono); }
+.chat-messages { flex: 1; overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 0.6rem; }
+.chat-bubble {
+  max-width: 70%; padding: 0.6rem 0.9rem; border-radius: var(--radius); font-size: 0.9rem; line-height: 1.45;
+}
+.chat-bubble-mine { align-self: flex-end; background: var(--ink); color: var(--paper); }
+.chat-bubble-theirs { align-self: flex-start; background: var(--paper-dim); color: var(--ink); }
+.chat-bubble-time { font-size: 0.68rem; opacity: 0.6; margin-top: 0.25rem; display: block; }
+.chat-input-bar { display: flex; gap: 0.6rem; padding: 1rem; border-top: 1px solid var(--line-soft); }
+.chat-input-bar input {
+  flex: 1; border: 1px solid var(--line); border-radius: var(--radius); padding: 0.65rem 0.9rem; font-size: 0.9rem;
+}
+
+/* ============================================================
+   PUBLIC PORTFOLIO PAGE (client-facing)
+   ============================================================ */
+.view-public.active { display: block; min-height: 100vh; }
+.public-header { background: var(--ink); color: var(--paper); padding: 2.5rem 4vw 2rem; }
+.public-header-inner { display: flex; justify-content: space-between; align-items: flex-start; max-width: 72rem; margin: 0 auto; }
+.public-broker-name { font-family: var(--font-display); font-size: 2rem; font-weight: 600; margin: 0; }
+.public-broker-creci { color: #9D988C; font-family: var(--font-mono); font-size: 0.82rem; margin-top: 0.3rem; }
+.public-badge {
+  font-family: var(--font-mono); font-size: 0.7rem; letter-spacing: 0.1em; border: 1px solid var(--terracotta);
+  color: var(--terracotta); padding: 0.4rem 0.7rem; transform: rotate(-2deg); white-space: nowrap;
+}
+.public-main { max-width: 72rem; margin: 0 auto; padding: 2.5rem 4vw 5rem; }
+.public-intro { color: var(--ink-soft); margin-bottom: 2rem; font-size: 1rem; }
+.public-footer {
+  display: flex; justify-content: space-between; padding: 1.5rem 4vw; border-top: 1px solid var(--line);
+  font-size: 0.8rem; color: var(--ink-soft); max-width: 72rem; margin: 0 auto;
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast {
+  position: fixed; bottom: 1.5rem; left: 50%; transform: translateX(-50%) translateY(20px);
+  background: var(--ink); color: var(--paper); padding: 0.8rem 1.4rem; border-radius: var(--radius);
+  font-size: 0.88rem; opacity: 0; pointer-events: none; transition: opacity 0.2s, transform 0.2s;
+  z-index: 200; box-shadow: var(--shadow-modal);
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ============================================================
+   FIREBASE MODAL EXTRA
+   ============================================================ */
+.firebase-explain { font-size: 0.88rem; line-height: 1.55; color: #3A3833; margin: 0; }
+.firebase-status { font-size: 0.85rem; padding: 0.6rem 0.8rem; border-radius: var(--radius); background: var(--paper-dim); border: 1px solid var(--line); color: var(--olive-deep); }
+.firebase-status.is-error { color: var(--rust); border-color: var(--rust); background: #FBEEEA; }
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 900px) {
+  .auth-wrap { grid-template-columns: 1fr; }
+  .auth-brand { padding: 3rem 1.75rem; }
+  .auth-card { padding: 3rem 1.75rem; }
+  .view-app.active { grid-template-columns: 1fr; }
+  .sidebar { position: static; height: auto; flex-direction: row; align-items: center; padding: 1rem; }
+  .sidebar-top { display: flex; align-items: center; gap: 1.5rem; }
+  .brand-mini { margin-bottom: 0; }
+  .nav { flex-direction: row; }
+  .sidebar-bottom { display: none; }
+  .main { padding: 1.5rem; height: auto; }
+  .form-row { flex-direction: column; }
+  .chat-layout { grid-template-columns: 1fr; height: auto; }
+  .chat-contacts { border-right: none; border-bottom: 1px solid var(--line-soft); max-height: 220px; }
+  .detail-spec-grid { grid-template-columns: repeat(2, 1fr); }
+  .public-header-inner { flex-direction: column; gap: 1rem; }
+}
+
+</style>
+</head>
+<body>
+
+<!-- ============ TELA: LOGIN / CADASTRO ============ -->
+<div id="view-auth" class="view view-auth active">
+  <div class="auth-wrap">
+    <div class="auth-brand">
+      <div class="auth-stamp">REGISTRO<br>DE CORRETORES</div>
+      <h1 class="auth-title">Cartório<span class="auth-title-accent">de Imóveis</span></h1>
+      <p class="auth-sub">Portal de portfólios e negociação entre corretores.</p>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab active" data-tab="login">Entrar</button>
+        <button class="auth-tab" data-tab="signup">Criar conta</button>
+      </div>
+
+      <form id="form-login" class="auth-form active">
+        <label class="field">
+          <span class="field-label">E-mail</span>
+          <input type="email" id="login-email" required autocomplete="username">
+        </label>
+        <label class="field">
+          <span class="field-label">Senha</span>
+          <input type="password" id="login-password" required autocomplete="current-password">
+        </label>
+        <p class="field-error" id="login-error"></p>
+        <button type="submit" class="btn btn-primary btn-block">Entrar no portal</button>
+      </form>
+
+      <form id="form-signup" class="auth-form">
+        <label class="field">
+          <span class="field-label">Nome completo</span>
+          <input type="text" id="signup-name" required>
+        </label>
+        <label class="field">
+          <span class="field-label">CRECI</span>
+          <input type="text" id="signup-creci" placeholder="Ex: 12345-F" required>
+        </label>
+        <label class="field">
+          <span class="field-label">E-mail</span>
+          <input type="email" id="signup-email" required autocomplete="username">
+        </label>
+        <label class="field">
+          <span class="field-label">Senha</span>
+          <input type="password" id="signup-password" required autocomplete="new-password" minlength="4">
+        </label>
+        <p class="field-error" id="signup-error"></p>
+        <button type="submit" class="btn btn-primary btn-block">Criar minha conta</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- ============ TELA: PORTFÓLIO PÚBLICO (link do cliente) ============ -->
+<div id="view-public" class="view view-public">
+  <header class="public-header">
+    <div class="public-header-inner">
+      <div class="public-broker" id="public-broker-info"></div>
+      <div class="public-badge">PORTFÓLIO PÚBLICO</div>
+    </div>
+  </header>
+  <main class="public-main">
+    <div class="public-intro" id="public-intro"></div>
+    <div class="grid-properties" id="public-properties-grid"></div>
+    <div class="empty-state" id="public-empty" hidden>
+      <p>Este corretor ainda não publicou imóveis no portfólio público.</p>
+    </div>
+  </main>
+  <footer class="public-footer">
+    <span>Gerado pelo Cartório de Imóveis</span>
+    <a href="#" id="public-back-link">Acessar o portal</a>
+  </footer>
+</div>
+
+<!-- ============ APP PRINCIPAL (autenticado) ============ -->
+<div id="view-app" class="view view-app">
+
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="brand-mini">
+        <span class="brand-mini-stamp">⌘</span>
+        <span class="brand-mini-text">Cartório<br>de Imóveis</span>
+      </div>
+      <nav class="nav">
+        <button class="nav-item active" data-view="dashboard">
+          <span class="nav-icon">▤</span> Meu portfólio
+        </button>
+        <button class="nav-item" data-view="explore">
+          <span class="nav-icon">⊞</span> Vitrine geral
+        </button>
+        <button class="nav-item" data-view="chat">
+          <span class="nav-icon">◈</span> Mensagens
+          <span class="nav-pill" id="chat-unread-pill" hidden>0</span>
+        </button>
+        <button class="nav-item" data-view="share">
+          <span class="nav-icon">↗</span> Compartilhar link
+        </button>
+      </nav>
+    </div>
+    <div class="sidebar-bottom">
+      <div class="broker-card" id="sidebar-broker-card"></div>
+      <button class="btn-logout" id="btn-logout">Sair da conta</button>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- ---- DASHBOARD: MEU PORTFÓLIO ---- -->
+    <section class="screen active" id="screen-dashboard">
+      <div class="screen-header">
+        <div>
+          <p class="eyebrow">Acervo individual</p>
+          <h2 class="screen-title">Meu portfólio</h2>
+        </div>
+        <button class="btn btn-primary" id="btn-new-property">+ Cadastrar imóvel</button>
+      </div>
+
+      <div class="filter-bar">
+        <button class="filter-chip active" data-filter="all">Todos</button>
+        <button class="filter-chip" data-filter="venda">Venda</button>
+        <button class="filter-chip" data-filter="aluguel">Aluguel</button>
+        <button class="filter-chip" data-filter="public">Públicos</button>
+        <button class="filter-chip" data-filter="private">Privados</button>
+      </div>
+
+      <div class="grid-properties" id="my-properties-grid"></div>
+      <div class="empty-state" id="my-properties-empty" hidden>
+        <div class="empty-stamp">VAZIO</div>
+        <p>Você ainda não cadastrou nenhum imóvel.</p>
+        <button class="btn btn-secondary" id="btn-new-property-empty">Cadastrar o primeiro</button>
+      </div>
+    </section>
+
+    <!-- ---- VITRINE GERAL (todos os corretores, só públicos) ---- -->
+    <section class="screen" id="screen-explore">
+      <div class="screen-header">
+        <div>
+          <p class="eyebrow">Rede de corretores</p>
+          <h2 class="screen-title">Vitrine geral</h2>
+        </div>
+      </div>
+      <div class="filter-bar">
+        <input type="search" id="explore-search" class="search-input" placeholder="Buscar por cidade, bairro, tipo...">
+      </div>
+      <div class="grid-properties" id="explore-grid"></div>
+      <div class="empty-state" id="explore-empty" hidden>
+        <p>Nenhum imóvel público encontrado.</p>
+      </div>
+    </section>
+
+    <!-- ---- CHAT ---- -->
+    <section class="screen" id="screen-chat">
+      <div class="chat-layout">
+        <div class="chat-contacts">
+          <div class="chat-contacts-head">
+            <p class="eyebrow">Corretores</p>
+            <input type="search" id="chat-search" class="search-input search-input-sm" placeholder="Buscar corretor...">
+            <button type="button" class="btn-text" id="btn-open-firebase-config" style="text-align:left;font-size:0.78rem;">⚙ Configurar sincronização entre dispositivos</button>
+          </div>
+          <div class="chat-contacts-list" id="chat-contacts-list"></div>
+        </div>
+        <div class="chat-conversation">
+          <div class="chat-empty-state" id="chat-no-selection">
+            <div class="empty-stamp">SELECIONE</div>
+            <p>Escolha um corretor na lista para iniciar a conversa.</p>
+          </div>
+          <div class="chat-active" id="chat-active" hidden>
+            <div class="chat-active-header">
+              <span class="chat-active-name" id="chat-active-name"></span>
+              <span class="chat-active-status" id="chat-active-status"></span>
+            </div>
+            <div class="chat-messages" id="chat-messages"></div>
+            <form class="chat-input-bar" id="chat-form">
+              <input type="text" id="chat-input" placeholder="Escreva uma mensagem..." autocomplete="off">
+              <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---- COMPARTILHAR LINK ---- -->
+    <section class="screen" id="screen-share">
+      <div class="screen-header">
+        <div>
+          <p class="eyebrow">Para seus clientes</p>
+          <h2 class="screen-title">Compartilhar portfólio</h2>
+        </div>
+      </div>
+      <div class="share-card">
+        <div class="share-stamp">PÚBLICO</div>
+        <p class="share-desc">
+          Este é o link permanente do seu portfólio. Ele mostra apenas os imóveis marcados como
+          <strong>"visível para todos"</strong>. Envie para qualquer cliente — não é preciso login.
+        </p>
+        <div class="share-link-row">
+          <input type="text" id="share-link-input" readonly>
+          <button class="btn btn-secondary" id="btn-copy-link">Copiar link</button>
+        </div>
+        <div class="share-preview">
+          <button class="btn btn-text" id="btn-preview-portfolio">Visualizar como cliente →</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- ============ MODAL: CADASTRAR / EDITAR IMÓVEL ============ -->
+<div class="modal-overlay" id="modal-property">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3 id="modal-property-title">Cadastrar imóvel</h3>
+      <button class="modal-close" data-close="modal-property">×</button>
+    </div>
+    <form id="form-property" class="modal-body">
+      <input type="hidden" id="property-id">
+
+      <div class="form-row">
+        <label class="field field-grow">
+          <span class="field-label">Título do anúncio</span>
+          <input type="text" id="prop-title" placeholder="Ex: Apartamento 3 quartos com vista mar" required>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label class="field">
+          <span class="field-label">Status</span>
+          <select id="prop-status">
+            <option value="disponivel">Disponível</option>
+            <option value="vendido">Vendido</option>
+            <option value="alugado">Alugado</option>
+            <option value="reservado">Reservado</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label">Finalidade</span>
+          <select id="prop-purpose">
+            <option value="venda">Venda</option>
+            <option value="aluguel">Aluguel</option>
+          </select>
+        </label>
+        <label class="field">
+          <span class="field-label">Tipo</span>
+          <select id="prop-type">
+            <option value="apartamento">Apartamento</option>
+            <option value="casa">Casa</option>
+            <option value="terreno">Terreno</option>
+            <option value="comercial">Comercial</option>
+            <option value="cobertura">Cobertura</option>
+            <option value="rural">Rural</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label class="field field-grow">
+          <span class="field-label">Endereço</span>
+          <input type="text" id="prop-address" placeholder="Rua, número, bairro">
+        </label>
+        <label class="field">
+          <span class="field-label">Cidade</span>
+          <input type="text" id="prop-city" placeholder="Cidade">
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label class="field">
+          <span class="field-label">Preço (R$)</span>
+          <input type="number" id="prop-price" min="0" step="0.01" required>
+        </label>
+        <label class="field">
+          <span class="field-label">Condomínio (R$)</span>
+          <input type="number" id="prop-condo" min="0" step="0.01">
+        </label>
+        <label class="field">
+          <span class="field-label">IPTU (R$/ano)</span>
+          <input type="number" id="prop-iptu" min="0" step="0.01">
+        </label>
+      </div>
+
+      <div class="form-row">
+        <label class="field">
+          <span class="field-label">Área (m²)</span>
+          <input type="number" id="prop-area" min="0" step="0.01">
+        </label>
+        <label class="field">
+          <span class="field-label">Quartos</span>
+          <input type="number" id="prop-bedrooms" min="0">
+        </label>
+        <label class="field">
+          <span class="field-label">Banheiros</span>
+          <input type="number" id="prop-bathrooms" min="0">
+        </label>
+        <label class="field">
+          <span class="field-label">Vagas de garagem</span>
+          <input type="number" id="prop-garage" min="0">
+        </label>
+      </div>
+
+      <label class="field">
+        <span class="field-label">Descrição</span>
+        <textarea id="prop-description" rows="4" placeholder="Detalhes do imóvel, diferenciais, condições de negociação..."></textarea>
+      </label>
+
+      <label class="field">
+        <span class="field-label">Fotos</span>
+        <input type="file" id="prop-photos" accept="image/*" multiple>
+        <div class="photo-preview-grid" id="photo-preview-grid"></div>
+      </label>
+
+      <div class="visibility-toggle">
+        <div>
+          <span class="visibility-title">Visibilidade do imóvel</span>
+          <span class="visibility-desc" id="visibility-desc">Visível para todos os corretores na vitrine geral e no seu link público.</span>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="prop-visibility" checked>
+          <span class="switch-track"><span class="switch-thumb"></span></span>
+        </label>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-danger" id="btn-delete-property" hidden>Excluir imóvel</button>
+        <div class="modal-actions-right">
+          <button type="button" class="btn btn-secondary" data-close="modal-property">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Salvar imóvel</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- ============ MODAL: VER IMÓVEL (DETALHE) ============ -->
+<div class="modal-overlay" id="modal-view-property">
+  <div class="modal modal-lg">
+    <div class="modal-head">
+      <h3>Detalhes do imóvel</h3>
+      <button class="modal-close" data-close="modal-view-property">×</button>
+    </div>
+    <div class="modal-body" id="view-property-body"></div>
+  </div>
+</div>
+
+<!-- ============ MODAL: CONFIG FIREBASE (APP COMPLETO) ============ -->
+<div class="modal-overlay" id="modal-firebase">
+  <div class="modal">
+    <div class="modal-head">
+      <h3>Conectar à nuvem (Firebase)</h3>
+      <button class="modal-close" data-close="modal-firebase">×</button>
+    </div>
+    <div class="modal-body">
+      <p class="firebase-explain">
+        Corretores, imóveis, fotos e chat passam a sincronizar entre dispositivos usando o
+        <strong>Firebase</strong> (plano gratuito Spark). Cole abaixo as credenciais do seu projeto —
+        encontre todas em <em>Configurações do projeto → Geral → Seus apps → SDK config</em>.
+        Sem isso, o app continua funcionando, mas só neste navegador.
+      </p>
+      <label class="field">
+        <span class="field-label">apiKey</span>
+        <input type="text" id="fb-apiKey" placeholder="AIzaSy...">
+      </label>
+      <label class="field">
+        <span class="field-label">authDomain</span>
+        <input type="text" id="fb-authDomain" placeholder="seu-projeto.firebaseapp.com">
+      </label>
+      <label class="field">
+        <span class="field-label">projectId</span>
+        <input type="text" id="fb-projectId" placeholder="seu-projeto">
+      </label>
+      <label class="field">
+        <span class="field-label">storageBucket</span>
+        <input type="text" id="fb-storageBucket" placeholder="seu-projeto.appspot.com">
+      </label>
+      <label class="field">
+        <span class="field-label">databaseURL</span>
+        <input type="text" id="fb-databaseURL" placeholder="https://seu-projeto-default-rtdb.firebaseio.com">
+      </label>
+      <label class="field">
+        <span class="field-label">appId</span>
+        <input type="text" id="fb-appId" placeholder="1:1234567890:web:abc123">
+      </label>
+      <p class="field-error" id="firebase-error"></p>
+      <p class="firebase-status" id="firebase-status" hidden></p>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-text" id="btn-firebase-howto">Como conseguir essas credenciais?</button>
+        <div class="modal-actions-right">
+          <button type="button" class="btn btn-secondary" data-close="modal-firebase">Fechar</button>
+          <button type="button" class="btn btn-danger" id="btn-disconnect-firebase" hidden>Desconectar</button>
+          <button type="button" class="btn btn-primary" id="btn-save-firebase">Conectar à nuvem</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+// ============================================================
+// db.js — Camada de persistência
+//
+// Quando o Firebase está configurado (veja CloudService abaixo):
+//   - brokers   -> Firestore, coleção "brokers"
+//   - properties-> Firestore, coleção "properties"
+//   - fotos     -> Firebase Storage, pasta "property-photos/"
+//   - chat      -> Realtime Database, nó "conversations/"
+// Sem configuração, tudo cai de volta para IndexedDB + localStorage,
+// e o app funciona normalmente, só sem sincronizar entre dispositivos.
+// ============================================================
+
+const DB_NAME = 'cartorio-imoveis';
+const DB_VERSION = 1;
+
+let dbInstance = null;
+
+function openDatabase() {
+  return new Promise((resolve, reject) => {
+    const request = indexedDB.open(DB_NAME, DB_VERSION);
+
+    request.onupgradeneeded = (event) => {
+      const db = event.target.result;
+
+      if (!db.objectStoreNames.contains('brokers')) {
+        const brokers = db.createObjectStore('brokers', { keyPath: 'id' });
+        brokers.createIndex('email', 'email', { unique: true });
+      }
+
+      if (!db.objectStoreNames.contains('properties')) {
+        const properties = db.createObjectStore('properties', { keyPath: 'id' });
+        properties.createIndex('brokerId', 'brokerId', { unique: false });
+        properties.createIndex('visibility', 'visibility', { unique: false });
+      }
+    };
+
+    request.onsuccess = (event) => {
+      dbInstance = event.target.result;
+      resolve(dbInstance);
+    };
+
+    request.onerror = (event) => {
+      reject(event.target.error);
+    };
+  });
+}
+
+function getLocalDB() {
+  if (dbInstance) return Promise.resolve(dbInstance);
+  return openDatabase();
+}
+
+function tx(storeName, mode = 'readonly') {
+  return getLocalDB().then((db) => db.transaction(storeName, mode).objectStore(storeName));
+}
+
+function uid(prefix = '') {
+  return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 9);
+}
+
+// ============================================================
+// CloudService — inicialização do Firebase (Firestore + Storage + Realtime DB)
+// ============================================================
+
+const FIREBASE_CONFIG_KEY = 'cartorio-imoveis-firebase-config';
+const FIREBASE_DISABLED_KEY = 'cartorio-imoveis-firebase-disabled';
+
+// Configuração padrão do projeto Firebase (pré-preenchida).
+// O databaseURL fica vazio até o Realtime Database ser criado no console
+// (Build → Realtime Database → Criar banco de dados); sem ele, o app
+// funciona normalmente e só o chat continua local até essa etapa ser feita.
+const DEFAULT_FIREBASE_CONFIG = {
+  apiKey: 'AIzaSyAMkwZMmnCFIIPxDR1naAoUQXU52MEw7wE',
+  authDomain: 'cartorio-imoveis.firebaseapp.com',
+  projectId: 'cartorio-imoveis',
+  storageBucket: 'cartorio-imoveis.firebasestorage.app',
+  databaseURL: '',
+  appId: '1:532829918011:web:6bf5304ab041ddc1dc9d1e',
+};
+
+let firebaseApp = null;
+let firestoreDB = null;
+let realtimeDB = null;
+let storageRef = null;
+let firebaseSDKLoaded = false;
+
+// módulos do SDK, preenchidos em loadFirebaseSDK()
+let _appMod = null;
+let _firestoreMod = null;
+let _storageMod = null;
+let _rtdbMod = null;
+
+function isDisabled() {
+  return localStorage.getItem(FIREBASE_DISABLED_KEY) === '1';
+}
+
+function getStoredConfig() {
+  if (isDisabled()) return null;
+  try {
+    const raw = localStorage.getItem(FIREBASE_CONFIG_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch {
+    // ignora e cai no padrão
+  }
+  return DEFAULT_FIREBASE_CONFIG;
+}
+
+function saveConfig(config) {
+  localStorage.removeItem(FIREBASE_DISABLED_KEY);
+  localStorage.setItem(FIREBASE_CONFIG_KEY, JSON.stringify(config));
+}
+
+function clearConfig() {
+  localStorage.removeItem(FIREBASE_CONFIG_KEY);
+  localStorage.setItem(FIREBASE_DISABLED_KEY, '1');
+  firebaseApp = null;
+  firestoreDB = null;
+  realtimeDB = null;
+  storageRef = null;
+  firebaseSDKLoaded = false;
+}
+
+function isConfigured() {
+  return !!getStoredConfig();
+}
+
+function isCloudActive() {
+  return !!firestoreDB;
+}
+
+async function loadFirebaseSDK() {
+  if (firebaseSDKLoaded) return;
+  const v = '10.12.2';
+  _appMod = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-app.js`);
+  _firestoreMod = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-firestore.js`);
+  _storageMod = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-storage.js`);
+  _rtdbMod = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-database.js`);
+  firebaseSDKLoaded = true;
+}
+
+async function initFirebase() {
+  const config = getStoredConfig();
+  if (!config) return { ok: false, reason: 'sem-config' };
+
+  try {
+    await loadFirebaseSDK();
+    const { initializeApp } = _appMod;
+    const { getFirestore } = _firestoreMod;
+    const { getStorage } = _storageMod;
+    const { getDatabase } = _rtdbMod;
+
+    firebaseApp = initializeApp({
+      apiKey: config.apiKey,
+      authDomain: config.authDomain,
+      projectId: config.projectId,
+      storageBucket: config.storageBucket,
+      databaseURL: config.databaseURL,
+      appId: config.appId,
+    });
+
+    firestoreDB = getFirestore(firebaseApp);
+    storageRef = getStorage(firebaseApp);
+    // Realtime DB é opcional (só para o chat); se o databaseURL não foi
+    // informado, getDatabase pode falhar — nesse caso o chat usa fallback local.
+    try {
+      realtimeDB = config.databaseURL ? getDatabase(firebaseApp) : null;
+    } catch {
+      realtimeDB = null;
+    }
+
+    // testa a conexão de fato lendo a coleção de corretores
+    const { collection, getDocs, query, limit } = _firestoreMod;
+    await getDocs(query(collection(firestoreDB, 'brokers'), limit(1)));
+
+    return { ok: true };
+  } catch (err) {
+    console.error('Falha ao inicializar Firebase:', err);
+    firebaseApp = null;
+    firestoreDB = null;
+    realtimeDB = null;
+    storageRef = null;
+    return { ok: false, reason: err.message || 'erro-desconhecido' };
+  }
+}
+
+const CloudService = {
+  getStoredConfig,
+  saveConfig,
+  clearConfig,
+  isConfigured,
+  isCloudActive,
+  initFirebase,
+};
+
+// ============================================================
+// BROKERS
+// ============================================================
+
+async function createBroker({ name, creci, email, password }) {
+  if (isCloudActive()) {
+    const { collection, query, where, getDocs, doc, setDoc } = _firestoreMod;
+    const brokersRef = collection(firestoreDB, 'brokers');
+    const existingSnap = await getDocs(query(brokersRef, where('email', '==', email.toLowerCase())));
+    if (!existingSnap.empty) {
+      throw new Error('Já existe uma conta cadastrada com este e-mail.');
+    }
+    const broker = {
+      id: uid('broker_'),
+      name,
+      creci,
+      email: email.toLowerCase(),
+      password, // nota: hashing real exigiria backend; aqui é armazenamento simples
+      createdAt: Date.now(),
+    };
+    await setDoc(doc(firestoreDB, 'brokers', broker.id), broker);
+    return broker;
+  }
+
+  const store = await tx('brokers', 'readwrite');
+  const existing = await new Promise((resolve, reject) => {
+    const idx = store.index('email');
+    const req = idx.get(email.toLowerCase());
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+  if (existing) {
+    throw new Error('Já existe uma conta cadastrada com este e-mail.');
+  }
+
+  const broker = {
+    id: uid('broker_'),
+    name,
+    creci,
+    email: email.toLowerCase(),
+    password,
+    createdAt: Date.now(),
+  };
+
+  return new Promise((resolve, reject) => {
+    const req = store.add(broker);
+    req.onsuccess = () => resolve(broker);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function findBrokerByEmail(email) {
+  if (isCloudActive()) {
+    const { collection, query, where, getDocs } = _firestoreMod;
+    const snap = await getDocs(query(collection(firestoreDB, 'brokers'), where('email', '==', email.toLowerCase())));
+    if (snap.empty) return null;
+    return snap.docs[0].data();
+  }
+
+  const store = await tx('brokers');
+  return new Promise((resolve, reject) => {
+    const idx = store.index('email');
+    const req = idx.get(email.toLowerCase());
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function getBrokerById(id) {
+  if (isCloudActive()) {
+    const { doc, getDoc } = _firestoreMod;
+    const snap = await getDoc(doc(firestoreDB, 'brokers', id));
+    return snap.exists() ? snap.data() : null;
+  }
+
+  const store = await tx('brokers');
+  return new Promise((resolve, reject) => {
+    const req = store.get(id);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function getAllBrokers() {
+  if (isCloudActive()) {
+    const { collection, getDocs } = _firestoreMod;
+    const snap = await getDocs(collection(firestoreDB, 'brokers'));
+    return snap.docs.map((d) => d.data());
+  }
+
+  const store = await tx('brokers');
+  return new Promise((resolve, reject) => {
+    const req = store.getAll();
+    req.onsuccess = () => resolve(req.result || []);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+// ============================================================
+// PROPERTY PHOTOS (Firebase Storage, com fallback base64 local)
+// ============================================================
+
+// Recebe um array misto: File (novo upload) ou string (URL/base64 já existente).
+// Faz upload dos File para o Storage (se a nuvem estiver ativa) e retorna
+// um array só de strings (URLs ou base64) pronto para salvar no Firestore/IndexedDB.
+async function resolvePhotos(photoItems, brokerId) {
+  const resolved = [];
+  for (const item of photoItems) {
+    if (typeof item === 'string') {
+      resolved.push(item);
+      continue;
+    }
+    // item é um File
+    if (isCloudActive() && storageRef) {
+      const { ref, uploadBytes, getDownloadURL } = _storageMod;
+      const path = `property-photos/${brokerId}/${uid('photo_')}_${item.name}`;
+      const fileRef = ref(storageRef, path);
+      await uploadBytes(fileRef, item);
+      const url = await getDownloadURL(fileRef);
+      resolved.push(url);
+    } else {
+      // fallback: converte para base64 (mesmo comportamento de antes)
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(item);
+      });
+      resolved.push(base64);
+    }
+  }
+  return resolved;
+}
+
+// ============================================================
+// PROPERTIES
+// ============================================================
+
+async function createProperty(data) {
+  const photos = await resolvePhotos(data.photos || [], data.brokerId);
+  const property = {
+    id: uid('prop_'),
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    ...data,
+    photos,
+  };
+
+  if (isCloudActive()) {
+    const { doc, setDoc } = _firestoreMod;
+    await setDoc(doc(firestoreDB, 'properties', property.id), property);
+    return property;
+  }
+
+  const store = await tx('properties', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const req = store.add(property);
+    req.onsuccess = () => resolve(property);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function updateProperty(id, data) {
+  const existing = await getPropertyById(id);
+  if (!existing) throw new Error('Imóvel não encontrado.');
+
+  const photos = data.photos ? await resolvePhotos(data.photos, existing.brokerId) : existing.photos;
+  const updated = { ...existing, ...data, photos, updatedAt: Date.now() };
+
+  if (isCloudActive()) {
+    const { doc, setDoc } = _firestoreMod;
+    await setDoc(doc(firestoreDB, 'properties', id), updated);
+    return updated;
+  }
+
+  const store = await tx('properties', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const req = store.put(updated);
+    req.onsuccess = () => resolve(updated);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function deleteProperty(id) {
+  if (isCloudActive()) {
+    const { doc, deleteDoc } = _firestoreMod;
+    await deleteDoc(doc(firestoreDB, 'properties', id));
+    return true;
+  }
+
+  const store = await tx('properties', 'readwrite');
+  return new Promise((resolve, reject) => {
+    const req = store.delete(id);
+    req.onsuccess = () => resolve(true);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function getPropertyById(id) {
+  if (isCloudActive()) {
+    const { doc, getDoc } = _firestoreMod;
+    const snap = await getDoc(doc(firestoreDB, 'properties', id));
+    return snap.exists() ? snap.data() : null;
+  }
+
+  const store = await tx('properties');
+  return new Promise((resolve, reject) => {
+    const req = store.get(id);
+    req.onsuccess = () => resolve(req.result || null);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function getPropertiesByBroker(brokerId) {
+  if (isCloudActive()) {
+    const { collection, query, where, getDocs } = _firestoreMod;
+    const snap = await getDocs(query(collection(firestoreDB, 'properties'), where('brokerId', '==', brokerId)));
+    return snap.docs.map((d) => d.data()).sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  const store = await tx('properties');
+  return new Promise((resolve, reject) => {
+    const idx = store.index('brokerId');
+    const req = idx.getAll(brokerId);
+    req.onsuccess = () => resolve((req.result || []).sort((a, b) => b.createdAt - a.createdAt));
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function getAllProperties() {
+  if (isCloudActive()) {
+    const { collection, getDocs } = _firestoreMod;
+    const snap = await getDocs(collection(firestoreDB, 'properties'));
+    return snap.docs.map((d) => d.data()).sort((a, b) => b.createdAt - a.createdAt);
+  }
+
+  const store = await tx('properties');
+  return new Promise((resolve, reject) => {
+    const req = store.getAll();
+    req.onsuccess = () => resolve((req.result || []).sort((a, b) => b.createdAt - a.createdAt));
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function getPublicProperties() {
+  const all = await getAllProperties();
+  return all.filter((p) => p.visibility === 'public');
+}
+
+async function getPublicPropertiesByBroker(brokerId) {
+  const all = await getPropertiesByBroker(brokerId);
+  return all.filter((p) => p.visibility === 'public');
+}
+
+// ---------- SESSION (localStorage só guarda QUEM está logado, não dados sensíveis) ----------
+
+const SESSION_KEY = 'cartorio-imoveis-session';
+
+function setSession(brokerId) {
+  localStorage.setItem(SESSION_KEY, brokerId);
+}
+function getSession() {
+  return localStorage.getItem(SESSION_KEY);
+}
+function clearSession() {
+  localStorage.removeItem(SESSION_KEY);
+}
+
+const DB = {
+  createBroker,
+  findBrokerByEmail,
+  getBrokerById,
+  getAllBrokers,
+  createProperty,
+  updateProperty,
+  deleteProperty,
+  getPropertyById,
+  getPropertiesByBroker,
+  getAllProperties,
+  getPublicProperties,
+  getPublicPropertiesByBroker,
+  setSession,
+  getSession,
+  clearSession,
+  uid,
+};
+
+
+// ============================================================
+// ChatService — chat em tempo real via Firebase Realtime Database
+// Sem nuvem ativa, cai para fallback local (localStorage + eventos).
+// ============================================================
+
+function conversationId(brokerIdA, brokerIdB) {
+  return [brokerIdA, brokerIdB].sort().join('__');
+}
+
+// Envia uma mensagem. Retorna true se foi via Firebase, false se foi fallback local.
+async function sendMessage({ fromId, toId, text }) {
+  const message = {
+    fromId,
+    toId,
+    text,
+    timestamp: Date.now(),
+  };
+
+  if (realtimeDB) {
+    try {
+      const { ref, push, set } = _rtdbMod;
+      const convId = conversationId(fromId, toId);
+      const msgRef = push(ref(realtimeDB, `conversations/${convId}/messages`));
+      await set(msgRef, message);
+      return true;
+    } catch (err) {
+      console.error('Erro ao enviar via Firebase, usando fallback local:', err);
+    }
+  }
+
+  // Fallback local: salva em localStorage para a conversa funcionar dentro do navegador
+  const convId = conversationId(fromId, toId);
+  const key = `cartorio-imoveis-chat-local-${convId}`;
+  const existing = JSON.parse(localStorage.getItem(key) || '[]');
+  existing.push({ ...message, id: 'local_' + Date.now() + Math.random().toString(36).slice(2, 7) });
+  localStorage.setItem(key, JSON.stringify(existing));
+  window.dispatchEvent(new CustomEvent('local-chat-update', { detail: { convId } }));
+  return false;
+}
+
+// Escuta mensagens de uma conversa em tempo real. Retorna função de unsubscribe.
+function listenToConversation(brokerIdA, brokerIdB, callback) {
+  const convId = conversationId(brokerIdA, brokerIdB);
+
+  if (realtimeDB) {
+    const { ref, onValue, off } = _rtdbMod;
+    const msgsRef = ref(realtimeDB, `conversations/${convId}/messages`);
+    const handler = (snapshot) => {
+      const data = snapshot.val() || {};
+      const messages = Object.entries(data)
+        .map(([id, msg]) => ({ id, ...msg }))
+        .sort((a, b) => a.timestamp - b.timestamp);
+      callback(messages);
+    };
+    onValue(msgsRef, handler);
+    return () => off(msgsRef, 'value', handler);
+  }
+
+  // Fallback local
+  const key = `cartorio-imoveis-chat-local-${convId}`;
+  const readAndEmit = () => {
+    const messages = JSON.parse(localStorage.getItem(key) || '[]').sort((a, b) => a.timestamp - b.timestamp);
+    callback(messages);
+  };
+  readAndEmit();
+  const handler = (e) => {
+    if (e.detail.convId === convId) readAndEmit();
+  };
+  window.addEventListener('local-chat-update', handler);
+  // Também escuta mudanças vindas de outras abas do mesmo navegador
+  const storageHandler = (e) => {
+    if (e.key === key) readAndEmit();
+  };
+  window.addEventListener('storage', storageHandler);
+
+  return () => {
+    window.removeEventListener('local-chat-update', handler);
+    window.removeEventListener('storage', storageHandler);
+  };
+}
+
+// Lista, para um corretor, o "último resumo" de cada conversa (para a lista de contatos)
+async function getConversationPreviews(brokerId, allBrokerIds) {
+  const previews = {};
+  await Promise.all(
+    allBrokerIds.map(async (otherId) => {
+      if (otherId === brokerId) return;
+      const convId = conversationId(brokerId, otherId);
+
+      if (realtimeDB) {
+        try {
+          const { ref, get } = _rtdbMod;
+          const snap = await get(ref(realtimeDB, `conversations/${convId}/messages`));
+          const data = snap.val() || {};
+          const messages = Object.values(data).sort((a, b) => a.timestamp - b.timestamp);
+          const last = messages[messages.length - 1];
+          previews[otherId] = last ? { text: last.text, timestamp: last.timestamp } : null;
+          return;
+        } catch (err) {
+          console.error('Erro ao buscar preview Firebase:', err);
+        }
+      }
+
+      const key = `cartorio-imoveis-chat-local-${convId}`;
+      const messages = JSON.parse(localStorage.getItem(key) || '[]').sort((a, b) => a.timestamp - b.timestamp);
+      const last = messages[messages.length - 1];
+      previews[otherId] = last ? { text: last.text, timestamp: last.timestamp } : null;
+    })
+  );
+  return previews;
+}
+
+const ChatService = {
+  sendMessage,
+  listenToConversation,
+  getConversationPreviews,
+  conversationId,
+  isUsingFirebase: () => !!realtimeDB,
+};
+
+
+// ==================== app.js ====================
+// ============================================================
+// app.js — Orquestração da aplicação
+// ============================================================
+
+let currentBroker = null;
+let activeChatPartnerId = null;
+let activeChatUnsubscribe = null;
+let allBrokersCache = [];
+
+// ---------------------------------------------------------------
+// BOOT
+// ---------------------------------------------------------------
+window.addEventListener('DOMContentLoaded', boot);
+
+async function boot() {
+  bindGlobalEvents();
+
+  const hash = window.location.hash;
+  if (hash.startsWith('#portfolio/')) {
+    const brokerId = hash.replace('#portfolio/', '');
+    await renderPublicPortfolio(brokerId);
+    return;
+  }
+
+  if (CloudService.isConfigured()) {
+    const result = await CloudService.initFirebase();
+    if (!result.ok) {
+      console.warn('Firebase configurado mas não foi possível conectar:', result.reason);
+      showToast('Não foi possível conectar à nuvem. Usando dados locais.');
+    }
+  }
+
+  const sessionId = DB.getSession();
+  if (sessionId) {
+    const broker = await DB.getBrokerById(sessionId);
+    if (broker) {
+      currentBroker = broker;
+      await enterApp();
+      return;
+    }
+  }
+  showView('view-auth');
+}
+
+function showView(viewId) {
+  document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+  document.getElementById(viewId).classList.add('active');
+}
+
+// ---------------------------------------------------------------
+// AUTH
+// ---------------------------------------------------------------
+function bindGlobalEvents() {
+  // tabs login/signup
+  document.querySelectorAll('.auth-tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.auth-tab').forEach((t) => t.classList.remove('active'));
+      document.querySelectorAll('.auth-form').forEach((f) => f.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(`form-${tab.dataset.tab}`).classList.add('active');
+    });
+  });
+
+  document.getElementById('form-login').addEventListener('submit', handleLogin);
+  document.getElementById('form-signup').addEventListener('submit', handleSignup);
+  document.getElementById('btn-logout').addEventListener('click', handleLogout);
+
+  // nav
+  document.querySelectorAll('.nav-item').forEach((item) => {
+    item.addEventListener('click', () => switchScreen(item.dataset.view));
+  });
+
+  // property modal
+  document.getElementById('btn-new-property').addEventListener('click', openNewPropertyModal);
+  document.getElementById('btn-new-property-empty').addEventListener('click', openNewPropertyModal);
+  document.getElementById('form-property').addEventListener('submit', handleSaveProperty);
+  document.getElementById('prop-photos').addEventListener('change', handlePhotoSelection);
+  document.getElementById('btn-delete-property').addEventListener('click', handleDeleteProperty);
+  document.getElementById('prop-visibility').addEventListener('change', updateVisibilityDesc);
+
+  // filters
+  document.querySelectorAll('#screen-dashboard .filter-chip').forEach((chip) => {
+    chip.addEventListener('click', () => {
+      document.querySelectorAll('#screen-dashboard .filter-chip').forEach((c) => c.classList.remove('active'));
+      chip.classList.add('active');
+      renderMyProperties(chip.dataset.filter);
+    });
+  });
+
+  document.getElementById('explore-search').addEventListener('input', (e) => renderExplore(e.target.value));
+  document.getElementById('chat-search').addEventListener('input', (e) => renderChatContacts(e.target.value));
+
+  // share
+  document.getElementById('btn-copy-link').addEventListener('click', copyShareLink);
+  document.getElementById('btn-preview-portfolio').addEventListener('click', () => {
+    const url = buildPublicUrl(currentBroker.id);
+    window.open(url, '_blank');
+  });
+  document.getElementById('public-back-link').addEventListener('click', (e) => {
+    e.preventDefault();
+    window.location.hash = '';
+    window.location.reload();
+  });
+
+  // modal close (generic)
+  document.querySelectorAll('[data-close]').forEach((btn) => {
+    btn.addEventListener('click', () => closeModal(btn.dataset.close));
+  });
+  document.querySelectorAll('.modal-overlay').forEach((overlay) => {
+    overlay.addEventListener('click', (e) => {
+      if (e.target === overlay) closeModal(overlay.id);
+    });
+  });
+
+  // chat
+  document.getElementById('chat-form').addEventListener('submit', handleSendMessage);
+
+  // firebase config
+  document.getElementById('btn-save-firebase').addEventListener('click', handleSaveFirebaseConfig);
+  document.getElementById('btn-disconnect-firebase').addEventListener('click', handleDisconnectFirebase);
+  document.getElementById('btn-open-firebase-config').addEventListener('click', window.openFirebaseConfigModal);
+  document.getElementById('btn-firebase-howto').addEventListener('click', () => {
+    window.open('https://firebase.google.com/docs/database/web/start', '_blank');
+  });
+}
+
+async function handleLogin(e) {
+  e.preventDefault();
+  const email = document.getElementById('login-email').value.trim();
+  const password = document.getElementById('login-password').value;
+  const errorEl = document.getElementById('login-error');
+  errorEl.textContent = '';
+
+  try {
+    const broker = await DB.findBrokerByEmail(email);
+    if (!broker || broker.password !== password) {
+      errorEl.textContent = 'E-mail ou senha incorretos.';
+      return;
+    }
+    currentBroker = broker;
+    DB.setSession(broker.id);
+    await enterApp();
+  } catch (err) {
+    errorEl.textContent = 'Erro ao entrar. Tente novamente.';
+    console.error(err);
+  }
+}
+
+async function handleSignup(e) {
+  e.preventDefault();
+  const name = document.getElementById('signup-name').value.trim();
+  const creci = document.getElementById('signup-creci').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  const password = document.getElementById('signup-password').value;
+  const errorEl = document.getElementById('signup-error');
+  errorEl.textContent = '';
+
+  try {
+    const broker = await DB.createBroker({ name, creci, email, password });
+    currentBroker = broker;
+    DB.setSession(broker.id);
+    showToast('Conta criada com sucesso!');
+    await enterApp();
+  } catch (err) {
+    errorEl.textContent = err.message || 'Erro ao criar conta.';
+  }
+}
+
+function handleLogout() {
+  DB.clearSession();
+  currentBroker = null;
+  if (activeChatUnsubscribe) activeChatUnsubscribe();
+  window.location.hash = '';
+  showView('view-auth');
+  document.getElementById('form-login').reset();
+}
+
+async function enterApp() {
+  showView('view-app');
+  renderSidebarBroker();
+  switchScreen('dashboard');
+  allBrokersCache = await DB.getAllBrokers();
+}
+
+function renderSidebarBroker() {
+  document.getElementById('sidebar-broker-card').innerHTML = `
+    <span class="broker-card-name">${escapeHtml(currentBroker.name)}</span>
+    <span class="broker-card-creci">CRECI ${escapeHtml(currentBroker.creci)}</span>
+  `;
+}
+
+// ---------------------------------------------------------------
+// NAVIGATION
+// ---------------------------------------------------------------
+async function switchScreen(viewName) {
+  document.querySelectorAll('.nav-item').forEach((item) => {
+    item.classList.toggle('active', item.dataset.view === viewName);
+  });
+  document.querySelectorAll('.screen').forEach((screen) => screen.classList.remove('active'));
+  document.getElementById(`screen-${viewName}`).classList.add('active');
+
+  if (viewName === 'dashboard') {
+    await renderMyProperties('all');
+  } else if (viewName === 'explore') {
+    await renderExplore('');
+  } else if (viewName === 'chat') {
+    await renderChatContacts('');
+  } else if (viewName === 'share') {
+    renderShareScreen();
+  }
+}
+
+// ---------------------------------------------------------------
+// PROPERTY CARD RENDERING (shared helper)
+// ---------------------------------------------------------------
+const STATUS_LABELS = {
+  disponivel: 'DISPONÍVEL',
+  vendido: 'VENDIDO',
+  alugado: 'ALUGADO',
+  reservado: 'RESERVADO',
+};
+
+function formatCurrency(value) {
+  if (value === undefined || value === null || value === '') return '—';
+  return new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(value);
+}
+
+function propertyCardHtml(property, { showBrokerTag = false, brokerName = '' } = {}) {
+  const firstPhoto = (property.photos && property.photos[0]) || null;
+  const statusClass = `stamp-${property.status}`;
+  const periodLabel = property.purpose === 'aluguel' ? '/mês' : '';
+
+  return `
+    <div class="property-card" data-id="${property.id}">
+      <div class="property-photo">
+        ${firstPhoto ? `<img src="${firstPhoto}" alt="${escapeHtml(property.title)}">` : `<span class="property-photo-placeholder">SEM FOTO</span>`}
+        <span class="property-stamp ${statusClass}">${STATUS_LABELS[property.status] || property.status}</span>
+        ${property.visibility === 'private' ? `<span class="property-visibility-flag">PRIVADO</span>` : ''}
+      </div>
+      <div class="property-body">
+        <div class="property-price">${formatCurrency(property.price)}<span class="property-price-period">${periodLabel}</span></div>
+        <div class="property-title">${escapeHtml(property.title)}</div>
+        <div class="property-location">${escapeHtml(property.city || '')}${property.address ? ' · ' + escapeHtml(property.address) : ''}</div>
+        <div class="property-specs">
+          ${property.area ? `<span>${property.area} m²</span>` : ''}
+          ${property.bedrooms ? `<span>${property.bedrooms} qts</span>` : ''}
+          ${property.bathrooms ? `<span>${property.bathrooms} banh.</span>` : ''}
+          ${property.garage ? `<span>${property.garage} vagas</span>` : ''}
+        </div>
+        ${showBrokerTag ? `<div class="property-broker-tag">${escapeHtml(brokerName)}</div>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+// ---------------------------------------------------------------
+// MY PORTFOLIO (dashboard)
+// ---------------------------------------------------------------
+let myPropertiesCache = [];
+
+async function renderMyProperties(filter) {
+  myPropertiesCache = await DB.getPropertiesByBroker(currentBroker.id);
+  const grid = document.getElementById('my-properties-grid');
+  const empty = document.getElementById('my-properties-empty');
+
+  let filtered = myPropertiesCache;
+  if (filter === 'venda') filtered = filtered.filter((p) => p.purpose === 'venda');
+  if (filter === 'aluguel') filtered = filtered.filter((p) => p.purpose === 'aluguel');
+  if (filter === 'public') filtered = filtered.filter((p) => p.visibility === 'public');
+  if (filter === 'private') filtered = filtered.filter((p) => p.visibility === 'private');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.hidden = false;
+  } else {
+    empty.hidden = true;
+    grid.innerHTML = filtered.map((p) => propertyCardHtml(p)).join('');
+    grid.querySelectorAll('.property-card').forEach((card) => {
+      card.addEventListener('click', () => openPropertyDetail(card.dataset.id, true));
+    });
+  }
+}
+
+function openNewPropertyModal() {
+  document.getElementById('form-property').reset();
+  document.getElementById('property-id').value = '';
+  document.getElementById('modal-property-title').textContent = 'Cadastrar imóvel';
+  document.getElementById('btn-delete-property').hidden = true;
+  document.getElementById('photo-preview-grid').innerHTML = '';
+  document.getElementById('prop-visibility').checked = true;
+  pendingPhotos = [];
+  updateVisibilityDesc();
+  openModal('modal-property');
+}
+
+async function openEditPropertyModal(propertyId) {
+  const property = await DB.getPropertyById(propertyId);
+  if (!property) return;
+
+  document.getElementById('property-id').value = property.id;
+  document.getElementById('prop-title').value = property.title || '';
+  document.getElementById('prop-status').value = property.status || 'disponivel';
+  document.getElementById('prop-purpose').value = property.purpose || 'venda';
+  document.getElementById('prop-type').value = property.type || 'apartamento';
+  document.getElementById('prop-address').value = property.address || '';
+  document.getElementById('prop-city').value = property.city || '';
+  document.getElementById('prop-price').value = property.price || '';
+  document.getElementById('prop-condo').value = property.condo || '';
+  document.getElementById('prop-iptu').value = property.iptu || '';
+  document.getElementById('prop-area').value = property.area || '';
+  document.getElementById('prop-bedrooms').value = property.bedrooms || '';
+  document.getElementById('prop-bathrooms').value = property.bathrooms || '';
+  document.getElementById('prop-garage').value = property.garage || '';
+  document.getElementById('prop-description').value = property.description || '';
+  document.getElementById('prop-visibility').checked = property.visibility === 'public';
+
+  pendingPhotos = property.photos ? [...property.photos] : [];
+  renderPhotoPreview();
+  updateVisibilityDesc();
+
+  document.getElementById('modal-property-title').textContent = 'Editar imóvel';
+  document.getElementById('btn-delete-property').hidden = false;
+  openModal('modal-property');
+}
+
+function updateVisibilityDesc() {
+  const checked = document.getElementById('prop-visibility').checked;
+  document.getElementById('visibility-desc').textContent = checked
+    ? 'Visível para todos os corretores na vitrine geral e no seu link público.'
+    : 'Visível apenas para você. Não aparece na vitrine geral nem no link público.';
+}
+
+let pendingPhotos = []; // itens: string (URL/base64 já salva) ou File (novo upload pendente)
+
+function handlePhotoSelection(e) {
+  const files = Array.from(e.target.files || []);
+  files.forEach((file) => pendingPhotos.push(file));
+  renderPhotoPreview();
+  e.target.value = '';
+}
+
+function photoPreviewUrl(item) {
+  return typeof item === 'string' ? item : URL.createObjectURL(item);
+}
+
+function renderPhotoPreview() {
+  const grid = document.getElementById('photo-preview-grid');
+  grid.innerHTML = pendingPhotos
+    .map(
+      (photo, idx) => `
+      <div class="photo-preview-item">
+        <img src="${photoPreviewUrl(photo)}" alt="Foto ${idx + 1}">
+        <button type="button" class="photo-preview-remove" data-idx="${idx}">×</button>
+      </div>
+    `
+    )
+    .join('');
+  grid.querySelectorAll('.photo-preview-remove').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      pendingPhotos.splice(Number(btn.dataset.idx), 1);
+      renderPhotoPreview();
+    });
+  });
+}
+
+
+async function handleSaveProperty(e) {
+  e.preventDefault();
+  const id = document.getElementById('property-id').value;
+  const saveBtn = e.target.querySelector('button[type="submit"]');
+  const saveBtnOriginalText = saveBtn.textContent;
+  const hasNewPhotos = pendingPhotos.some((p) => p instanceof File);
+
+  const data = {
+    title: document.getElementById('prop-title').value.trim(),
+    status: document.getElementById('prop-status').value,
+    purpose: document.getElementById('prop-purpose').value,
+    type: document.getElementById('prop-type').value,
+    address: document.getElementById('prop-address').value.trim(),
+    city: document.getElementById('prop-city').value.trim(),
+    price: parseFloat(document.getElementById('prop-price').value) || 0,
+    condo: parseFloat(document.getElementById('prop-condo').value) || 0,
+    iptu: parseFloat(document.getElementById('prop-iptu').value) || 0,
+    area: parseFloat(document.getElementById('prop-area').value) || 0,
+    bedrooms: parseInt(document.getElementById('prop-bedrooms').value) || 0,
+    bathrooms: parseInt(document.getElementById('prop-bathrooms').value) || 0,
+    garage: parseInt(document.getElementById('prop-garage').value) || 0,
+    description: document.getElementById('prop-description').value.trim(),
+    visibility: document.getElementById('prop-visibility').checked ? 'public' : 'private',
+    photos: pendingPhotos,
+    brokerId: currentBroker.id,
+  };
+
+  saveBtn.disabled = true;
+  saveBtn.textContent = hasNewPhotos ? 'Enviando fotos...' : 'Salvando...';
+
+  try {
+    if (id) {
+      await DB.updateProperty(id, data);
+      showToast('Imóvel atualizado.');
+    } else {
+      await DB.createProperty(data);
+      showToast('Imóvel cadastrado.');
+    }
+    closeModal('modal-property');
+    await renderMyProperties(getActiveFilter());
+  } catch (err) {
+    console.error(err);
+    showToast('Erro ao salvar imóvel.');
+  } finally {
+    saveBtn.disabled = false;
+    saveBtn.textContent = saveBtnOriginalText;
+  }
+}
+
+function getActiveFilter() {
+  const active = document.querySelector('#screen-dashboard .filter-chip.active');
+  return active ? active.dataset.filter : 'all';
+}
+
+async function handleDeleteProperty() {
+  const id = document.getElementById('property-id').value;
+  if (!id) return;
+  if (!confirm('Tem certeza que deseja excluir este imóvel? Esta ação não pode ser desfeita.')) return;
+
+  await DB.deleteProperty(id);
+  closeModal('modal-property');
+  showToast('Imóvel excluído.');
+  await renderMyProperties(getActiveFilter());
+}
+
+// ---------------------------------------------------------------
+// PROPERTY DETAIL VIEW
+// ---------------------------------------------------------------
+async function openPropertyDetail(propertyId, isOwner) {
+  const property = await DB.getPropertyById(propertyId);
+  if (!property) return;
+
+  let brokerName = '';
+  let brokerCreci = '';
+  if (!isOwner) {
+    const broker = await DB.getBrokerById(property.brokerId);
+    brokerName = broker ? broker.name : 'Corretor';
+    brokerCreci = broker ? broker.creci : '';
+  }
+
+  const photosHtml =
+    property.photos && property.photos.length
+      ? `<div class="detail-photos">${property.photos.map((p) => `<img src="${p}" alt="Foto do imóvel">`).join('')}</div>`
+      : `<div class="detail-photos-empty">SEM FOTOS CADASTRADAS</div>`;
+
+  const periodLabel = property.purpose === 'aluguel' ? '/mês' : '';
+
+  document.getElementById('view-property-body').innerHTML = `
+    ${photosHtml}
+    <div class="detail-header">
+      <div>
+        <div class="detail-price">${formatCurrency(property.price)}${periodLabel ? `<span style="font-size:0.9rem;font-weight:400;color:var(--ink-soft)"> ${periodLabel}</span>` : ''}</div>
+        <div class="detail-title">${escapeHtml(property.title)}</div>
+        <div class="detail-location">${escapeHtml(property.city || '')}${property.address ? ' · ' + escapeHtml(property.address) : ''}</div>
+      </div>
+      <span class="property-stamp stamp-${property.status}" style="position:static;transform:rotate(-3deg);">${STATUS_LABELS[property.status]}</span>
+    </div>
+    <div class="detail-spec-grid">
+      <div class="detail-spec"><span class="detail-spec-value">${property.area || '—'}</span><span class="detail-spec-label">m²</span></div>
+      <div class="detail-spec"><span class="detail-spec-value">${property.bedrooms || '—'}</span><span class="detail-spec-label">Quartos</span></div>
+      <div class="detail-spec"><span class="detail-spec-value">${property.bathrooms || '—'}</span><span class="detail-spec-label">Banheiros</span></div>
+      <div class="detail-spec"><span class="detail-spec-value">${property.garage || '—'}</span><span class="detail-spec-label">Vagas</span></div>
+    </div>
+    ${property.description ? `<p class="detail-description">${escapeHtml(property.description)}</p>` : ''}
+    <div class="detail-financials">
+      <span>Condomínio: <strong>${formatCurrency(property.condo)}</strong></span>
+      <span>IPTU/ano: <strong>${formatCurrency(property.iptu)}</strong></span>
+    </div>
+    ${
+      isOwner
+        ? `<div class="modal-actions"><div></div><div class="modal-actions-right"><button class="btn btn-primary" id="btn-edit-from-detail">Editar imóvel</button></div></div>`
+        : `<div class="detail-broker-row"><span>Anunciado por <strong>${escapeHtml(brokerName)}</strong> · CRECI ${escapeHtml(brokerCreci)}</span><button class="btn btn-secondary btn-sm" id="btn-chat-from-detail">Conversar</button></div>`
+    }
+  `;
+
+  openModal('modal-view-property');
+
+  if (isOwner) {
+    document.getElementById('btn-edit-from-detail')?.addEventListener('click', () => {
+      closeModal('modal-view-property');
+      openEditPropertyModal(property.id);
+    });
+  } else {
+    document.getElementById('btn-chat-from-detail')?.addEventListener('click', () => {
+      closeModal('modal-view-property');
+      switchScreen('chat');
+      setTimeout(() => openConversation(property.brokerId), 150);
+    });
+  }
+}
+
+// ---------------------------------------------------------------
+// EXPLORE (vitrine geral — todos os corretores, só públicos)
+// ---------------------------------------------------------------
+async function renderExplore(searchTerm) {
+  const all = await DB.getPublicProperties();
+  const otherBrokers = all.filter((p) => p.brokerId !== currentBroker.id || true); // inclui todos, inclusive próprios públicos
+  const brokers = await DB.getAllBrokers();
+  const brokerMap = new Map(brokers.map((b) => [b.id, b]));
+
+  const term = searchTerm.trim().toLowerCase();
+  const filtered = otherBrokers.filter((p) => {
+    if (!term) return true;
+    return (
+      (p.city || '').toLowerCase().includes(term) ||
+      (p.address || '').toLowerCase().includes(term) ||
+      (p.type || '').toLowerCase().includes(term) ||
+      (p.title || '').toLowerCase().includes(term)
+    );
+  });
+
+  const grid = document.getElementById('explore-grid');
+  const empty = document.getElementById('explore-empty');
+
+  if (filtered.length === 0) {
+    grid.innerHTML = '';
+    empty.hidden = false;
+  } else {
+    empty.hidden = true;
+    grid.innerHTML = filtered
+      .map((p) => propertyCardHtml(p, { showBrokerTag: true, brokerName: brokerMap.get(p.brokerId)?.name || 'Corretor' }))
+      .join('');
+    grid.querySelectorAll('.property-card').forEach((card) => {
+      const property = filtered.find((p) => p.id === card.dataset.id);
+      card.addEventListener('click', () => openPropertyDetail(card.dataset.id, property.brokerId === currentBroker.id));
+    });
+  }
+}
+
+// ---------------------------------------------------------------
+// SHARE SCREEN
+// ---------------------------------------------------------------
+function buildPublicUrl(brokerId) {
+  const base = window.location.href.split('#')[0];
+  return `${base}#portfolio/${brokerId}`;
+}
+
+function renderShareScreen() {
+  document.getElementById('share-link-input').value = buildPublicUrl(currentBroker.id);
+}
+
+function copyShareLink() {
+  const input = document.getElementById('share-link-input');
+  input.select();
+  navigator.clipboard
+    .writeText(input.value)
+    .then(() => showToast('Link copiado!'))
+    .catch(() => {
+      document.execCommand('copy');
+      showToast('Link copiado!');
+    });
+}
+
+// ---------------------------------------------------------------
+// PUBLIC PORTFOLIO PAGE (no login required)
+// ---------------------------------------------------------------
+async function renderPublicPortfolio(brokerId) {
+  showView('view-public');
+  const broker = await DB.getBrokerById(brokerId);
+
+  if (!broker) {
+    document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">Corretor não encontrado</h1>`;
+    document.getElementById('public-intro').textContent = 'Verifique se o link está correto.';
+    return;
+  }
+
+  document.getElementById('public-broker-info').innerHTML = `
+    <h1 class="public-broker-name">${escapeHtml(broker.name)}</h1>
+    <p class="public-broker-creci">CRECI ${escapeHtml(broker.creci)}</p>
+  `;
+  document.getElementById('public-intro').textContent = `Confira os imóveis disponíveis no portfólio de ${broker.name}.`;
+
+  const properties = await DB.getPublicPropertiesByBroker(brokerId);
+  const grid = document.getElementById('public-properties-grid');
+  const empty = document.getElementById('public-empty');
+
+  if (properties.length === 0) {
+    grid.innerHTML = '';
+    empty.hidden = false;
+  } else {
+    empty.hidden = true;
+    grid.innerHTML = properties.map((p) => propertyCardHtml(p)).join('');
+    grid.querySelectorAll('.property-card').forEach((card) => {
+      card.addEventListener('click', () => openPublicPropertyDetail(card.dataset.id, broker));
+    });
+  }
+}
+
+async function openPublicPropertyDetail(propertyId, broker) {
+  const property = await DB.getPropertyById(propertyId);
+  if (!property) return;
+
+  const photosHtml =
+    property.photos && property.photos.length
+      ? `<div class="detail-photos">${property.photos.map((p) => `<img src="${p}" alt="Foto do imóvel">`).join('')}</div>`
+      : `<div class="detail-photos-empty">SEM FOTOS CADASTRADAS</div>`;
+  const periodLabel = property.purpose === 'aluguel' ? '/mês' : '';
+
+  document.getElementById('view-property-body').innerHTML = `
+    ${photosHtml}
+    <div class="detail-header">
+      <div>
+        <div class="detail-price">${formatCurrency(property.price)}${periodLabel ? `<span style="font-size:0.9rem;font-weight:400;color:var(--ink-soft)"> ${periodLabel}</span>` : ''}</div>
+        <div class="detail-title">${escapeHtml(property.title)}</div>
+        <div class="detail-location">${escapeHtml(property.city || '')}${property.address ? ' · ' + escapeHtml(property.address) : ''}</div>
+      </div>
+      <span class="property-stamp stamp-${property.status}" style="position:static;transform:rotate(-3deg);">${STATUS_LABELS[property.status]}</span>
+    </div>
+    <div class="detail-spec-grid">
+      <div class="detail-spec"><span class="detail-spec-value">${property.area || '—'}</span><span class="detail-spec-label">m²</span></div>
+      <div class="detail-spec"><span class="detail-spec-value">${property.bedrooms || '—'}</span><span class="detail-spec-label">Quartos</span></div>
+      <div class="detail-spec"><span class="detail-spec-value">${property.bathrooms || '—'}</span><span class="detail-spec-label">Banheiros</span></div>
+      <div class="detail-spec"><span class="detail-spec-value">${property.garage || '—'}</span><span class="detail-spec-label">Vagas</span></div>
+    </div>
+    ${property.description ? `<p class="detail-description">${escapeHtml(property.description)}</p>` : ''}
+    <div class="detail-financials">
+      <span>Condomínio: <strong>${formatCurrency(property.condo)}</strong></span>
+      <span>IPTU/ano: <strong>${formatCurrency(property.iptu)}</strong></span>
+    </div>
+    <div class="detail-broker-row"><span>Anunciado por <strong>${escapeHtml(broker.name)}</strong> · CRECI ${escapeHtml(broker.creci)}</span></div>
+  `;
+  openModal('modal-view-property');
+}
+
+// ---------------------------------------------------------------
+// CHAT
+// ---------------------------------------------------------------
+async function renderChatContacts(searchTerm) {
+  const brokers = await DB.getAllBrokers();
+  const others = brokers.filter((b) => b.id !== currentBroker.id);
+  const term = searchTerm.trim().toLowerCase();
+  const filtered = others.filter((b) => !term || b.name.toLowerCase().includes(term));
+
+  const previews = await ChatService.getConversationPreviews(currentBroker.id, others.map((b) => b.id));
+
+  const list = document.getElementById('chat-contacts-list');
+
+  if (filtered.length === 0) {
+    list.innerHTML = `<div class="empty-state"><p>${others.length === 0 ? 'Nenhum outro corretor cadastrado ainda.' : 'Nenhum corretor encontrado.'}</p></div>`;
+    return;
+  }
+
+  list.innerHTML = filtered
+    .map((b) => {
+      const preview = previews[b.id];
+      const initials = b.name
+        .split(' ')
+        .slice(0, 2)
+        .map((w) => w[0])
+        .join('')
+        .toUpperCase();
+      return `
+        <div class="chat-contact ${b.id === activeChatPartnerId ? 'active' : ''}" data-id="${b.id}">
+          <div class="chat-contact-avatar">${initials}</div>
+          <div class="chat-contact-info">
+            <div class="chat-contact-name">${escapeHtml(b.name)}</div>
+            <div class="chat-contact-preview">${preview ? escapeHtml(preview.text) : 'Nenhuma mensagem ainda'}</div>
+          </div>
+        </div>
+      `;
+    })
+    .join('');
+
+  list.querySelectorAll('.chat-contact').forEach((el) => {
+    el.addEventListener('click', () => openConversation(el.dataset.id));
+  });
+}
+
+async function openConversation(brokerId) {
+  activeChatPartnerId = brokerId;
+  const broker = await DB.getBrokerById(brokerId);
+  if (!broker) return;
+
+  document.getElementById('chat-no-selection').hidden = true;
+  document.getElementById('chat-active').hidden = false;
+  document.getElementById('chat-active-name').textContent = broker.name;
+  document.getElementById('chat-active-status').textContent = ChatService.isUsingFirebase()
+    ? 'Sincronizado entre dispositivos'
+    : 'Chat local (configure o Firebase para sincronizar)';
+
+  await renderChatContacts(document.getElementById('chat-search').value);
+
+  if (activeChatUnsubscribe) activeChatUnsubscribe();
+  activeChatUnsubscribe = ChatService.listenToConversation(currentBroker.id, brokerId, (messages) => {
+    renderMessages(messages);
+  });
+}
+
+function renderMessages(messages) {
+  const container = document.getElementById('chat-messages');
+  container.innerHTML = messages
+    .map((msg) => {
+      const mine = msg.fromId === currentBroker.id;
+      const time = new Date(msg.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      return `
+        <div class="chat-bubble ${mine ? 'chat-bubble-mine' : 'chat-bubble-theirs'}">
+          ${escapeHtml(msg.text)}
+          <span class="chat-bubble-time">${time}</span>
+        </div>
+      `;
+    })
+    .join('');
+  container.scrollTop = container.scrollHeight;
+}
+
+async function handleSendMessage(e) {
+  e.preventDefault();
+  const input = document.getElementById('chat-input');
+  const text = input.value.trim();
+  if (!text || !activeChatPartnerId) return;
+
+  input.value = '';
+  await ChatService.sendMessage({ fromId: currentBroker.id, toId: activeChatPartnerId, text });
+  await renderChatContacts(document.getElementById('chat-search').value);
+}
+
+// ---------------------------------------------------------------
+// FIREBASE CONFIG MODAL
+// ---------------------------------------------------------------
+window.openFirebaseConfigModal = function () {
+  const config = CloudService.getStoredConfig();
+  const statusEl = document.getElementById('firebase-status');
+  const disconnectBtn = document.getElementById('btn-disconnect-firebase');
+  document.getElementById('firebase-error').textContent = '';
+
+  if (config) {
+    document.getElementById('fb-apiKey').value = config.apiKey || '';
+    document.getElementById('fb-authDomain').value = config.authDomain || '';
+    document.getElementById('fb-projectId').value = config.projectId || '';
+    document.getElementById('fb-storageBucket').value = config.storageBucket || '';
+    document.getElementById('fb-databaseURL').value = config.databaseURL || '';
+    document.getElementById('fb-appId').value = config.appId || '';
+
+    statusEl.hidden = false;
+    statusEl.classList.toggle('is-error', !CloudService.isCloudActive());
+    statusEl.textContent = CloudService.isCloudActive()
+      ? 'Conectado à nuvem. Corretores, imóveis, fotos e chat estão sincronizando.'
+      : 'Credenciais salvas, mas não foi possível conectar agora.';
+    disconnectBtn.hidden = false;
+  } else {
+    statusEl.hidden = true;
+    disconnectBtn.hidden = true;
+  }
+  openModal('modal-firebase');
+};
+
+async function handleSaveFirebaseConfig() {
+  const apiKey = document.getElementById('fb-apiKey').value.trim();
+  const authDomain = document.getElementById('fb-authDomain').value.trim();
+  const projectId = document.getElementById('fb-projectId').value.trim();
+  const storageBucket = document.getElementById('fb-storageBucket').value.trim();
+  const databaseURL = document.getElementById('fb-databaseURL').value.trim();
+  const appId = document.getElementById('fb-appId').value.trim();
+  const errorEl = document.getElementById('firebase-error');
+  const statusEl = document.getElementById('firebase-status');
+  errorEl.textContent = '';
+
+  if (!apiKey || !authDomain || !projectId || !storageBucket || !appId) {
+    errorEl.textContent = 'Preencha apiKey, authDomain, projectId, storageBucket e appId. O databaseURL é opcional (só necessário para o chat em tempo real).';
+    return;
+  }
+
+  const saveBtn = document.getElementById('btn-save-firebase');
+  saveBtn.disabled = true;
+  saveBtn.textContent = 'Conectando...';
+
+  CloudService.saveConfig({ apiKey, authDomain, projectId, storageBucket, databaseURL, appId });
+  const result = await CloudService.initFirebase();
+
+  saveBtn.disabled = false;
+  saveBtn.textContent = 'Conectar à nuvem';
+
+  if (result.ok) {
+    showToast('Conectado à nuvem com sucesso!');
+    statusEl.hidden = false;
+    statusEl.classList.remove('is-error');
+    statusEl.textContent = 'Conectado à nuvem. Corretores, imóveis, fotos e chat estão sincronizando.';
+    document.getElementById('btn-disconnect-firebase').hidden = false;
+    if (activeChatPartnerId) await openConversation(activeChatPartnerId);
+  } else {
+    errorEl.textContent = 'Não foi possível conectar. Verifique as credenciais e as regras de segurança do projeto.';
+  }
+}
+
+function handleDisconnectFirebase() {
+  CloudService.clearConfig();
+  showToast('Desconectado da nuvem. Voltando a salvar localmente.');
+  closeModal('modal-firebase');
+  window.location.reload();
+}
+
+// ---------------------------------------------------------------
+// MODAL HELPERS
+// ---------------------------------------------------------------
+function openModal(id) {
+  document.getElementById(id).classList.add('active');
+}
+function closeModal(id) {
+  document.getElementById(id).classList.remove('active');
+}
+
+// ---------------------------------------------------------------
+// TOAST
+// ---------------------------------------------------------------
+let toastTimeout = null;
+function showToast(message) {
+  const toast = document.getElementById('toast');
+  toast.textContent = message;
+  toast.classList.add('show');
+  clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => toast.classList.remove('show'), 2600);
+}
+
+// ---------------------------------------------------------------
+// UTIL
+// ---------------------------------------------------------------
+function escapeHtml(str) {
+  if (str === undefined || str === null) return '';
+  return String(str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
+}
+
+</script>
+</body>
+</html>
