@@ -665,14 +665,13 @@ img { max-width: 100%; }
   scrollbar-width: thin; scrollbar-color: var(--line) transparent;
 }
 .detail-photos img {
-  height: auto;
+  height: 220px;
   width: auto;
-  max-height: 260px;
-  max-width: 340px;
-  min-width: 0;
+  aspect-ratio: auto;
+  max-width: 520px;
+  min-width: 120px;
   border-radius: var(--radius);
-  object-fit: contain;
-  background: var(--paper-dim);
+  object-fit: cover;
   flex-shrink: 0;
   cursor: zoom-in;
   transition: opacity 0.15s;
