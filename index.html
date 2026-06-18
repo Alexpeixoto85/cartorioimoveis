@@ -394,6 +394,7 @@ a { color: var(--terracotta-deep); }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 4rem 2rem; text-align: center; color: var(--ink-soft); gap: 1rem;
 }
+.empty-state[hidden] { display: none; }
 .empty-stamp {
   font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700;
   letter-spacing: 0.1em; border: 1.5px dashed var(--line); padding: 0.5rem 1rem;
@@ -621,6 +622,39 @@ a { color: var(--terracotta-deep); }
 .chat-input-bar input {
   flex: 1; border: 1px solid var(--line); border-radius: var(--radius); padding: 0.65rem 0.9rem; font-size: 0.9rem;
 }
+
+/* contexto do imóvel anexado à conversa */
+.chat-context-chip {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin: 0 1rem; padding: 0.55rem 0.75rem;
+  background: var(--paper-dim); border: 1px solid var(--line-soft);
+  border-left: 3px solid var(--terracotta); border-radius: var(--radius);
+}
+.chat-context-chip[hidden] { display: none; }
+.chat-context-icon { color: var(--terracotta); font-size: 1.1rem; line-height: 1; }
+.chat-context-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.chat-context-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); font-weight: 600; }
+.chat-context-title { font-size: 0.85rem; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-context-remove {
+  background: none; border: none; color: var(--ink-soft); font-size: 1.2rem; line-height: 1; padding: 0 0.2rem; flex-shrink: 0;
+}
+.chat-context-remove:hover { color: var(--rust); }
+
+/* card do imóvel dentro da bolha de mensagem */
+.chat-property-ref {
+  display: flex; flex-direction: column; gap: 0.1rem;
+  margin: -0.1rem -0.2rem 0.5rem; padding: 0.45rem 0.6rem;
+  border-radius: var(--radius);
+  background: rgba(181,81,42,0.10); border: 1px solid rgba(181,81,42,0.25);
+}
+.chat-bubble-mine .chat-property-ref { background: rgba(250,248,244,0.14); border-color: rgba(250,248,244,0.25); }
+.chat-property-ref-tag {
+  font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--terracotta); font-weight: 600;
+}
+.chat-bubble-mine .chat-property-ref-tag { color: var(--amber); }
+.chat-property-ref-title { font-size: 0.82rem; font-weight: 600; }
+.chat-property-ref-price { font-size: 0.78rem; opacity: 0.85; }
 
 /* ============================================================
    PUBLIC PORTFOLIO PAGE (client-facing)
@@ -855,6 +889,7 @@ a { color: var(--terracotta-deep); }
               <span class="chat-active-status" id="chat-active-status"></span>
             </div>
             <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-context-chip" id="chat-context-chip" hidden></div>
             <form class="chat-input-bar" id="chat-form">
               <input type="text" id="chat-input" placeholder="Escreva uma mensagem..." autocomplete="off">
               <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
@@ -1184,15 +1219,16 @@ const FIREBASE_CONFIG_KEY = 'cartorio-imoveis-firebase-config';
 const FIREBASE_DISABLED_KEY = 'cartorio-imoveis-firebase-disabled';
 
 // Configuração padrão do projeto Firebase (pré-preenchida).
-// O databaseURL fica vazio até o Realtime Database ser criado no console
-// (Build → Realtime Database → Criar banco de dados); sem ele, o app
-// funciona normalmente e só o chat continua local até essa etapa ser feita.
+// databaseURL aponta para o Realtime Database (usado pelo chat). Confirme que
+// o valor abaixo bate com o que aparece na aba "Dados" do Realtime Database no
+// console — se você criou o banco em outra região, o formato muda para algo como
+// https://cartorio-imoveis-default-rtdb.<regiao>.firebasedatabase.app
 const DEFAULT_FIREBASE_CONFIG = {
   apiKey: 'AIzaSyAMkwZMmnCFIIPxDR1naAoUQXU52MEw7wE',
   authDomain: 'cartorio-imoveis.firebaseapp.com',
   projectId: 'cartorio-imoveis',
   storageBucket: 'cartorio-imoveis.firebasestorage.app',
-  databaseURL: '',
+  databaseURL: 'https://cartorio-imoveis-default-rtdb.firebaseio.com',
   appId: '1:532829918011:web:6bf5304ab041ddc1dc9d1e',
 };
 
@@ -1661,13 +1697,15 @@ function conversationId(brokerIdA, brokerIdB) {
 }
 
 // Envia uma mensagem. Retorna true se foi via Firebase, false se foi fallback local.
-async function sendMessage({ fromId, toId, text }) {
+async function sendMessage({ fromId, toId, text, property }) {
   const message = {
     fromId,
     toId,
     text,
     timestamp: Date.now(),
   };
+  // Só inclui o imóvel quando houver — o Realtime Database rejeita undefined.
+  if (property) message.property = property;
 
   if (realtimeDB) {
     try {
@@ -1780,6 +1818,7 @@ const ChatService = {
 let currentBroker = null;
 let activeChatPartnerId = null;
 let activeChatUnsubscribe = null;
+let pendingPropertyContext = null; // imóvel a ser anexado à próxima mensagem enviada
 let allBrokersCache = [];
 
 // ---------------------------------------------------------------
@@ -2311,9 +2350,17 @@ async function openPropertyDetail(propertyId, isOwner) {
     });
   } else {
     document.getElementById('btn-chat-from-detail')?.addEventListener('click', () => {
+      const context = {
+        id: property.id,
+        title: property.title || 'Imóvel',
+        price: property.price || 0,
+        purpose: property.purpose || 'venda',
+        status: property.status || 'disponivel',
+        city: property.city || '',
+      };
       closeModal('modal-view-property');
       switchScreen('chat');
-      setTimeout(() => openConversation(property.brokerId), 150);
+      setTimeout(() => openConversation(property.brokerId, context), 150);
     });
   }
 }
@@ -2503,8 +2550,9 @@ async function renderChatContacts(searchTerm) {
   });
 }
 
-async function openConversation(brokerId) {
+async function openConversation(brokerId, propertyContext = null) {
   activeChatPartnerId = brokerId;
+  pendingPropertyContext = propertyContext;
   const broker = await DB.getBrokerById(brokerId);
   if (!broker) return;
 
@@ -2515,6 +2563,7 @@ async function openConversation(brokerId) {
     ? 'Sincronizado entre dispositivos'
     : 'Chat local neste navegador';
 
+  renderChatContextChip();
   await renderChatContacts(document.getElementById('chat-search').value);
 
   if (activeChatUnsubscribe) activeChatUnsubscribe();
@@ -2523,14 +2572,48 @@ async function openConversation(brokerId) {
   });
 }
 
+function renderChatContextChip() {
+  const chip = document.getElementById('chat-context-chip');
+  if (!chip) return;
+  if (pendingPropertyContext) {
+    const p = pendingPropertyContext;
+    const period = p.purpose === 'aluguel' ? '/mês' : '';
+    chip.innerHTML = `
+      <span class="chat-context-icon">⌂</span>
+      <div class="chat-context-info">
+        <span class="chat-context-label">Conversa sobre o imóvel</span>
+        <span class="chat-context-title">${escapeHtml(p.title)} · ${formatCurrency(p.price)}${period}</span>
+      </div>
+      <button type="button" class="chat-context-remove" id="chat-context-remove" title="Remover contexto">×</button>
+    `;
+    chip.hidden = false;
+    document.getElementById('chat-context-remove').addEventListener('click', () => {
+      pendingPropertyContext = null;
+      renderChatContextChip();
+    });
+  } else {
+    chip.hidden = true;
+    chip.innerHTML = '';
+  }
+}
+
 function renderMessages(messages) {
   const container = document.getElementById('chat-messages');
   container.innerHTML = messages
     .map((msg) => {
       const mine = msg.fromId === currentBroker.id;
       const time = new Date(msg.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const p = msg.property;
+      const propRef = p
+        ? `<div class="chat-property-ref">
+             <span class="chat-property-ref-tag">Imóvel</span>
+             <span class="chat-property-ref-title">${escapeHtml(p.title || 'Imóvel')}</span>
+             <span class="chat-property-ref-price">${formatCurrency(p.price || 0)}${p.purpose === 'aluguel' ? '/mês' : ''}${p.city ? ' · ' + escapeHtml(p.city) : ''}</span>
+           </div>`
+        : '';
       return `
         <div class="chat-bubble ${mine ? 'chat-bubble-mine' : 'chat-bubble-theirs'}">
+          ${propRef}
           ${escapeHtml(msg.text)}
           <span class="chat-bubble-time">${time}</span>
         </div>
@@ -2546,8 +2629,14 @@ async function handleSendMessage(e) {
   const text = input.value.trim();
   if (!text || !activeChatPartnerId) return;
 
+  // Anexa o imóvel apenas à primeira mensagem após abrir "Conversar".
+  const property = pendingPropertyContext;
   input.value = '';
-  await ChatService.sendMessage({ fromId: currentBroker.id, toId: activeChatPartnerId, text });
+  await ChatService.sendMessage({ fromId: currentBroker.id, toId: activeChatPartnerId, text, property });
+  if (property) {
+    pendingPropertyContext = null;
+    renderChatContextChip();
+  }
   await renderChatContacts(document.getElementById('chat-search').value);
 }
 
