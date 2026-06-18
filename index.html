@@ -665,15 +665,18 @@ img { max-width: 100%; }
   scrollbar-width: thin; scrollbar-color: var(--line) transparent;
 }
 .detail-photos img {
-  height: 220px;
+  height: auto;
   width: auto;
-  min-width: 220px;
+  max-height: 260px;
   max-width: 340px;
+  min-width: 0;
   border-radius: var(--radius);
-  object-fit: cover;
+  object-fit: contain;
+  background: var(--paper-dim);
   flex-shrink: 0;
   cursor: zoom-in;
   transition: opacity 0.15s;
+  display: block;
 }
 .detail-photos img:hover { opacity: 0.88; }
 .detail-photos-empty {
