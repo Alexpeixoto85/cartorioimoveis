@@ -871,7 +871,6 @@ img { max-width: 100%; }
   .broker-card { display: none; }
   .btn-logout { width: 44px; height: 44px; padding: 0; font-size: 0; }
   .btn-logout::before { content: '⏻'; font-size: 1.1rem; }
-  #btn-open-firebase-config { display: none; }
   .main { padding: 2rem 1.75rem; }
   .detail-spec-grid { grid-template-columns: repeat(4, 1fr); }
 }
@@ -1123,7 +1122,6 @@ img { max-width: 100%; }
     <div class="sidebar-bottom">
       <div class="broker-card" id="sidebar-broker-card"></div>
       <button class="btn-logout" id="btn-logout">Sair da conta</button>
-      <button type="button" id="btn-open-firebase-config" style="background:none;border:none;color:#6B675F;font-size:0.68rem;padding:0.4rem 0 0;cursor:pointer;text-align:left;">Configuração avançada</button>
     </div>
   </aside>
 
@@ -1148,7 +1146,7 @@ img { max-width: 100%; }
     </button>
   </nav>
 
-  <!-- mobile-only slide-down menu (broker info + logout + advanced config) -->
+  <!-- mobile-only slide-down menu (broker info + logout) -->
   <div class="mobile-menu-overlay" id="mobile-menu-overlay">
     <div class="mobile-menu-sheet">
       <div class="mobile-menu-head">
@@ -1157,7 +1155,6 @@ img { max-width: 100%; }
       </div>
       <div class="broker-card" id="mobile-broker-card"></div>
       <button class="btn-logout btn-block" id="btn-logout-mobile">Sair da conta</button>
-      <button type="button" id="btn-open-firebase-config-mobile" class="btn-text" style="text-align:left;">Configuração avançada</button>
     </div>
   </div>
 
@@ -2381,14 +2378,11 @@ function bindGlobalEvents() {
   document.getElementById('chat-form').addEventListener('submit', handleSendMessage);
 
   // firebase config
+  // Acesso à "Configuração avançada" foi removido da interface: não há mais
+  // botão para abrir o modal (nem no desktop nem no mobile), então qualquer
+  // pessoa logada fica impedida de ver/alterar/desconectar a nuvem.
   document.getElementById('btn-save-firebase').addEventListener('click', handleSaveFirebaseConfig);
   document.getElementById('btn-disconnect-firebase').addEventListener('click', handleDisconnectFirebase);
-  document.getElementById('btn-open-firebase-config').addEventListener('click', window.openFirebaseConfigModal);
-  document.getElementById('btn-open-firebase-config-mobile').addEventListener('click', () => {
-    document.getElementById('mobile-menu-overlay').classList.remove('active');
-    document.body.classList.remove('modal-open');
-    window.openFirebaseConfigModal();
-  });
   document.getElementById('btn-firebase-howto').addEventListener('click', () => {
     window.open('https://firebase.google.com/docs/database/web/start', '_blank');
   });
