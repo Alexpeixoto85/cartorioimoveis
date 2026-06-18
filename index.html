@@ -166,7 +166,7 @@ a { color: var(--terracotta-deep); }
 /* ============================================================
    FORM ELEMENTS
    ============================================================ */
-.field { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; }
+.field { display: flex; flex-direction: column; gap: 0.4rem; flex: 1; min-width: 0; }
 .field-grow { flex: 2; }
 .field-label {
   font-size: 0.78rem;
@@ -395,6 +395,7 @@ a { color: var(--terracotta-deep); }
   display: flex; flex-direction: column; align-items: center; justify-content: center;
   padding: 4rem 2rem; text-align: center; color: var(--ink-soft); gap: 1rem;
 }
+.empty-state[hidden] { display: none; }
 .empty-stamp {
   font-family: var(--font-mono); font-size: 0.75rem; font-weight: 700;
   letter-spacing: 0.1em; border: 1.5px dashed var(--line); padding: 0.5rem 1rem;
@@ -419,7 +420,7 @@ a { color: var(--terracotta-deep); }
   max-height: 90vh;
   display: flex; flex-direction: column;
 }
-.modal-lg { max-width: 46rem; }
+.modal-lg { max-width: 50rem; }
 .modal-head {
   display: flex; justify-content: space-between; align-items: center;
   padding: 1.25rem 1.5rem; border-bottom: 1px solid var(--line);
@@ -458,6 +459,70 @@ a { color: var(--terracotta-deep); }
 }
 .switch input:checked + .switch-track { background: var(--olive); }
 .switch input:checked + .switch-track .switch-thumb { transform: translateX(18px); }
+
+/* ---- property modal: sectioned form ---- */
+.property-form { gap: 0; }
+.form-section { padding: 1.4rem 0; border-bottom: 1px solid var(--line-soft); display: flex; flex-direction: column; gap: 1rem; }
+.form-section:first-of-type { padding-top: 0.25rem; }
+.form-section:last-of-type { border-bottom: none; }
+.form-section-head {
+  display: flex; align-items: center; gap: 0.55rem;
+  font-family: var(--font-display); font-size: 1.02rem; font-weight: 600; color: var(--ink);
+}
+.form-section-num {
+  font-family: var(--font-mono); font-size: 0.7rem; font-weight: 500;
+  color: var(--terracotta-deep); background: var(--paper-dim);
+  border: 1px solid var(--line-soft); border-radius: 999px;
+  padding: 0.15rem 0.5rem; letter-spacing: 0.05em;
+}
+
+/* ---- input affixes (R$, m², /ano) ---- */
+.input-affix {
+  display: flex; align-items: stretch;
+  border: 1px solid var(--line); background: #fff; border-radius: var(--radius);
+  overflow: hidden; transition: border-color 0.15s;
+}
+.input-affix:focus-within { border-color: var(--terracotta); }
+.input-affix input { border: none; flex: 1; min-width: 0; padding: 0.7rem 0.6rem; }
+.input-affix input:focus { border: none; }
+.affix {
+  display: flex; align-items: center; padding: 0 0.7rem;
+  font-size: 0.85rem; font-weight: 500; color: var(--ink-soft); background: var(--paper-dim);
+  white-space: nowrap;
+}
+.affix-pre { border-right: 1px solid var(--line-soft); }
+.affix-suf { border-left: 1px solid var(--line-soft); }
+
+/* ---- photo dropzone ---- */
+.dropzone {
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.3rem;
+  text-align: center; padding: 1.6rem 1rem;
+  border: 1.5px dashed var(--line); border-radius: var(--radius);
+  background: var(--paper-dim); color: var(--ink-soft);
+  cursor: pointer; transition: border-color 0.15s, background 0.15s;
+}
+.dropzone:hover, .dropzone:focus-visible { border-color: var(--terracotta); outline: none; }
+.dropzone.dragover { border-color: var(--terracotta); background: #F4E9E1; color: var(--ink); }
+.dropzone-icon { font-size: 1.5rem; color: var(--terracotta); line-height: 1; }
+.dropzone-text { font-size: 0.9rem; }
+.dropzone-link { color: var(--terracotta-deep); font-weight: 600; text-decoration: underline; text-underline-offset: 2px; }
+.dropzone-hint { font-size: 0.78rem; color: var(--ink-soft); }
+.photo-preview-grid:empty { margin-top: 0; }
+
+/* cover badge on first photo */
+.photo-preview-item .photo-cover-badge {
+  position: absolute; bottom: 2px; left: 2px;
+  background: var(--ink); color: var(--paper);
+  font-family: var(--font-mono); font-size: 0.55rem; letter-spacing: 0.05em;
+  padding: 0.1rem 0.3rem; border-radius: 2px; text-transform: uppercase;
+}
+
+/* ---- sticky footer for the property form ---- */
+.property-form .modal-actions {
+  position: sticky; bottom: 0; z-index: 2;
+  margin: 0 -1.5rem -1.5rem; padding: 1rem 1.5rem;
+  background: var(--paper); border-top: 1px solid var(--line);
+}
 
 /* ============================================================
    PROPERTY DETAIL VIEW (modal)
@@ -558,6 +623,39 @@ a { color: var(--terracotta-deep); }
 .chat-input-bar input {
   flex: 1; border: 1px solid var(--line); border-radius: var(--radius); padding: 0.65rem 0.9rem; font-size: 0.9rem;
 }
+
+/* contexto do imóvel anexado à conversa */
+.chat-context-chip {
+  display: flex; align-items: center; gap: 0.6rem;
+  margin: 0 1rem; padding: 0.55rem 0.75rem;
+  background: var(--paper-dim); border: 1px solid var(--line-soft);
+  border-left: 3px solid var(--terracotta); border-radius: var(--radius);
+}
+.chat-context-chip[hidden] { display: none; }
+.chat-context-icon { color: var(--terracotta); font-size: 1.1rem; line-height: 1; }
+.chat-context-info { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.chat-context-label { font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--ink-soft); font-weight: 600; }
+.chat-context-title { font-size: 0.85rem; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.chat-context-remove {
+  background: none; border: none; color: var(--ink-soft); font-size: 1.2rem; line-height: 1; padding: 0 0.2rem; flex-shrink: 0;
+}
+.chat-context-remove:hover { color: var(--rust); }
+
+/* card do imóvel dentro da bolha de mensagem */
+.chat-property-ref {
+  display: flex; flex-direction: column; gap: 0.1rem;
+  margin: -0.1rem -0.2rem 0.5rem; padding: 0.45rem 0.6rem;
+  border-radius: var(--radius);
+  background: rgba(181,81,42,0.10); border: 1px solid rgba(181,81,42,0.25);
+}
+.chat-bubble-mine .chat-property-ref { background: rgba(250,248,244,0.14); border-color: rgba(250,248,244,0.25); }
+.chat-property-ref-tag {
+  font-family: var(--font-mono); font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase;
+  color: var(--terracotta); font-weight: 600;
+}
+.chat-bubble-mine .chat-property-ref-tag { color: var(--amber); }
+.chat-property-ref-title { font-size: 0.82rem; font-weight: 600; }
+.chat-property-ref-price { font-size: 0.78rem; opacity: 0.85; }
 
 /* ============================================================
    PUBLIC PORTFOLIO PAGE (client-facing)
@@ -792,6 +890,7 @@ a { color: var(--terracotta-deep); }
               <span class="chat-active-status" id="chat-active-status"></span>
             </div>
             <div class="chat-messages" id="chat-messages"></div>
+            <div class="chat-context-chip" id="chat-context-chip" hidden></div>
             <form class="chat-input-bar" id="chat-form">
               <input type="text" id="chat-input" placeholder="Escreva uma mensagem..." autocomplete="off">
               <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
@@ -835,112 +934,147 @@ a { color: var(--terracotta-deep); }
       <h3 id="modal-property-title">Cadastrar imóvel</h3>
       <button class="modal-close" data-close="modal-property">×</button>
     </div>
-    <form id="form-property" class="modal-body">
+    <form id="form-property" class="modal-body property-form">
       <input type="hidden" id="property-id">
 
-      <div class="form-row">
+      <!-- Seção 01 — Identificação -->
+      <section class="form-section">
+        <div class="form-section-head"><span class="form-section-num">01</span> Identificação</div>
         <label class="field field-grow">
           <span class="field-label">Título do anúncio</span>
           <input type="text" id="prop-title" placeholder="Ex: Apartamento 3 quartos com vista mar" required>
         </label>
-      </div>
-
-      <div class="form-row">
-        <label class="field">
-          <span class="field-label">Status</span>
-          <select id="prop-status">
-            <option value="disponivel">Disponível</option>
-            <option value="vendido">Vendido</option>
-            <option value="alugado">Alugado</option>
-            <option value="reservado">Reservado</option>
-          </select>
-        </label>
-        <label class="field">
-          <span class="field-label">Finalidade</span>
-          <select id="prop-purpose">
-            <option value="venda">Venda</option>
-            <option value="aluguel">Aluguel</option>
-          </select>
-        </label>
-        <label class="field">
-          <span class="field-label">Tipo</span>
-          <select id="prop-type">
-            <option value="apartamento">Apartamento</option>
-            <option value="casa">Casa</option>
-            <option value="terreno">Terreno</option>
-            <option value="comercial">Comercial</option>
-            <option value="cobertura">Cobertura</option>
-            <option value="rural">Rural</option>
-          </select>
-        </label>
-      </div>
-
-      <div class="form-row">
-        <label class="field field-grow">
-          <span class="field-label">Endereço</span>
-          <input type="text" id="prop-address" placeholder="Rua, número, bairro">
-        </label>
-        <label class="field">
-          <span class="field-label">Cidade</span>
-          <input type="text" id="prop-city" placeholder="Cidade">
-        </label>
-      </div>
-
-      <div class="form-row">
-        <label class="field">
-          <span class="field-label">Preço (R$)</span>
-          <input type="number" id="prop-price" min="0" step="0.01" required>
-        </label>
-        <label class="field">
-          <span class="field-label">Condomínio (R$)</span>
-          <input type="number" id="prop-condo" min="0" step="0.01">
-        </label>
-        <label class="field">
-          <span class="field-label">IPTU (R$/ano)</span>
-          <input type="number" id="prop-iptu" min="0" step="0.01">
-        </label>
-      </div>
-
-      <div class="form-row">
-        <label class="field">
-          <span class="field-label">Área (m²)</span>
-          <input type="number" id="prop-area" min="0" step="0.01">
-        </label>
-        <label class="field">
-          <span class="field-label">Quartos</span>
-          <input type="number" id="prop-bedrooms" min="0">
-        </label>
-        <label class="field">
-          <span class="field-label">Banheiros</span>
-          <input type="number" id="prop-bathrooms" min="0">
-        </label>
-        <label class="field">
-          <span class="field-label">Vagas de garagem</span>
-          <input type="number" id="prop-garage" min="0">
-        </label>
-      </div>
-
-      <label class="field">
-        <span class="field-label">Descrição</span>
-        <textarea id="prop-description" rows="4" placeholder="Detalhes do imóvel, diferenciais, condições de negociação..."></textarea>
-      </label>
-
-      <label class="field">
-        <span class="field-label">Fotos</span>
-        <input type="file" id="prop-photos" accept="image/*" multiple>
-        <div class="photo-preview-grid" id="photo-preview-grid"></div>
-      </label>
-
-      <div class="visibility-toggle">
-        <div>
-          <span class="visibility-title">Visibilidade do imóvel</span>
-          <span class="visibility-desc" id="visibility-desc">Visível para todos os corretores na vitrine geral e no seu link público.</span>
+        <div class="form-row">
+          <label class="field">
+            <span class="field-label">Status</span>
+            <select id="prop-status">
+              <option value="disponivel">Disponível</option>
+              <option value="vendido">Vendido</option>
+              <option value="alugado">Alugado</option>
+              <option value="reservado">Reservado</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field-label">Finalidade</span>
+            <select id="prop-purpose">
+              <option value="venda">Venda</option>
+              <option value="aluguel">Aluguel</option>
+            </select>
+          </label>
+          <label class="field">
+            <span class="field-label">Tipo</span>
+            <select id="prop-type">
+              <option value="apartamento">Apartamento</option>
+              <option value="casa">Casa</option>
+              <option value="terreno">Terreno</option>
+              <option value="comercial">Comercial</option>
+              <option value="cobertura">Cobertura</option>
+              <option value="rural">Rural</option>
+            </select>
+          </label>
         </div>
-        <label class="switch">
-          <input type="checkbox" id="prop-visibility" checked>
-          <span class="switch-track"><span class="switch-thumb"></span></span>
+      </section>
+
+      <!-- Seção 02 — Localização -->
+      <section class="form-section">
+        <div class="form-section-head"><span class="form-section-num">02</span> Localização</div>
+        <div class="form-row">
+          <label class="field field-grow">
+            <span class="field-label">Endereço</span>
+            <input type="text" id="prop-address" placeholder="Rua, número, bairro">
+          </label>
+          <label class="field">
+            <span class="field-label">Cidade</span>
+            <input type="text" id="prop-city" placeholder="Cidade">
+          </label>
+        </div>
+      </section>
+
+      <!-- Seção 03 — Valores -->
+      <section class="form-section">
+        <div class="form-section-head"><span class="form-section-num">03</span> Valores</div>
+        <div class="form-row">
+          <label class="field">
+            <span class="field-label">Preço</span>
+            <div class="input-affix">
+              <span class="affix affix-pre">R$</span>
+              <input type="number" id="prop-price" min="0" step="0.01" placeholder="0,00" required>
+            </div>
+          </label>
+          <label class="field">
+            <span class="field-label">Condomínio</span>
+            <div class="input-affix">
+              <span class="affix affix-pre">R$</span>
+              <input type="number" id="prop-condo" min="0" step="0.01" placeholder="0,00">
+            </div>
+          </label>
+          <label class="field">
+            <span class="field-label">IPTU</span>
+            <div class="input-affix">
+              <span class="affix affix-pre">R$</span>
+              <input type="number" id="prop-iptu" min="0" step="0.01" placeholder="0,00">
+              <span class="affix affix-suf">/ano</span>
+            </div>
+          </label>
+        </div>
+      </section>
+
+      <!-- Seção 04 — Características -->
+      <section class="form-section">
+        <div class="form-section-head"><span class="form-section-num">04</span> Características</div>
+        <div class="form-row">
+          <label class="field">
+            <span class="field-label">Área</span>
+            <div class="input-affix">
+              <input type="number" id="prop-area" min="0" step="0.01" placeholder="0">
+              <span class="affix affix-suf">m²</span>
+            </div>
+          </label>
+          <label class="field">
+            <span class="field-label">Quartos</span>
+            <input type="number" id="prop-bedrooms" min="0" placeholder="0">
+          </label>
+          <label class="field">
+            <span class="field-label">Banheiros</span>
+            <input type="number" id="prop-bathrooms" min="0" placeholder="0">
+          </label>
+          <label class="field">
+            <span class="field-label">Vagas</span>
+            <input type="number" id="prop-garage" min="0" placeholder="0">
+          </label>
+        </div>
+        <label class="field">
+          <span class="field-label">Descrição</span>
+          <textarea id="prop-description" rows="4" placeholder="Detalhes do imóvel, diferenciais, condições de negociação..."></textarea>
         </label>
-      </div>
+      </section>
+
+      <!-- Seção 05 — Fotos -->
+      <section class="form-section">
+        <div class="form-section-head"><span class="form-section-num">05</span> Fotos</div>
+        <div class="dropzone" id="prop-dropzone" tabindex="0" role="button" aria-label="Adicionar fotos">
+          <input type="file" id="prop-photos" accept="image/*" multiple hidden>
+          <span class="dropzone-icon">⬓</span>
+          <span class="dropzone-text">Arraste as fotos aqui ou <span class="dropzone-link">clique para selecionar</span></span>
+          <span class="dropzone-hint">A primeira foto será usada como capa do anúncio</span>
+        </div>
+        <div class="photo-preview-grid" id="photo-preview-grid"></div>
+      </section>
+
+      <!-- Seção 06 — Visibilidade -->
+      <section class="form-section">
+        <div class="form-section-head"><span class="form-section-num">06</span> Visibilidade</div>
+        <div class="visibility-toggle">
+          <div>
+            <span class="visibility-title">Imóvel público</span>
+            <span class="visibility-desc" id="visibility-desc">Visível para todos os corretores na vitrine geral e no seu link público.</span>
+          </div>
+          <label class="switch">
+            <input type="checkbox" id="prop-visibility" checked>
+            <span class="switch-track"><span class="switch-thumb"></span></span>
+          </label>
+        </div>
+      </section>
 
       <div class="modal-actions">
         <button type="button" class="btn btn-danger" id="btn-delete-property" hidden>Excluir imóvel</button>
@@ -1086,15 +1220,16 @@ const FIREBASE_CONFIG_KEY = 'cartorio-imoveis-firebase-config';
 const FIREBASE_DISABLED_KEY = 'cartorio-imoveis-firebase-disabled';
 
 // Configuração padrão do projeto Firebase (pré-preenchida).
-// O databaseURL fica vazio até o Realtime Database ser criado no console
-// (Build → Realtime Database → Criar banco de dados); sem ele, o app
-// funciona normalmente e só o chat continua local até essa etapa ser feita.
+// databaseURL aponta para o Realtime Database (usado pelo chat). Confirme que
+// o valor abaixo bate com o que aparece na aba "Dados" do Realtime Database no
+// console — se você criou o banco em outra região, o formato muda para algo como
+// https://cartorio-imoveis-default-rtdb.<regiao>.firebasedatabase.app
 const DEFAULT_FIREBASE_CONFIG = {
   apiKey: 'AIzaSyAMkwZMmnCFIIPxDR1naAoUQXU52MEw7wE',
   authDomain: 'cartorio-imoveis.firebaseapp.com',
   projectId: 'cartorio-imoveis',
   storageBucket: 'cartorio-imoveis.firebasestorage.app',
-  databaseURL: '',
+  databaseURL: 'https://cartorio-imoveis-default-rtdb.firebaseio.com',
   appId: '1:532829918011:web:6bf5304ab041ddc1dc9d1e',
 };
 
@@ -1150,12 +1285,63 @@ function isCloudActive() {
 
 async function loadFirebaseSDK() {
   if (firebaseSDKLoaded) return;
+
+  // Aberto como arquivo local (file://) o navegador bloqueia importar módulos
+  // de outra origem (gstatic). Aí o único caminho é servir por http(s).
+  if (location.protocol === 'file:') {
+    throw new Error(
+      'O app está aberto como arquivo local (file://). Para a nuvem funcionar, ' +
+      'abra por um endereço http(s) — ex: GitHub Pages ou rodando "python3 -m http.server".'
+    );
+  }
+
   const v = '10.12.2';
-  _appMod = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-app.js`);
-  _firestoreMod = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-firestore.js`);
-  _storageMod = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-storage.js`);
-  _rtdbMod = await import(`https://www.gstatic.com/firebasejs/${v}/firebase-database.js`);
-  firebaseSDKLoaded = true;
+  // Bases de CDN em ordem de preferência. Se o gstatic estiver bloqueado por
+  // extensão/firewall, tentamos o jsdelivr como alternativa.
+  const bases = [
+    {
+      app: `https://www.gstatic.com/firebasejs/${v}/firebase-app.js`,
+      firestore: `https://www.gstatic.com/firebasejs/${v}/firebase-firestore.js`,
+      storage: `https://www.gstatic.com/firebasejs/${v}/firebase-storage.js`,
+      database: `https://www.gstatic.com/firebasejs/${v}/firebase-database.js`,
+    },
+    {
+      app: `https://cdn.jsdelivr.net/npm/firebase@${v}/app/+esm`,
+      firestore: `https://cdn.jsdelivr.net/npm/firebase@${v}/firestore/+esm`,
+      storage: `https://cdn.jsdelivr.net/npm/firebase@${v}/storage/+esm`,
+      database: `https://cdn.jsdelivr.net/npm/firebase@${v}/database/+esm`,
+    },
+  ];
+
+  let lastErr = null;
+  for (const urls of bases) {
+    try {
+      const [appMod, firestoreMod, storageMod, rtdbMod] = await Promise.all([
+        import(urls.app),
+        import(urls.firestore),
+        import(urls.storage),
+        import(urls.database),
+      ]);
+      // valida que os exports esperados existem (CDN errado carrega mas não exporta)
+      if (typeof appMod.initializeApp !== 'function' || typeof firestoreMod.getFirestore !== 'function') {
+        throw new Error('SDK carregado mas sem os exports esperados.');
+      }
+      _appMod = appMod;
+      _firestoreMod = firestoreMod;
+      _storageMod = storageMod;
+      _rtdbMod = rtdbMod;
+      firebaseSDKLoaded = true;
+      return;
+    } catch (err) {
+      lastErr = err;
+      console.warn('Falha ao carregar o SDK do Firebase de um CDN, tentando o próximo...', err);
+    }
+  }
+  throw new Error(
+    'Não foi possível carregar o SDK do Firebase de nenhum CDN. ' +
+    'Verifique sua conexão ou se uma extensão/firewall está bloqueando o acesso. ' +
+    'Detalhe: ' + (lastErr?.message || 'desconhecido')
+  );
 }
 
 async function initFirebase() {
@@ -1512,13 +1698,15 @@ function conversationId(brokerIdA, brokerIdB) {
 }
 
 // Envia uma mensagem. Retorna true se foi via Firebase, false se foi fallback local.
-async function sendMessage({ fromId, toId, text }) {
+async function sendMessage({ fromId, toId, text, property }) {
   const message = {
     fromId,
     toId,
     text,
     timestamp: Date.now(),
   };
+  // Só inclui o imóvel quando houver — o Realtime Database rejeita undefined.
+  if (property) message.property = property;
 
   if (realtimeDB) {
     try {
@@ -1631,6 +1819,7 @@ const ChatService = {
 let currentBroker = null;
 let activeChatPartnerId = null;
 let activeChatUnsubscribe = null;
+let pendingPropertyContext = null; // imóvel a ser anexado à próxima mensagem enviada
 let allBrokersCache = [];
 
 // ---------------------------------------------------------------
@@ -1641,19 +1830,29 @@ window.addEventListener('DOMContentLoaded', boot);
 async function boot() {
   bindGlobalEvents();
 
+  // A nuvem precisa ser inicializada ANTES de qualquer rota — inclusive a do
+  // portfólio público. O cliente abre o link num navegador diferente, então a
+  // única forma de ele ver os imóveis é lendo da nuvem (o banco local dele está
+  // vazio). Se isto rodar depois do "#portfolio", o link nunca exibe nada.
   const hash = window.location.hash;
-  if (hash.startsWith('#portfolio/')) {
-    const brokerId = hash.replace('#portfolio/', '');
-    await renderPublicPortfolio(brokerId);
-    return;
-  }
+  const isPublicRoute = hash.startsWith('#portfolio/');
 
   if (CloudService.isConfigured()) {
     const result = await CloudService.initFirebase();
     if (!result.ok) {
       console.error('Firebase configurado mas não foi possível conectar:', result.reason);
-      showToast('Nuvem: ' + (result.reason || 'falha desconhecida') + ' — usando dados locais.', 6000);
+      // Na rota pública não mostramos o aviso técnico para o cliente;
+      // renderPublicPortfolio já trata o caso de nuvem indisponível.
+      if (!isPublicRoute) {
+        showToast('Nuvem: ' + (result.reason || 'falha desconhecida') + ' — usando dados locais.', 6000);
+      }
     }
+  }
+
+  if (isPublicRoute) {
+    const brokerId = hash.replace('#portfolio/', '');
+    await renderPublicPortfolio(brokerId);
+    return;
   }
 
   const sessionId = DB.getSession();
@@ -1701,6 +1900,7 @@ function bindGlobalEvents() {
   document.getElementById('btn-new-property-empty').addEventListener('click', openNewPropertyModal);
   document.getElementById('form-property').addEventListener('submit', handleSaveProperty);
   document.getElementById('prop-photos').addEventListener('change', handlePhotoSelection);
+  setupDropzone();
   document.getElementById('btn-delete-property').addEventListener('click', handleDeleteProperty);
   document.getElementById('prop-visibility').addEventListener('change', updateVisibilityDesc);
 
@@ -1958,10 +2158,46 @@ function updateVisibilityDesc() {
 
 let pendingPhotos = []; // itens: string (URL/base64 já salva) ou File (novo upload pendente)
 
-function handlePhotoSelection(e) {
-  const files = Array.from(e.target.files || []);
+function setupDropzone() {
+  const dz = document.getElementById('prop-dropzone');
+  const input = document.getElementById('prop-photos');
+  if (!dz || !input) return;
+
+  // clique / teclado abre o seletor de arquivos
+  dz.addEventListener('click', () => input.click());
+  dz.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); input.click(); }
+  });
+
+  // arrastar e soltar
+  ['dragenter', 'dragover'].forEach((evt) =>
+    dz.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dz.classList.add('dragover');
+    })
+  );
+  ['dragleave', 'dragend'].forEach((evt) =>
+    dz.addEventListener(evt, (e) => {
+      e.preventDefault();
+      dz.classList.remove('dragover');
+    })
+  );
+  dz.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dz.classList.remove('dragover');
+    const files = Array.from(e.dataTransfer?.files || []).filter((f) => f.type.startsWith('image/'));
+    addPhotoFiles(files);
+  });
+}
+
+function addPhotoFiles(files) {
   files.forEach((file) => pendingPhotos.push(file));
   renderPhotoPreview();
+}
+
+function handlePhotoSelection(e) {
+  const files = Array.from(e.target.files || []);
+  addPhotoFiles(files);
   e.target.value = '';
 }
 
@@ -1976,7 +2212,8 @@ function renderPhotoPreview() {
       (photo, idx) => `
       <div class="photo-preview-item">
         <img src="${photoPreviewUrl(photo)}" alt="Foto ${idx + 1}">
-        <button type="button" class="photo-preview-remove" data-idx="${idx}">×</button>
+        ${idx === 0 ? '<span class="photo-cover-badge">Capa</span>' : ''}
+        <button type="button" class="photo-preview-remove" data-idx="${idx}" title="Remover">×</button>
       </div>
     `
     )
@@ -2114,9 +2351,17 @@ async function openPropertyDetail(propertyId, isOwner) {
     });
   } else {
     document.getElementById('btn-chat-from-detail')?.addEventListener('click', () => {
+      const context = {
+        id: property.id,
+        title: property.title || 'Imóvel',
+        price: property.price || 0,
+        purpose: property.purpose || 'venda',
+        status: property.status || 'disponivel',
+        city: property.city || '',
+      };
       closeModal('modal-view-property');
       switchScreen('chat');
-      setTimeout(() => openConversation(property.brokerId), 150);
+      setTimeout(() => openConversation(property.brokerId, context), 150);
     });
   }
 }
@@ -2191,8 +2436,16 @@ async function renderPublicPortfolio(brokerId) {
   const broker = await DB.getBrokerById(brokerId);
 
   if (!broker) {
-    document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">Corretor não encontrado</h1>`;
-    document.getElementById('public-intro').textContent = 'Verifique se o link está correto.';
+    // Se a nuvem não está ativa, o visitante (outro navegador) nunca terá os
+    // dados localmente — o problema é de conexão/configuração, não do link.
+    if (!CloudService.isCloudActive()) {
+      console.error('Portfólio público aberto sem nuvem ativa — os dados só existem no dispositivo do corretor.');
+      document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">Portfólio indisponível</h1>`;
+      document.getElementById('public-intro').textContent = 'Este portfólio está temporariamente indisponível. Tente novamente mais tarde.';
+    } else {
+      document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">Corretor não encontrado</h1>`;
+      document.getElementById('public-intro').textContent = 'Verifique se o link está correto.';
+    }
     return;
   }
 
@@ -2298,8 +2551,9 @@ async function renderChatContacts(searchTerm) {
   });
 }
 
-async function openConversation(brokerId) {
+async function openConversation(brokerId, propertyContext = null) {
   activeChatPartnerId = brokerId;
+  pendingPropertyContext = propertyContext;
   const broker = await DB.getBrokerById(brokerId);
   if (!broker) return;
 
@@ -2310,6 +2564,7 @@ async function openConversation(brokerId) {
     ? 'Sincronizado entre dispositivos'
     : 'Chat local neste navegador';
 
+  renderChatContextChip();
   await renderChatContacts(document.getElementById('chat-search').value);
 
   if (activeChatUnsubscribe) activeChatUnsubscribe();
@@ -2318,14 +2573,48 @@ async function openConversation(brokerId) {
   });
 }
 
+function renderChatContextChip() {
+  const chip = document.getElementById('chat-context-chip');
+  if (!chip) return;
+  if (pendingPropertyContext) {
+    const p = pendingPropertyContext;
+    const period = p.purpose === 'aluguel' ? '/mês' : '';
+    chip.innerHTML = `
+      <span class="chat-context-icon">⌂</span>
+      <div class="chat-context-info">
+        <span class="chat-context-label">Conversa sobre o imóvel</span>
+        <span class="chat-context-title">${escapeHtml(p.title)} · ${formatCurrency(p.price)}${period}</span>
+      </div>
+      <button type="button" class="chat-context-remove" id="chat-context-remove" title="Remover contexto">×</button>
+    `;
+    chip.hidden = false;
+    document.getElementById('chat-context-remove').addEventListener('click', () => {
+      pendingPropertyContext = null;
+      renderChatContextChip();
+    });
+  } else {
+    chip.hidden = true;
+    chip.innerHTML = '';
+  }
+}
+
 function renderMessages(messages) {
   const container = document.getElementById('chat-messages');
   container.innerHTML = messages
     .map((msg) => {
       const mine = msg.fromId === currentBroker.id;
       const time = new Date(msg.timestamp).toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+      const p = msg.property;
+      const propRef = p
+        ? `<div class="chat-property-ref">
+             <span class="chat-property-ref-tag">Imóvel</span>
+             <span class="chat-property-ref-title">${escapeHtml(p.title || 'Imóvel')}</span>
+             <span class="chat-property-ref-price">${formatCurrency(p.price || 0)}${p.purpose === 'aluguel' ? '/mês' : ''}${p.city ? ' · ' + escapeHtml(p.city) : ''}</span>
+           </div>`
+        : '';
       return `
         <div class="chat-bubble ${mine ? 'chat-bubble-mine' : 'chat-bubble-theirs'}">
+          ${propRef}
           ${escapeHtml(msg.text)}
           <span class="chat-bubble-time">${time}</span>
         </div>
@@ -2341,8 +2630,14 @@ async function handleSendMessage(e) {
   const text = input.value.trim();
   if (!text || !activeChatPartnerId) return;
 
+  // Anexa o imóvel apenas à primeira mensagem após abrir "Conversar".
+  const property = pendingPropertyContext;
   input.value = '';
-  await ChatService.sendMessage({ fromId: currentBroker.id, toId: activeChatPartnerId, text });
+  await ChatService.sendMessage({ fromId: currentBroker.id, toId: activeChatPartnerId, text, property });
+  if (property) {
+    pendingPropertyContext = null;
+    renderChatContextChip();
+  }
   await renderChatContacts(document.getElementById('chat-search').value);
 }
 
