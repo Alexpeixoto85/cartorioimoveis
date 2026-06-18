@@ -1591,7 +1591,21 @@ function getStoredConfig() {
   if (isDisabled()) return null;
   try {
     const raw = localStorage.getItem(FIREBASE_CONFIG_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const stored = JSON.parse(raw);
+      // Backfill: se a config salva é do mesmo projeto do padrão mas foi gravada
+      // sem o databaseURL (campo opcional no modal), o chat ficaria sem Realtime
+      // Database e cairia em "local". Preenchemos com o databaseURL padrão.
+      if (
+        stored &&
+        !stored.databaseURL &&
+        stored.projectId === DEFAULT_FIREBASE_CONFIG.projectId &&
+        DEFAULT_FIREBASE_CONFIG.databaseURL
+      ) {
+        stored.databaseURL = DEFAULT_FIREBASE_CONFIG.databaseURL;
+      }
+      return stored;
+    }
   } catch {
     // ignora e cai no padrão
   }
@@ -1747,13 +1761,21 @@ async function initFirebase() {
     // informado, getDatabase pode falhar — nesse caso o chat usa fallback local.
     try {
       realtimeDB = config.databaseURL ? getDatabase(firebaseApp) : null;
-    } catch {
+    } catch (e) {
+      console.error('Falha ao inicializar o Realtime Database:', e);
       realtimeDB = null;
+    }
+
+    if (!config.databaseURL) {
+      console.warn('Chat: databaseURL ausente na config — o Realtime Database não será usado e o chat ficará LOCAL. Preencha o databaseURL em "Configuração avançada".');
+    } else if (realtimeDB) {
+      console.info('Chat: Realtime Database conectado em', config.databaseURL);
     }
 
     // testa a conexão de fato lendo a coleção de corretores
     const { collection, getDocs, query, limit } = _firestoreMod;
     await getDocs(query(collection(firestoreDB, 'brokers'), limit(1)));
+    console.info('Firestore conectado (leitura de "brokers" OK). Chat via Firebase:', !!realtimeDB);
 
     return { ok: true };
   } catch (err) {
@@ -2234,6 +2256,13 @@ async function boot() {
       // renderPublicPortfolio já trata o caso de nuvem indisponível.
       if (!isPublicRoute) {
         showToast('Nuvem: ' + (result.reason || 'falha desconhecida') + ' — usando dados locais.', 6000);
+      }
+    } else if (!isPublicRoute) {
+      const chatViaCloud = ChatService.isUsingFirebase();
+      console.info('Nuvem conectada. Chat sincronizado entre dispositivos:', chatViaCloud);
+      if (!chatViaCloud) {
+        // Firestore conectou mas o chat continua local: faltou o Realtime Database.
+        showToast('Nuvem conectada, mas o chat segue local: configure o databaseURL do Realtime Database em "Configuração avançada".', 7000);
       }
     }
   }
