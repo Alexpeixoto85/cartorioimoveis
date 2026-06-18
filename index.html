@@ -1634,8 +1634,39 @@ async function loadFirebaseSDK() {
   }
 
   const v = '10.12.2';
-  // Bases de CDN em ordem de preferência. Se o gstatic estiver bloqueado por
-  // extensão/firewall, tentamos o jsdelivr como alternativa.
+
+  // 0) Pacote local servido do MESMO domínio do app (firebase-bundle.js ao lado
+  //    do index.html). É o caminho mais robusto: como não é um domínio externo
+  //    (gstatic, etc.), bloqueadores de anúncio/privacidade não conseguem barrar.
+  //    Se o arquivo não tiver sido publicado, o import falha (404) e seguimos
+  //    para os CDNs abaixo — então é seguro deixar sempre como primeira opção.
+  try {
+    const local = await import('./firebase-bundle.js');
+    if (
+      local?.appMod?.initializeApp &&
+      local?.firestoreMod?.getFirestore &&
+      local?.rtdbMod?.getDatabase
+    ) {
+      _appMod = local.appMod;
+      _firestoreMod = local.firestoreMod;
+      _storageMod = local.storageMod;
+      _rtdbMod = local.rtdbMod;
+      firebaseSDKLoaded = true;
+      console.info('Firebase carregado do pacote local (firebase-bundle.js).');
+      return;
+    }
+    throw new Error('firebase-bundle.js carregou mas sem os exports esperados.');
+  } catch (err) {
+    console.warn('Pacote local do Firebase indisponível, tentando CDNs...', err?.message || err);
+  }
+
+  // Bases de CDN em ordem de preferência.
+  // 1) gstatic: build oficial e mais confiável — mas costuma ser bloqueado por
+  //    extensões de privacidade/ad-block (Firebase entra em várias listas).
+  // 2) esm.sh: reserva real. Importante: NÃO usar o "/+esm" do jsdelivr aqui,
+  //    porque ele empacota uma cópia separada do @firebase/app para cada módulo
+  //    e o getFirestore não acha o serviço ("Service firestore is not available").
+  //    O esm.sh externaliza/compartilha o @firebase/app entre os módulos.
   const bases = [
     {
       app: `https://www.gstatic.com/firebasejs/${v}/firebase-app.js`,
@@ -1644,24 +1675,30 @@ async function loadFirebaseSDK() {
       database: `https://www.gstatic.com/firebasejs/${v}/firebase-database.js`,
     },
     {
-      app: `https://cdn.jsdelivr.net/npm/firebase@${v}/app/+esm`,
-      firestore: `https://cdn.jsdelivr.net/npm/firebase@${v}/firestore/+esm`,
-      storage: `https://cdn.jsdelivr.net/npm/firebase@${v}/storage/+esm`,
-      database: `https://cdn.jsdelivr.net/npm/firebase@${v}/database/+esm`,
+      app: `https://esm.sh/firebase@${v}/app`,
+      firestore: `https://esm.sh/firebase@${v}/firestore`,
+      storage: `https://esm.sh/firebase@${v}/storage`,
+      database: `https://esm.sh/firebase@${v}/database`,
     },
   ];
 
   let lastErr = null;
   for (const urls of bases) {
     try {
-      const [appMod, firestoreMod, storageMod, rtdbMod] = await Promise.all([
-        import(urls.app),
+      // Carrega o app primeiro e os demais módulos depois, para que firestore/
+      // storage/database se registrem contra a MESMA instância de @firebase/app.
+      const appMod = await import(urls.app);
+      const [firestoreMod, storageMod, rtdbMod] = await Promise.all([
         import(urls.firestore),
         import(urls.storage),
         import(urls.database),
       ]);
       // valida que os exports esperados existem (CDN errado carrega mas não exporta)
-      if (typeof appMod.initializeApp !== 'function' || typeof firestoreMod.getFirestore !== 'function') {
+      if (
+        typeof appMod.initializeApp !== 'function' ||
+        typeof firestoreMod.getFirestore !== 'function' ||
+        typeof rtdbMod.getDatabase !== 'function'
+      ) {
         throw new Error('SDK carregado mas sem os exports esperados.');
       }
       _appMod = appMod;
