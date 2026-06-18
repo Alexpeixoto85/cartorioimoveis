@@ -541,6 +541,7 @@ a { color: var(--terracotta-deep); }
   position: absolute; inset: 0; display: flex; flex-direction: column;
   align-items: center; justify-content: center; gap: 1rem; color: var(--ink-soft);
 }
+.chat-empty-state[hidden] { display: none; }
 .chat-active { display: flex; flex-direction: column; height: 100%; }
 .chat-active-header { padding: 1rem 1.25rem; border-bottom: 1px solid var(--line-soft); display: flex; align-items: center; gap: 0.6rem; }
 .chat-active-name { font-weight: 600; }
@@ -720,6 +721,7 @@ a { color: var(--terracotta-deep); }
     <div class="sidebar-bottom">
       <div class="broker-card" id="sidebar-broker-card"></div>
       <button class="btn-logout" id="btn-logout">Sair da conta</button>
+      <button type="button" id="btn-open-firebase-config" style="background:none;border:none;color:#6B675F;font-size:0.68rem;padding:0.4rem 0 0;cursor:pointer;text-align:left;">Configuração avançada</button>
     </div>
   </aside>
 
@@ -775,7 +777,6 @@ a { color: var(--terracotta-deep); }
           <div class="chat-contacts-head">
             <p class="eyebrow">Corretores</p>
             <input type="search" id="chat-search" class="search-input search-input-sm" placeholder="Buscar corretor...">
-            <button type="button" class="btn-text" id="btn-open-firebase-config" style="text-align:left;font-size:0.78rem;">⚙ Configurar sincronização entre dispositivos</button>
           </div>
           <div class="chat-contacts-list" id="chat-contacts-list"></div>
         </div>
@@ -966,15 +967,14 @@ a { color: var(--terracotta-deep); }
 <div class="modal-overlay" id="modal-firebase">
   <div class="modal">
     <div class="modal-head">
-      <h3>Conectar à nuvem (Firebase)</h3>
+      <h3>Configuração avançada da nuvem</h3>
       <button class="modal-close" data-close="modal-firebase">×</button>
     </div>
     <div class="modal-body">
       <p class="firebase-explain">
-        Corretores, imóveis, fotos e chat passam a sincronizar entre dispositivos usando o
-        <strong>Firebase</strong> (plano gratuito Spark). Cole abaixo as credenciais do seu projeto —
-        encontre todas em <em>Configurações do projeto → Geral → Seus apps → SDK config</em>.
-        Sem isso, o app continua funcionando, mas só neste navegador.
+        Este app já está conectado à nuvem por padrão. Use esta tela apenas se quiser
+        apontar para um projeto Firebase diferente do seu, ou para desconectar e voltar
+        a salvar tudo localmente neste navegador.
       </p>
       <label class="field">
         <span class="field-label">apiKey</span>
@@ -2305,7 +2305,7 @@ async function openConversation(brokerId) {
   document.getElementById('chat-active-name').textContent = broker.name;
   document.getElementById('chat-active-status').textContent = ChatService.isUsingFirebase()
     ? 'Sincronizado entre dispositivos'
-    : 'Chat local (configure o Firebase para sincronizar)';
+    : 'Chat local neste navegador';
 
   await renderChatContacts(document.getElementById('chat-search').value);
 
