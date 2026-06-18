@@ -660,12 +660,116 @@ img { max-width: 100%; }
 /* ============================================================
    PROPERTY DETAIL VIEW (modal)
    ============================================================ */
-.detail-photos { display: flex; gap: 0.5rem; overflow-x: auto; border-radius: var(--radius); }
-.detail-photos img { height: 220px; border-radius: var(--radius); object-fit: cover; flex-shrink: 0; }
+.detail-photos {
+  display: flex; gap: 0.5rem; overflow-x: auto; border-radius: var(--radius);
+  scrollbar-width: thin; scrollbar-color: var(--line) transparent;
+}
+.detail-photos img {
+  height: 220px;
+  width: auto;
+  min-width: 220px;
+  max-width: 340px;
+  border-radius: var(--radius);
+  object-fit: cover;
+  flex-shrink: 0;
+  cursor: zoom-in;
+  transition: opacity 0.15s;
+}
+.detail-photos img:hover { opacity: 0.88; }
 .detail-photos-empty {
   height: 180px; background: var(--paper-dim); border-radius: var(--radius);
   display: flex; align-items: center; justify-content: center; color: #B5AD9C; font-family: var(--font-mono); font-size: 0.85rem;
 }
+
+/* ============================================================
+   LIGHTBOX
+   ============================================================ */
+.lightbox-overlay {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(10, 10, 10, 0.94);
+  z-index: 200;
+  align-items: center; justify-content: center;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.5rem;
+}
+.lightbox-overlay.active { display: flex; }
+.lightbox-img-wrap {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 0;
+  position: relative;
+}
+.lightbox-img-wrap img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  border-radius: 2px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+  user-select: none;
+}
+.lightbox-controls {
+  display: flex; align-items: center; gap: 1.25rem;
+  flex-shrink: 0;
+}
+.lightbox-btn {
+  background: rgba(250,248,244,0.1);
+  border: 1px solid rgba(250,248,244,0.18);
+  color: var(--paper);
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  font-size: 1.4rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.lightbox-btn:hover { background: rgba(250,248,244,0.2); }
+.lightbox-btn:disabled { opacity: 0.3; cursor: default; }
+.lightbox-counter {
+  color: rgba(250,248,244,0.65);
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  min-width: 4rem;
+  text-align: center;
+}
+.lightbox-close {
+  position: absolute; top: 1rem; right: 1rem;
+  background: rgba(250,248,244,0.1);
+  border: 1px solid rgba(250,248,244,0.18);
+  color: var(--paper);
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  z-index: 201;
+  transition: background 0.15s;
+}
+.lightbox-close:hover { background: rgba(250,248,244,0.22); }
+.lightbox-thumbs {
+  display: flex; gap: 0.4rem; align-items: center;
+  overflow-x: auto; max-width: 100%;
+  scrollbar-width: none;
+  padding: 0.25rem 0;
+  flex-shrink: 0;
+}
+.lightbox-thumbs::-webkit-scrollbar { display: none; }
+.lightbox-thumb {
+  width: 52px; height: 40px;
+  object-fit: cover;
+  border-radius: 2px;
+  cursor: pointer;
+  opacity: 0.5;
+  border: 2px solid transparent;
+  transition: opacity 0.15s, border-color 0.15s;
+  flex-shrink: 0;
+}
+.lightbox-thumb.active { opacity: 1; border-color: var(--terracotta); }
+.lightbox-thumb:hover { opacity: 0.85; }
 .detail-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 1rem; }
 .detail-price { font-family: var(--font-display); font-size: 1.9rem; font-weight: 600; }
 .detail-title { font-size: 1.1rem; font-weight: 600; margin-top: 0.2rem; }
@@ -1485,6 +1589,20 @@ img { max-width: 100%; }
 </div>
 
 <div class="toast" id="toast"></div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox-overlay" role="dialog" aria-modal="true" aria-label="Visualizar foto">
+  <button class="lightbox-close" id="lightbox-close" title="Fechar (Esc)">×</button>
+  <div class="lightbox-img-wrap">
+    <img id="lightbox-img" src="" alt="Foto do imóvel">
+  </div>
+  <div class="lightbox-thumbs" id="lightbox-thumbs"></div>
+  <div class="lightbox-controls">
+    <button class="lightbox-btn" id="lightbox-prev" title="Anterior (←)">&#8592;</button>
+    <span class="lightbox-counter" id="lightbox-counter">1 / 1</span>
+    <button class="lightbox-btn" id="lightbox-next" title="Próxima (→)">&#8594;</button>
+  </div>
+</div>
 
 <script type="module">
 // ============================================================
@@ -2337,6 +2455,7 @@ function bindGlobalEvents() {
   document.getElementById('form-property').addEventListener('submit', handleSaveProperty);
   document.getElementById('prop-photos').addEventListener('change', handlePhotoSelection);
   setupDropzone();
+  Lightbox.init();
   document.getElementById('btn-delete-property').addEventListener('click', handleDeleteProperty);
   document.getElementById('prop-visibility').addEventListener('change', updateVisibilityDesc);
 
@@ -2757,7 +2876,7 @@ async function openPropertyDetail(propertyId, isOwner) {
 
   const photosHtml =
     property.photos && property.photos.length
-      ? `<div class="detail-photos">${property.photos.map((p) => `<img src="${p}" alt="Foto do imóvel">`).join('')}</div>`
+      ? `<div class="detail-photos" id="detail-photos-strip">${property.photos.map((p, i) => `<img src="${p}" alt="Foto do imóvel" data-idx="${i}">`).join('')}</div>`
       : `<div class="detail-photos-empty">SEM FOTOS CADASTRADAS</div>`;
 
   const periodLabel = property.purpose === 'aluguel' ? '/mês' : '';
@@ -2791,6 +2910,19 @@ async function openPropertyDetail(propertyId, isOwner) {
   `;
 
   openModal('modal-view-property');
+
+  // bind lightbox to photo strip
+  if (property.photos && property.photos.length) {
+    const strip = document.getElementById('detail-photos-strip');
+    if (strip) {
+      strip.querySelectorAll('img').forEach((img) => {
+        img.addEventListener('click', () => {
+          openModalCount++; // lightbox counts as an extra modal layer
+          Lightbox.open(property.photos, Number(img.dataset.idx));
+        });
+      });
+    }
+  }
 
   if (isOwner) {
     document.getElementById('btn-edit-from-detail')?.addEventListener('click', () => {
@@ -2925,7 +3057,7 @@ async function openPublicPropertyDetail(propertyId, broker) {
 
   const photosHtml =
     property.photos && property.photos.length
-      ? `<div class="detail-photos">${property.photos.map((p) => `<img src="${p}" alt="Foto do imóvel">`).join('')}</div>`
+      ? `<div class="detail-photos" id="detail-photos-strip">${property.photos.map((p, i) => `<img src="${p}" alt="Foto do imóvel" data-idx="${i}">`).join('')}</div>`
       : `<div class="detail-photos-empty">SEM FOTOS CADASTRADAS</div>`;
   const periodLabel = property.purpose === 'aluguel' ? '/mês' : '';
 
@@ -2953,6 +3085,18 @@ async function openPublicPropertyDetail(propertyId, broker) {
     <div class="detail-broker-row"><span>Anunciado por <strong>${escapeHtml(broker.name)}</strong> · CRECI ${escapeHtml(broker.creci)}</span></div>
   `;
   openModal('modal-view-property');
+
+  if (property.photos && property.photos.length) {
+    const strip = document.getElementById('detail-photos-strip');
+    if (strip) {
+      strip.querySelectorAll('img').forEach((img) => {
+        img.addEventListener('click', () => {
+          openModalCount++;
+          Lightbox.open(property.photos, Number(img.dataset.idx));
+        });
+      });
+    }
+  }
 }
 
 // ---------------------------------------------------------------
@@ -3222,6 +3366,89 @@ function showToast(message, durationMs = 2600) {
   clearTimeout(toastTimeout);
   toastTimeout = setTimeout(() => toast.classList.remove('show'), durationMs);
 }
+
+// ---------------------------------------------------------------
+// LIGHTBOX
+// ---------------------------------------------------------------
+const Lightbox = (() => {
+  let photos = [];
+  let current = 0;
+
+  function open(srcs, startIndex) {
+    photos = srcs;
+    current = startIndex || 0;
+    render();
+    document.getElementById('lightbox-overlay').classList.add('active');
+    document.body.classList.add('modal-open');
+    document.getElementById('lightbox-overlay').focus();
+  }
+
+  function close() {
+    document.getElementById('lightbox-overlay').classList.remove('active');
+    openModalCount = Math.max(0, openModalCount - 1);
+    if (openModalCount === 0) document.body.classList.remove('modal-open');
+  }
+
+  function go(idx) {
+    current = Math.max(0, Math.min(photos.length - 1, idx));
+    render();
+  }
+
+  function render() {
+    const img = document.getElementById('lightbox-img');
+    const counter = document.getElementById('lightbox-counter');
+    const thumbsEl = document.getElementById('lightbox-thumbs');
+    const prevBtn = document.getElementById('lightbox-prev');
+    const nextBtn = document.getElementById('lightbox-next');
+
+    img.src = photos[current];
+    counter.textContent = `${current + 1} / ${photos.length}`;
+    prevBtn.disabled = current === 0;
+    nextBtn.disabled = current === photos.length - 1;
+
+    thumbsEl.innerHTML = photos.map((src, i) =>
+      `<img class="lightbox-thumb${i === current ? ' active' : ''}" src="${src}" alt="Foto ${i + 1}" data-i="${i}">`
+    ).join('');
+    thumbsEl.querySelectorAll('.lightbox-thumb').forEach((t) => {
+      t.addEventListener('click', () => go(Number(t.dataset.i)));
+    });
+    // scroll active thumb into view
+    const activeThumb = thumbsEl.querySelector('.lightbox-thumb.active');
+    if (activeThumb) activeThumb.scrollIntoView({ inline: 'center', behavior: 'smooth', block: 'nearest' });
+  }
+
+  function init() {
+    document.getElementById('lightbox-close').addEventListener('click', () => {
+      close();
+      openModalCount++; // close() already decrements; compensate since we incremented in open()
+    });
+    document.getElementById('lightbox-overlay').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) { close(); openModalCount++; }
+    });
+    document.getElementById('lightbox-prev').addEventListener('click', () => go(current - 1));
+    document.getElementById('lightbox-next').addEventListener('click', () => go(current + 1));
+
+    document.addEventListener('keydown', (e) => {
+      if (!document.getElementById('lightbox-overlay').classList.contains('active')) return;
+      if (e.key === 'ArrowLeft') go(current - 1);
+      else if (e.key === 'ArrowRight') go(current + 1);
+      else if (e.key === 'Escape') { close(); openModalCount++; }
+    });
+
+    // swipe support
+    let touchStartX = null;
+    const overlay = document.getElementById('lightbox-overlay');
+    overlay.addEventListener('touchstart', (e) => { touchStartX = e.touches[0].clientX; }, { passive: true });
+    overlay.addEventListener('touchend', (e) => {
+      if (touchStartX === null) return;
+      const dx = e.changedTouches[0].clientX - touchStartX;
+      if (Math.abs(dx) > 50) go(dx < 0 ? current + 1 : current - 1);
+      touchStartX = null;
+    });
+  }
+
+  return { open, close, init };
+})();
 
 // ---------------------------------------------------------------
 // UTIL
