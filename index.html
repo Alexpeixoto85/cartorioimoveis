@@ -3,13 +3,29 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
-<title>Cartório de Imóveis — Portal de Corretores</title>
+<title>Vitrine Imobiliária — Portal de Corretores</title>
 <meta name="theme-color" content="#1C1E1D">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Cartório de Imóveis">
+<meta name="apple-mobile-web-app-title" content="Vitrine Imob.">
 <meta name="mobile-web-app-capable" content="yes">
+<meta name="application-name" content="Vitrine Imobiliária">
 <meta name="format-detection" content="telephone=no">
+
+<!-- Manifest (Android / Chrome — usa a logo do sistema ao "Adicionar à tela inicial") -->
+<link rel="manifest" href="manifest.json">
+
+<!-- Favicons (aba do navegador) -->
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/favicon-16.png">
+<link rel="shortcut icon" href="icons/favicon.ico">
+
+<!-- Apple touch icons (iPhone / iPad — usa a logo do sistema ao "Adicionar à Tela de Início") -->
+<link rel="apple-touch-icon" sizes="180x180" href="icons/apple-touch-icon-180.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/apple-touch-icon-167.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/apple-touch-icon-152.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120.png">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -1212,6 +1228,178 @@ img { max-width: 100%; }
   .mobile-tabbar { padding: 0.25rem 0.3rem calc(0.25rem + var(--sab)); }
 }
 
+/* ============================================================
+   CARROSSEL DE BANNERS (rodapé do portal / catálogos / painel)
+   ============================================================ */
+.banner-carousel {
+  position: relative; width: 100%; overflow: hidden;
+  background: var(--paper-dim); border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.banner-carousel:empty, .banner-carousel.is-empty { display: none; }
+.banner-carousel-label {
+  position: absolute; top: 6px; left: 50%; transform: translateX(-50%);
+  z-index: 3; font-family: var(--font-mono); font-size: .54rem;
+  letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-soft); background: rgba(250,248,244,.78);
+  padding: .12rem .5rem; border-radius: 999px; pointer-events: none;
+}
+.banner-carousel-track {
+  display: flex; will-change: transform;
+  transition: transform .9s cubic-bezier(.4, 0, .15, 1);
+}
+.banner-carousel-slide {
+  flex: 0 0 100%; min-width: 100%;
+  display: flex; align-items: center; justify-content: center;
+}
+.banner-carousel-slide a {
+  display: block; position: relative; width: 100%; text-decoration: none;
+  background: var(--ink);
+}
+.banner-carousel-slide img {
+  display: block; width: 100%; height: auto; max-height: 160px;
+  object-fit: cover; object-position: center;
+}
+.banner-carousel-slide .ad-fallback {
+  padding: 1.6rem 1.5rem; color: var(--paper); text-align: center;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.2rem;
+}
+.banner-carousel-slide .ad-flag {
+  position: absolute; top: 8px; right: 8px; z-index: 2;
+  font-family: var(--font-mono); font-size: .54rem; letter-spacing: .1em;
+  color: rgba(250,248,244,.82); background: rgba(28,30,29,.55);
+  padding: .15rem .4rem; border-radius: 2px; text-transform: uppercase;
+}
+.banner-carousel-dots {
+  position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
+  z-index: 3; display: flex; gap: 6px;
+}
+.banner-carousel-dots button {
+  width: 7px; height: 7px; padding: 0; border: none; border-radius: 50%;
+  background: rgba(28,30,29,.28); cursor: pointer; transition: background .25s, transform .25s;
+}
+.banner-carousel-dots button.active { background: var(--terracotta); transform: scale(1.25); }
+/* rodapé fixo do portal/catálogo */
+.banner-carousel-fixed {
+  position: sticky; bottom: 0; left: 0; right: 0; z-index: 40;
+  box-shadow: 0 -6px 20px -12px rgba(28,30,29,.4);
+  padding-bottom: var(--sab);
+}
+/* dentro do app (painel do corretor), respeita a tab bar no mobile */
+@media (max-width: 768px) {
+  .view-app .banner-carousel-fixed { bottom: calc(var(--tabbar-h) + var(--sab)); padding-bottom: 0; }
+}
+
+/* ============================================================
+   PAINEL ADMINISTRATIVO
+   ============================================================ */
+.admin-link {
+  background: none; border: none; color: var(--ink-soft);
+  font-family: var(--font-mono); font-size: .68rem; letter-spacing: .08em;
+  text-transform: uppercase; opacity: .55; padding: .4rem .6rem;
+  transition: opacity .2s;
+}
+.admin-link:hover { opacity: 1; color: var(--terracotta-deep); }
+
+#view-admin { background: var(--ink); color: var(--paper); min-height: var(--vh-full);
+  overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.admin-shell { max-width: 1080px; margin: 0 auto; padding: calc(1.5rem + var(--sat)) 1.25rem calc(3rem + var(--sab)); }
+.admin-topbar { display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-bottom: 2rem; flex-wrap: wrap; }
+.admin-brand { font-family: var(--font-display); font-weight: 600; font-size: 1.4rem; color: var(--paper); }
+.admin-brand small { display: block; font-family: var(--font-mono); font-size: .6rem;
+  letter-spacing: .18em; text-transform: uppercase; color: var(--amber); margin-top: .25rem; }
+.admin-exit { background: none; border: 1px solid rgba(250,248,244,.25); color: var(--paper);
+  border-radius: var(--radius); padding: .5rem .9rem; font-size: .82rem; }
+.admin-exit:hover { border-color: var(--terracotta); color: var(--terracotta); }
+
+/* auth do painel (centralizado) */
+.admin-auth-wrap { max-width: 26rem; margin: 0 auto; padding: calc(6vh + var(--sat)) 1.25rem 3rem; }
+.admin-auth-card { background: rgba(250,248,244,.04); border: 1px solid rgba(250,248,244,.12);
+  border-radius: var(--radius); padding: 2rem 1.6rem; }
+.admin-auth-card h2 { font-family: var(--font-display); margin: 0 0 .3rem; font-size: 1.5rem; color: var(--paper); }
+.admin-auth-card p.sub { margin: 0 0 1.4rem; color: rgba(250,248,244,.6); font-size: .9rem; }
+.admin-field { display: flex; flex-direction: column; gap: .35rem; margin-bottom: 1rem; }
+.admin-field label { font-size: .78rem; color: rgba(250,248,244,.7); font-weight: 600; }
+.admin-field input, .admin-field select, .admin-field textarea {
+  background: rgba(250,248,244,.06); border: 1px solid rgba(250,248,244,.18);
+  color: var(--paper); border-radius: var(--radius); padding: .6rem .7rem; font-size: .92rem;
+}
+.admin-field input::placeholder, .admin-field textarea::placeholder { color: rgba(250,248,244,.35); }
+.admin-field input:focus, .admin-field select:focus, .admin-field textarea:focus {
+  outline: 2px solid var(--terracotta); outline-offset: 1px; }
+.admin-field select option { color: #1C1E1D; }
+.admin-error { color: #E8957F; font-size: .82rem; min-height: 1em; margin: .2rem 0 .6rem; }
+.admin-btn { background: var(--terracotta); color: var(--paper); border: none;
+  border-radius: var(--radius); padding: .7rem 1rem; font-size: .92rem; font-weight: 600; width: 100%; }
+.admin-btn:hover { background: var(--terracotta-deep); }
+.admin-btn-sm { width: auto; padding: .5rem .85rem; font-size: .82rem; }
+.admin-btn-ghost { background: none; border: 1px solid rgba(250,248,244,.25); color: var(--paper); }
+.admin-btn-ghost:hover { border-color: var(--terracotta); color: var(--terracotta); background: none; }
+.admin-btn-danger { background: none; border: 1px solid rgba(232,149,127,.5); color: #E8957F; }
+.admin-btn-danger:hover { background: rgba(232,149,127,.12); }
+
+/* métricas */
+.admin-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: .9rem; margin-bottom: 2.2rem; }
+.metric-card { background: rgba(250,248,244,.05); border: 1px solid rgba(250,248,244,.12);
+  border-radius: var(--radius); padding: 1.1rem 1.2rem; }
+.metric-card .metric-value { font-family: var(--font-display); font-size: 2.1rem; font-weight: 600;
+  color: var(--paper); line-height: 1; }
+.metric-card .metric-label { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em;
+  text-transform: uppercase; color: var(--amber); margin-top: .5rem; }
+.metric-card.accent { border-color: rgba(181,81,42,.5); background: rgba(181,81,42,.12); }
+
+.admin-section { margin-bottom: 2.4rem; }
+.admin-section-head { display: flex; align-items: center; justify-content: space-between;
+  gap: 1rem; margin-bottom: 1rem; flex-wrap: wrap; }
+.admin-section-head h3 { font-family: var(--font-display); font-size: 1.2rem; margin: 0; color: var(--paper); }
+.admin-section-head .eyebrow-mono { font-family: var(--font-mono); font-size: .6rem;
+  letter-spacing: .16em; text-transform: uppercase; color: rgba(250,248,244,.5); display: block; margin-bottom: .2rem; }
+
+.admin-grid-form { background: rgba(250,248,244,.04); border: 1px solid rgba(250,248,244,.12);
+  border-radius: var(--radius); padding: 1.3rem; display: grid;
+  grid-template-columns: 1fr 1fr; gap: .9rem 1.1rem; }
+.admin-grid-form .full { grid-column: 1 / -1; }
+@media (max-width: 640px) { .admin-grid-form { grid-template-columns: 1fr; } }
+
+.placements-row { display: flex; flex-wrap: wrap; gap: .5rem; }
+.placement-chip { display: inline-flex; align-items: center; gap: .35rem;
+  background: rgba(250,248,244,.06); border: 1px solid rgba(250,248,244,.18);
+  border-radius: 999px; padding: .3rem .7rem; font-size: .78rem; cursor: pointer; user-select: none; }
+.placement-chip input { accent-color: var(--terracotta); }
+.placement-chip.checked { background: rgba(181,81,42,.2); border-color: var(--terracotta); }
+
+.banner-list { display: grid; gap: .8rem; }
+.banner-item { display: flex; gap: .9rem; align-items: center;
+  background: rgba(250,248,244,.04); border: 1px solid rgba(250,248,244,.12);
+  border-radius: var(--radius); padding: .8rem; }
+.banner-item .thumb { width: 110px; height: 56px; flex: 0 0 110px; border-radius: 2px;
+  overflow: hidden; background: var(--ink); display: flex; align-items: center; justify-content: center; }
+.banner-item .thumb img { width: 100%; height: 100%; object-fit: cover; }
+.banner-item .thumb .noimg { font-family: var(--font-mono); font-size: .55rem; color: rgba(250,248,244,.4); }
+.banner-item .meta { flex: 1; min-width: 0; }
+.banner-item .meta .bt { font-weight: 600; color: var(--paper); margin-bottom: .15rem;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.banner-item .meta .bs { font-size: .74rem; color: rgba(250,248,244,.55); display: flex;
+  flex-wrap: wrap; gap: .3rem .8rem; }
+.banner-item .actions { display: flex; flex-direction: column; gap: .4rem; flex: 0 0 auto; }
+.status-tag { font-family: var(--font-mono); font-size: .58rem; letter-spacing: .08em;
+  text-transform: uppercase; padding: .12rem .45rem; border-radius: 2px; }
+.status-tag.on { background: rgba(92,102,80,.4); color: #C9D6BA; }
+.status-tag.off { background: rgba(28,30,29,.5); color: rgba(250,248,244,.5); }
+.status-tag.sched { background: rgba(183,135,46,.3); color: #E6C77E; }
+
+.users-list { display: grid; gap: .6rem; }
+.user-item { display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+  background: rgba(250,248,244,.04); border: 1px solid rgba(250,248,244,.12);
+  border-radius: var(--radius); padding: .7rem .9rem; }
+.user-item .ui-name { font-weight: 600; color: var(--paper); }
+.user-item .ui-sub { font-size: .74rem; color: rgba(250,248,244,.5); font-family: var(--font-mono); }
+.admin-toggle { display: inline-flex; align-items: center; gap: .5rem; font-size: .82rem;
+  color: rgba(250,248,244,.8); }
+.admin-empty { color: rgba(250,248,244,.4); font-size: .85rem; font-style: italic; padding: .6rem 0; }
+
 </style>
 </head>
 <body>
@@ -1269,6 +1457,10 @@ img { max-width: 100%; }
         <button type="submit" class="btn btn-primary btn-block">Criar minha conta</button>
       </form>
     </div>
+
+    <div style="text-align:center;margin-top:1.4rem;">
+      <button type="button" class="admin-link" id="btn-open-admin">⚙ Painel administrativo</button>
+    </div>
   </div>
 </div>
 
@@ -1292,6 +1484,7 @@ img { max-width: 100%; }
     <span>Gerado pelo Cartório de Imóveis</span>
     <a href="#" id="public-back-link">Acessar o portal</a>
   </footer>
+  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="portfolio"></div>
 </div>
 
 <!-- ============ TELA: PORTAL GERAL (todos os corretores — link do cliente) ============ -->
@@ -1319,6 +1512,7 @@ img { max-width: 100%; }
     <span>Gerado pelo Cartório de Imóveis</span>
     <a href="#" id="portal-back-link">Acessar o portal</a>
   </footer>
+  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="portal"></div>
 </div>
 
 <!-- ============ APP PRINCIPAL (autenticado) ============ -->
@@ -1518,6 +1712,7 @@ img { max-width: 100%; }
     </section>
 
   </main>
+  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="dashboard"></div>
 </div>
 
 <!-- ============ MODAL: CADASTRAR / EDITAR IMÓVEL ============ -->
@@ -1773,6 +1968,158 @@ img { max-width: 100%; }
   </div>
 </div>
 
+<!-- ============ PAINEL ADMINISTRATIVO ============ -->
+<div id="view-admin" class="view">
+
+  <!-- AUTENTICAÇÃO (cadastro único na 1ª vez; depois só login) -->
+  <div id="admin-auth" class="admin-auth-wrap">
+    <div class="admin-auth-card">
+      <h2 id="admin-auth-title">Painel administrativo</h2>
+      <p class="sub" id="admin-auth-sub">Acesso restrito à gestão do portal.</p>
+
+      <!-- LOGIN -->
+      <form id="admin-login-form">
+        <div class="admin-field">
+          <label for="admin-login-user">Usuário</label>
+          <input type="text" id="admin-login-user" autocomplete="username" required>
+        </div>
+        <div class="admin-field">
+          <label for="admin-login-pass">Senha</label>
+          <input type="password" id="admin-login-pass" autocomplete="current-password" required>
+        </div>
+        <p class="admin-error" id="admin-login-error"></p>
+        <button type="submit" class="admin-btn">Entrar no painel</button>
+      </form>
+
+      <!-- CADASTRO DO 1º ADMIN (some após criado) -->
+      <form id="admin-register-form" hidden>
+        <div class="admin-field">
+          <label for="admin-reg-name">Nome</label>
+          <input type="text" id="admin-reg-name" required>
+        </div>
+        <div class="admin-field">
+          <label for="admin-reg-user">Usuário</label>
+          <input type="text" id="admin-reg-user" autocomplete="username" required>
+        </div>
+        <div class="admin-field">
+          <label for="admin-reg-pass">Senha</label>
+          <input type="password" id="admin-reg-pass" autocomplete="new-password" minlength="4" required>
+        </div>
+        <p class="admin-error" id="admin-reg-error"></p>
+        <button type="submit" class="admin-btn">Criar administrador</button>
+      </form>
+
+      <div style="text-align:center;margin-top:1.3rem;">
+        <button type="button" class="admin-link" id="admin-back-portal">← Voltar ao portal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- DASHBOARD (após autenticar) -->
+  <div id="admin-dash" class="admin-shell" hidden>
+    <div class="admin-topbar">
+      <div class="admin-brand">Cartório de Imóveis<small>Painel administrativo</small></div>
+      <div style="display:flex;gap:.6rem;align-items:center;">
+        <span id="admin-who" style="font-size:.82rem;color:rgba(250,248,244,.6);"></span>
+        <button type="button" class="admin-exit" id="admin-logout">Sair</button>
+      </div>
+    </div>
+
+    <!-- MÉTRICAS -->
+    <div class="admin-section">
+      <span class="eyebrow-mono">Uso do portal</span>
+      <div class="admin-metrics" id="admin-metrics"></div>
+    </div>
+
+    <!-- BANNERS -->
+    <div class="admin-section">
+      <div class="admin-section-head">
+        <div><span class="eyebrow-mono">Monetização</span><h3>Banners patrocinados</h3></div>
+      </div>
+
+      <form class="admin-grid-form" id="banner-form">
+        <input type="hidden" id="banner-id">
+        <div class="admin-field full">
+          <label for="banner-title">Título / anunciante</label>
+          <input type="text" id="banner-title" placeholder="Ex.: Construtora Horizonte" required>
+        </div>
+        <div class="admin-field full">
+          <label for="banner-image">Imagem do banner</label>
+          <input type="file" id="banner-image" accept="image/*">
+          <small style="color:rgba(250,248,244,.45);font-size:.72rem;">Recomendado: 1200×300px. Fica salvo localmente (IndexedDB).</small>
+          <div id="banner-image-preview" style="margin-top:.5rem;"></div>
+        </div>
+        <div class="admin-field full">
+          <label for="banner-link">Link de destino (URL)</label>
+          <input type="url" id="banner-link" placeholder="https://...">
+        </div>
+        <div class="admin-field">
+          <label for="banner-start">Início da veiculação</label>
+          <input type="date" id="banner-start">
+        </div>
+        <div class="admin-field">
+          <label for="banner-end">Fim da veiculação</label>
+          <input type="date" id="banner-end">
+        </div>
+        <div class="admin-field">
+          <label for="banner-weight">Peso (prioridade)</label>
+          <input type="number" id="banner-weight" min="1" max="100" value="1">
+        </div>
+        <div class="admin-field">
+          <label class="admin-toggle"><input type="checkbox" id="banner-active" checked> Ativo</label>
+        </div>
+        <div class="admin-field full">
+          <label>Onde exibir</label>
+          <div class="placements-row" id="banner-placements">
+            <label class="placement-chip checked"><input type="checkbox" value="all" checked> Em todo lugar</label>
+            <label class="placement-chip"><input type="checkbox" value="portal"> Portal geral</label>
+            <label class="placement-chip"><input type="checkbox" value="portfolio"> Catálogo do cliente</label>
+            <label class="placement-chip"><input type="checkbox" value="dashboard"> Painel do corretor</label>
+            <label class="placement-chip"><input type="checkbox" value="explore"> Vitrine geral</label>
+            <label class="placement-chip"><input type="checkbox" value="chat"> Mensagens</label>
+          </div>
+        </div>
+        <p class="admin-error full" id="banner-error"></p>
+        <div class="full" style="display:flex;gap:.6rem;">
+          <button type="submit" class="admin-btn admin-btn-sm" id="banner-save-btn">Salvar banner</button>
+          <button type="button" class="admin-btn admin-btn-sm admin-btn-ghost" id="banner-cancel-btn" hidden>Cancelar edição</button>
+        </div>
+      </form>
+
+      <div style="margin-top:1.4rem;">
+        <span class="eyebrow-mono">Banners cadastrados</span>
+        <div class="banner-list" id="banner-list" style="margin-top:.6rem;"></div>
+      </div>
+    </div>
+
+    <!-- USUÁRIOS -->
+    <div class="admin-section">
+      <div class="admin-section-head">
+        <div><span class="eyebrow-mono">Acesso ao painel</span><h3>Usuários administradores</h3></div>
+      </div>
+      <form class="admin-grid-form" id="admin-user-form">
+        <div class="admin-field">
+          <label for="new-admin-name">Nome</label>
+          <input type="text" id="new-admin-name" required>
+        </div>
+        <div class="admin-field">
+          <label for="new-admin-user">Usuário</label>
+          <input type="text" id="new-admin-user" required>
+        </div>
+        <div class="admin-field">
+          <label for="new-admin-pass">Senha</label>
+          <input type="password" id="new-admin-pass" minlength="4" required>
+        </div>
+        <div class="admin-field" style="justify-content:flex-end;">
+          <button type="submit" class="admin-btn admin-btn-sm">Cadastrar usuário</button>
+        </div>
+        <p class="admin-error full" id="admin-user-error"></p>
+      </form>
+      <div class="users-list" id="admin-users-list" style="margin-top:1rem;"></div>
+    </div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- LIGHTBOX -->
@@ -1803,27 +2150,42 @@ img { max-width: 100%; }
 // ============================================================
 
 const DB_NAME = 'cartorio-imoveis';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 
 let dbInstance = null;
+
+// Cria/garante TODOS os object stores. Usado tanto pela camada principal
+// quanto (indiretamente) pelo painel administrativo, que abre o mesmo banco.
+// Por isso usamos guards `if (!contains)` — não importa quem dispara o upgrade.
+function ensureStores(db) {
+  if (!db.objectStoreNames.contains('brokers')) {
+    const brokers = db.createObjectStore('brokers', { keyPath: 'id' });
+    brokers.createIndex('email', 'email', { unique: true });
+  }
+  if (!db.objectStoreNames.contains('properties')) {
+    const properties = db.createObjectStore('properties', { keyPath: 'id' });
+    properties.createIndex('brokerId', 'brokerId', { unique: false });
+    properties.createIndex('visibility', 'visibility', { unique: false });
+  }
+  // --- Painel administrativo / monetização (sempre em IndexedDB) ---
+  if (!db.objectStoreNames.contains('admins')) {
+    const admins = db.createObjectStore('admins', { keyPath: 'id' });
+    admins.createIndex('username', 'username', { unique: true });
+  }
+  if (!db.objectStoreNames.contains('banners')) {
+    db.createObjectStore('banners', { keyPath: 'id' });
+  }
+  if (!db.objectStoreNames.contains('metrics')) {
+    db.createObjectStore('metrics', { keyPath: 'key' });
+  }
+}
 
 function openDatabase() {
   return new Promise((resolve, reject) => {
     const request = indexedDB.open(DB_NAME, DB_VERSION);
 
     request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-
-      if (!db.objectStoreNames.contains('brokers')) {
-        const brokers = db.createObjectStore('brokers', { keyPath: 'id' });
-        brokers.createIndex('email', 'email', { unique: true });
-      }
-
-      if (!db.objectStoreNames.contains('properties')) {
-        const properties = db.createObjectStore('properties', { keyPath: 'id' });
-        properties.createIndex('brokerId', 'brokerId', { unique: false });
-        properties.createIndex('visibility', 'visibility', { unique: false });
-      }
+      ensureStores(event.target.result);
     };
 
     request.onsuccess = (event) => {
@@ -2406,6 +2768,25 @@ const DB = {
   uid,
 };
 
+// Ponte para o painel administrativo (script separado). Os contadores usam a
+// mesma abstração do app, então funcionam tanto no IndexedDB local quanto na
+// nuvem, caso o Firebase esteja ativo. Banners/admins ficam sempre no IndexedDB.
+window.AppDB = DB;
+window.AppBridge = {
+  async getBrokerCount() {
+    try { return (await getAllBrokers()).length; } catch (_) { return 0; }
+  },
+  async getPropertyCount() {
+    try { return (await getAllProperties()).length; } catch (_) { return 0; }
+  },
+  async getPublicPropertyCount() {
+    try { return (await getPublicProperties()).length; } catch (_) { return 0; }
+  },
+  async getAllBrokers() {
+    try { return await getAllBrokers(); } catch (_) { return []; }
+  },
+};
+
 
 // ============================================================
 // ChatService — chat em tempo real via Firebase Realtime Database
@@ -2570,21 +2951,28 @@ async function boot() {
   const hash = window.location.hash;
   const isPublicRoute = hash.startsWith('#portfolio/');
   const isPortalRoute = hash === '#portal';
+  const isAdminRoute = hash === '#admin';
 
   if (CloudService.isConfigured()) {
     const result = await CloudService.initFirebase();
     if (!result.ok) {
       console.error('Firebase configurado mas não foi possível conectar:', result.reason);
-      if (!isPublicRoute && !isPortalRoute) {
+      if (!isPublicRoute && !isPortalRoute && !isAdminRoute) {
         showToast('Nuvem: ' + (result.reason || 'falha desconhecida') + ' — usando dados locais.', 6000);
       }
-    } else if (!isPublicRoute && !isPortalRoute) {
+    } else if (!isPublicRoute && !isPortalRoute && !isAdminRoute) {
       const chatViaCloud = ChatService.isUsingFirebase();
       console.info('Nuvem conectada. Chat sincronizado entre dispositivos:', chatViaCloud);
       if (!chatViaCloud) {
         showToast('Nuvem conectada, mas o chat segue local: configure o databaseURL do Realtime Database em "Configuração avançada".', 7000);
       }
     }
+  }
+
+  if (isAdminRoute) {
+    showView('view-admin');
+    try { window.__admin?.enter(); } catch (_) {}
+    return;
   }
 
   if (isPortalRoute) {
@@ -2615,6 +3003,7 @@ function showView(viewId) {
   document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
   document.getElementById(viewId).classList.add('active');
 }
+window.showViewGlobal = showView;
 
 // ---------------------------------------------------------------
 // AUTH
@@ -2632,6 +3021,13 @@ function bindGlobalEvents() {
 
   document.getElementById('form-login').addEventListener('submit', handleLogin);
   document.getElementById('form-signup').addEventListener('submit', handleSignup);
+
+  // abrir painel administrativo a partir da tela de login
+  document.getElementById('btn-open-admin')?.addEventListener('click', () => {
+    window.location.hash = '#admin';
+    showView('view-admin');
+    try { window.__admin?.enter(); } catch (_) {}
+  });
   document.getElementById('btn-logout').addEventListener('click', handleLogout);
   document.getElementById('btn-logout-mobile').addEventListener('click', handleLogout);
 
@@ -3733,6 +4129,7 @@ function showToast(message, durationMs = 2600) {
   clearTimeout(toastTimeout);
   toastTimeout = setTimeout(() => toast.classList.remove('show'), durationMs);
 }
+window.showToast = showToast;
 
 // ---------------------------------------------------------------
 // LIGHTBOX
@@ -3833,131 +4230,591 @@ function escapeHtml(str) {
 </script>
 
 <!-- ============================================================
-     CAMADA DE MONETIZAÇÃO — banners + métricas (sincroniza com o painel admin)
-     App Firebase nomeado ("monetization") lendo o MESMO projeto, de forma
-     totalmente independente da lógica acima. Se a nuvem falhar, vira no-op.
+     PAINEL ADMINISTRATIVO + MONETIZAÇÃO (100% IndexedDB)
+     Tudo no mesmo arquivo: cadastro único de admin, login, métricas
+     do portal, CRUD de banners patrocinados e carrossel de rodapé.
      ============================================================ -->
 <script type="module">
-(async () => {
-  const CFG_KEY = 'cartorio-imoveis-firebase-config';
-  const DIS_KEY = 'cartorio-imoveis-firebase-disabled';
-  const DEFAULT = {
-    apiKey: 'AIzaSyAMkwZMmnCFIIPxDR1naAoUQXU52MEw7wE',
-    authDomain: 'cartorio-imoveis.firebaseapp.com',
-    projectId: 'cartorio-imoveis',
-    storageBucket: 'cartorio-imoveis.firebasestorage.app',
-    databaseURL: 'https://cartorio-imoveis-default-rtdb.firebaseio.com',
-  };
-  function cfg() {
-    if (localStorage.getItem(DIS_KEY) === '1') return DEFAULT;
-    try { const r = localStorage.getItem(CFG_KEY); if (r) { const p = JSON.parse(r); if (p?.apiKey && p?.projectId) return p; } } catch (_) {}
-    return DEFAULT;
-  }
-  function dayKey(d = new Date()) { return `${d.getFullYear()}${String(d.getMonth()+1).padStart(2,'0')}${String(d.getDate()).padStart(2,'0')}`; }
-  function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+(() => {
+  'use strict';
 
-  // ---- carrega SDK (local -> CDN), espelhando o app ----
-  let appMod, fsMod;
-  if (location.protocol === 'file:') return; // sem nuvem em file://
-  const v = '10.12.2';
-  try {
-    const local = await import('./firebase-bundle.js');
-    if (local?.appMod?.initializeApp && local?.firestoreMod?.getFirestore) { appMod = local.appMod; fsMod = local.firestoreMod; }
-  } catch (_) {}
-  if (!appMod) {
-    const bases = [
-      { a:`https://www.gstatic.com/firebasejs/${v}/firebase-app.js`, f:`https://www.gstatic.com/firebasejs/${v}/firebase-firestore.js` },
-      { a:`https://esm.sh/firebase@${v}/app`, f:`https://esm.sh/firebase@${v}/firestore` },
-    ];
-    for (const u of bases) {
-      try { const am = await import(u.a); const fm = await import(u.f);
-        if (am.initializeApp && fm.getFirestore) { appMod = am; fsMod = fm; break; } } catch (_) {}
+  // ---------- IndexedDB (mesmo banco do app) ----------
+  const DB_NAME = 'cartorio-imoveis';
+  const DB_VERSION = 2;
+  let _db = null;
+
+  function ensureStores(db) {
+    if (!db.objectStoreNames.contains('brokers')) {
+      const b = db.createObjectStore('brokers', { keyPath: 'id' });
+      b.createIndex('email', 'email', { unique: true });
     }
+    if (!db.objectStoreNames.contains('properties')) {
+      const p = db.createObjectStore('properties', { keyPath: 'id' });
+      p.createIndex('brokerId', 'brokerId', { unique: false });
+      p.createIndex('visibility', 'visibility', { unique: false });
+    }
+    if (!db.objectStoreNames.contains('admins')) {
+      const a = db.createObjectStore('admins', { keyPath: 'id' });
+      a.createIndex('username', 'username', { unique: true });
+    }
+    if (!db.objectStoreNames.contains('banners')) db.createObjectStore('banners', { keyPath: 'id' });
+    if (!db.objectStoreNames.contains('metrics')) db.createObjectStore('metrics', { keyPath: 'key' });
   }
-  if (!appMod || !fsMod) { console.warn('Monetização: SDK indisponível, banners desativados.'); return; }
 
-  const { initializeApp } = appMod;
-  const { getFirestore, collection, onSnapshot, doc, setDoc, updateDoc, increment } = fsMod;
-  let fs;
-  try {
-    const c = cfg();
-    const app = initializeApp({ apiKey:c.apiKey, authDomain:c.authDomain, projectId:c.projectId, storageBucket:c.storageBucket, appId:c.appId }, 'monetization');
-    fs = getFirestore(app);
-  } catch (e) { console.warn('Monetização: falha ao iniciar Firebase.', e); return; }
-
-  let banners = [];
-  const seenImp = new Set(JSON.parse(sessionStorage.getItem('ci-imp') || '[]'));
-  function persistSeen(){ try { sessionStorage.setItem('ci-imp', JSON.stringify([...seenImp])); } catch(_){} }
-
-  // ---- métricas diárias agregadas (lidas pelo painel) ----
-  async function bumpDaily(field, n = 1) {
-    try { await setDoc(doc(fs, 'metrics_daily', dayKey()), { date: dayKey(), [field]: increment(n) }, { merge: true }); } catch (_) {}
+  function openDB() {
+    if (_db) return Promise.resolve(_db);
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open(DB_NAME, DB_VERSION);
+      req.onupgradeneeded = (e) => ensureStores(e.target.result);
+      req.onsuccess = (e) => {
+        _db = e.target.result;
+        _db.onversionchange = () => { try { _db.close(); } catch (_) {} _db = null; };
+        resolve(_db);
+      };
+      req.onerror = () => reject(req.error);
+      req.onblocked = () => console.warn('IndexedDB upgrade bloqueado — feche outras abas do portal.');
+    });
   }
-  // ---- presença / logins (lidos pelo painel como "usuários ativos") ----
-  async function trackActive(b) {
-    if (!b?.id) return;
-    try { await setDoc(doc(fs, 'active_users', b.id), { brokerId: b.id, name: b.name || '', lastSeen: Date.now() }, { merge: true }); } catch (_) {}
+
+  function store(name, mode = 'readonly') {
+    return openDB().then((db) => db.transaction(name, mode).objectStore(name));
   }
-  async function trackLogin(b) {
-    if (!b?.id) return;
+  const reqP = (r) => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+
+  async function getAll(name) { return reqP((await store(name)).getAll()).then((x) => x || []); }
+  async function getOne(name, key) { return reqP((await store(name)).get(key)).then((x) => x || null); }
+  async function putOne(name, val) { return reqP((await store(name, 'readwrite')).put(val)).then(() => val); }
+  async function delOne(name, key) { return reqP((await store(name, 'readwrite')).delete(key)); }
+  async function getByIndex(name, idx, val) {
+    const s = await store(name);
+    return reqP(s.index(idx).get(val)).then((x) => x || null);
+  }
+
+  const uid = (p = '') => p + Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+  const esc = (s) => String(s ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const todayStr = () => new Date().toISOString().slice(0, 10);
+  const dayKey = () => 'd_' + todayStr();
+
+  // ---------- métricas ----------
+  async function bumpMetric(key, n = 1) {
+    const cur = (await getOne('metrics', key)) || { key, value: 0 };
+    cur.value = (cur.value || 0) + n;
+    await putOne('metrics', cur);
+    return cur.value;
+  }
+  async function getMetric(key) { return ((await getOne('metrics', key)) || {}).value || 0; }
+
+  // conta 1 acesso por sessão do navegador (métrica "visitas")
+  async function countAccessOncePerSession() {
     try {
-      await setDoc(doc(fs, 'active_users', b.id), { brokerId: b.id, name: b.name || '', lastSeen: Date.now(), lastLoginAt: Date.now(), loginCount: increment(1) }, { merge: true });
+      if (sessionStorage.getItem('ci-access-counted') === '1') return;
+      sessionStorage.setItem('ci-access-counted', '1');
+      await bumpMetric('accesses', 1);
+      await bumpMetric(dayKey(), 1);
     } catch (_) {}
-    bumpDaily('logins', 1);
   }
 
-  // ---- contagem de impressões/cliques ----
-  function countImpression(id) {
+  // ---------- banners ----------
+  function isLive(b) {
+    if (!b || !b.active) return false;
+    const t = todayStr();
+    if (b.startDate && b.startDate > t) return false;
+    if (b.endDate && b.endDate < t) return false;
+    return true;
+  }
+  function matchesPlacement(b, placement) {
+    const pl = (b.placements && b.placements.length) ? b.placements : ['all'];
+    return pl.some((p) => p === 'all' || p === placement);
+  }
+  let _banners = [];
+  async function loadBanners() { _banners = await getAll('banners'); return _banners; }
+  function liveFor(placement) {
+    return _banners.filter((b) => isLive(b) && matchesPlacement(b, placement));
+  }
+
+  // dedupe de impressões por sessão
+  const seenImp = new Set(JSON.parse(sessionStorage.getItem('ci-imp') || '[]'));
+  const persistSeen = () => { try { sessionStorage.setItem('ci-imp', JSON.stringify([...seenImp])); } catch (_) {} };
+  async function countImpression(id) {
     if (!id || seenImp.has(id)) return;
     seenImp.add(id); persistSeen();
-    try { updateDoc(doc(fs, 'banners', id), { impressions: increment(1) }); } catch (_) {}
-    bumpDaily('impressions', 1);
+    const b = _banners.find((x) => x.id === id);
+    if (b) { b.impressions = (b.impressions || 0) + 1; putOne('banners', b); }
+    bumpMetric('impressions', 1);
   }
-  function countClick(id) {
+  async function countClick(id) {
     if (!id) return;
-    try { updateDoc(doc(fs, 'banners', id), { clicks: increment(1) }); } catch (_) {}
-    bumpDaily('clicks', 1);
+    const b = _banners.find((x) => x.id === id);
+    if (b) { b.clicks = (b.clicks || 0) + 1; putOne('banners', b); }
+    bumpMetric('clicks', 1);
   }
-
-  // ---- seleção ponderada por área ----
-  function pickFor(placement) {
-    const pool = banners.filter(b => b.active && (b.placements || ['all']).some(p => p === 'all' || p === placement));
+  const weightedPick = (pool) => {
     if (!pool.length) return null;
-    let total = pool.reduce((s, b) => s + (b.weight || 1), 0);
+    const total = pool.reduce((s, b) => s + (b.weight || 1), 0);
     let r = Math.random() * total;
     for (const b of pool) { r -= (b.weight || 1); if (r <= 0) return b; }
     return pool[0];
+  };
+
+  function bannerMediaHtml(b) {
+    return b.imageUrl
+      ? `<img src="${esc(b.imageUrl)}" alt="${esc(b.title || '')}" loading="lazy">`
+      : `<div class="ad-fallback">${esc(b.title || 'Publicidade')}</div>`;
   }
 
+  // ---------- render: ad-slots inline (banner único, ponderado) ----------
   const io = ('IntersectionObserver' in window) ? new IntersectionObserver((entries) => {
-    entries.forEach(e => { if (e.isIntersecting) { countImpression(e.target.dataset.bannerId); io.unobserve(e.target); } });
+    entries.forEach((e) => { if (e.isIntersecting) { countImpression(e.target.dataset.bannerId); io.unobserve(e.target); } });
   }, { threshold: 0.5 }) : null;
 
-  function render() {
-    document.querySelectorAll('.ad-slot[data-placement]').forEach(slot => {
-      const b = pickFor(slot.dataset.placement);
+  function renderAdSlots() {
+    document.querySelectorAll('.ad-slot[data-placement]').forEach((slot) => {
+      const b = weightedPick(liveFor(slot.dataset.placement));
       if (!b) { slot.innerHTML = ''; return; }
-      // evita re-render desnecessário do mesmo banner
       if (slot.firstElementChild?.dataset?.bannerId === b.id) return;
-      const media = b.imageUrl ? `<img src="${esc(b.imageUrl)}" alt="${esc(b.title||'')}" loading="lazy">` : `<div class="ad-fallback">${esc(b.title||'Publicidade')}</div>`;
-      slot.innerHTML = `<a class="ad-banner" data-banner-id="${esc(b.id)}" href="${esc(b.linkUrl||'#')}" target="_blank" rel="noopener nofollow sponsored"><span class="ad-flag">Publicidade</span>${media}</a>`;
+      slot.innerHTML = `<a class="ad-banner" data-banner-id="${esc(b.id)}" href="${esc(b.linkUrl || '#')}" target="_blank" rel="noopener nofollow sponsored"><span class="ad-flag">Publicidade</span>${bannerMediaHtml(b)}</a>`;
       const a = slot.firstElementChild;
       a.addEventListener('click', () => countClick(b.id));
       if (io) io.observe(a); else countImpression(b.id);
     });
   }
 
-  onSnapshot(collection(fs, 'banners'), (snap) => {
-    banners = snap.docs.map(d => d.data());
-    render();
-  }, (e) => console.warn('Monetização: banners', e?.message || e));
+  // ---------- render: carrossel de rodapé (deslizando suavemente) ----------
+  const carouselTimers = new WeakMap();
+  function renderCarousels() {
+    document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => {
+      const pool = liveFor(el.dataset.carousel);
+      // sinal de já renderizado com o mesmo conjunto de banners
+      const signature = pool.map((b) => b.id).join(',');
+      if (el.dataset.sig === signature) return;
+      el.dataset.sig = signature;
 
-  // re-render quando a navegação troca de tela (slots ficam visíveis)
-  const reRender = () => setTimeout(render, 30);
-  document.addEventListener('click', (e) => { if (e.target.closest('.nav-item,.mobile-tab')) reRender(); });
+      // limpa timer anterior
+      const prev = carouselTimers.get(el);
+      if (prev) clearInterval(prev);
 
-  // API exposta para o app chamar nos eventos de auth
-  window.__mon = { trackLogin, trackActive, mount: render };
+      if (!pool.length) { el.classList.add('is-empty'); el.innerHTML = ''; return; }
+      el.classList.remove('is-empty');
+
+      const slides = pool.map((b) => `
+        <div class="banner-carousel-slide">
+          <a data-banner-id="${esc(b.id)}" href="${esc(b.linkUrl || '#')}" target="_blank" rel="noopener nofollow sponsored">
+            <span class="ad-flag">Publicidade</span>${bannerMediaHtml(b)}
+          </a>
+        </div>`).join('');
+      const dots = pool.length > 1
+        ? `<div class="banner-carousel-dots">${pool.map((_, i) => `<button data-i="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Banner ${i + 1}"></button>`).join('')}</div>`
+        : '';
+      el.innerHTML = `<span class="banner-carousel-label">Publicidade</span><div class="banner-carousel-track">${slides}</div>${dots}`;
+
+      const track = el.querySelector('.banner-carousel-track');
+      const dotEls = [...el.querySelectorAll('.banner-carousel-dots button')];
+      const anchors = [...el.querySelectorAll('.banner-carousel-slide a')];
+      let idx = 0;
+
+      const show = (i) => {
+        idx = (i + pool.length) % pool.length;
+        track.style.transform = `translateX(-${idx * 100}%)`;
+        dotEls.forEach((d, di) => d.classList.toggle('active', di === idx));
+        countImpression(pool[idx].id);
+      };
+      anchors.forEach((a) => a.addEventListener('click', () => countClick(a.dataset.bannerId)));
+      dotEls.forEach((d) => d.addEventListener('click', () => { show(Number(d.dataset.i)); restart(); }));
+
+      countImpression(pool[0].id);
+
+      let timer = null;
+      const start = () => { if (pool.length > 1) timer = setInterval(() => show(idx + 1), 5000); };
+      const stop = () => { if (timer) { clearInterval(timer); timer = null; } };
+      const restart = () => { stop(); start(); };
+      start();
+      carouselTimers.set(el, timer);
+
+      // pausa ao interagir
+      el.addEventListener('mouseenter', stop);
+      el.addEventListener('mouseleave', restart);
+      // swipe (mobile)
+      let sx = null;
+      el.addEventListener('touchstart', (e) => { sx = e.touches[0].clientX; stop(); }, { passive: true });
+      el.addEventListener('touchend', (e) => {
+        if (sx === null) return;
+        const dx = e.changedTouches[0].clientX - sx;
+        if (Math.abs(dx) > 40) show(idx + (dx < 0 ? 1 : -1));
+        sx = null; restart();
+      });
+    });
+  }
+
+  function renderAll() { renderAdSlots(); renderCarousels(); }
+
+  // ============================================================
+  // PAINEL ADMINISTRATIVO
+  // ============================================================
+  const ADMIN_SESSION_KEY = 'cartorio-admin-session';
+  let currentAdmin = null;
+
+  const $ = (id) => document.getElementById(id);
+
+  async function adminExists() { return (await getAll('admins')).length > 0; }
+
+  async function enterAdmin() {
+    await loadBanners();
+    const exists = await adminExists();
+    const sessId = localStorage.getItem(ADMIN_SESSION_KEY);
+    if (sessId) {
+      const a = await getOne('admins', sessId);
+      if (a) { currentAdmin = a; return showDash(); }
+    }
+    showAuth(exists);
+  }
+
+  function showAuth(exists) {
+    $('admin-auth').hidden = false;
+    $('admin-dash').hidden = true;
+    // cadastro único: se já existe admin, some o form de cadastro; só login.
+    $('admin-login-form').hidden = exists ? false : true;
+    $('admin-register-form').hidden = exists ? true : false;
+    $('admin-auth-title').textContent = exists ? 'Entrar no painel' : 'Criar administrador';
+    $('admin-auth-sub').textContent = exists
+      ? 'Acesso restrito à gestão do portal.'
+      : 'Primeiro acesso: defina o administrador do portal. Isto é feito uma única vez.';
+  }
+
+  async function showDash() {
+    $('admin-auth').hidden = true;
+    $('admin-dash').hidden = false;
+    $('admin-who').textContent = currentAdmin ? `Olá, ${currentAdmin.name || currentAdmin.username}` : '';
+    await Promise.all([renderMetrics(), renderBannerList(), renderUsers()]);
+  }
+
+  // ---------- métricas no painel ----------
+  async function renderMetrics() {
+    const bridge = window.AppBridge || {};
+    const [brokers, props, pubProps] = await Promise.all([
+      bridge.getBrokerCount ? bridge.getBrokerCount() : 0,
+      bridge.getPropertyCount ? bridge.getPropertyCount() : 0,
+      bridge.getPublicPropertyCount ? bridge.getPublicPropertyCount() : 0,
+    ]);
+    const accesses = await getMetric('accesses');
+    const impressions = await getMetric('impressions');
+    const clicks = await getMetric('clicks');
+    const logins = await getMetric('logins');
+    const activeBanners = _banners.filter(isLive).length;
+
+    const cards = [
+      { v: brokers, l: 'Corretores', accent: true },
+      { v: props, l: 'Imóveis cadastrados' },
+      { v: pubProps, l: 'Imóveis públicos' },
+      { v: accesses, l: 'Acessos ao portal', accent: true },
+      { v: logins, l: 'Logins de corretores' },
+      { v: activeBanners, l: 'Banners ativos' },
+      { v: impressions, l: 'Impressões de banner' },
+      { v: clicks, l: 'Cliques em banner' },
+    ];
+    $('admin-metrics').innerHTML = cards.map((c) => `
+      <div class="metric-card${c.accent ? ' accent' : ''}">
+        <div class="metric-value">${Number(c.v).toLocaleString('pt-BR')}</div>
+        <div class="metric-label">${esc(c.l)}</div>
+      </div>`).join('');
+  }
+
+  // ---------- lista de banners ----------
+  const PLACEMENT_LABELS = { all: 'Todo lugar', portal: 'Portal', portfolio: 'Catálogo', dashboard: 'Painel corretor', explore: 'Vitrine', chat: 'Mensagens' };
+  async function renderBannerList() {
+    const list = (await getAll('banners')).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+    const el = $('banner-list');
+    if (!list.length) { el.innerHTML = `<p class="admin-empty">Nenhum banner cadastrado ainda.</p>`; return; }
+    el.innerHTML = list.map((b) => {
+      const live = isLive(b);
+      const scheduled = b.active && b.startDate && b.startDate > todayStr();
+      const tag = live ? '<span class="status-tag on">No ar</span>'
+        : scheduled ? '<span class="status-tag sched">Agendado</span>'
+          : '<span class="status-tag off">Inativo</span>';
+      const period = (b.startDate || b.endDate)
+        ? `${b.startDate || '—'} → ${b.endDate || '∞'}` : 'Sem período definido';
+      const pls = ((b.placements && b.placements.length) ? b.placements : ['all']).map((p) => PLACEMENT_LABELS[p] || p).join(', ');
+      return `
+        <div class="banner-item" data-id="${esc(b.id)}">
+          <div class="thumb">${b.imageUrl ? `<img src="${esc(b.imageUrl)}" alt="">` : '<span class="noimg">SEM IMG</span>'}</div>
+          <div class="meta">
+            <div class="bt">${esc(b.title || 'Sem título')} ${tag}</div>
+            <div class="bs">
+              <span>📍 ${esc(pls)}</span>
+              <span>🗓 ${esc(period)}</span>
+              <span>👁 ${b.impressions || 0}</span>
+              <span>🖱 ${b.clicks || 0}</span>
+              <span>⚖ peso ${b.weight || 1}</span>
+            </div>
+          </div>
+          <div class="actions">
+            <button class="admin-btn admin-btn-sm admin-btn-ghost" data-act="toggle">${b.active ? 'Pausar' : 'Ativar'}</button>
+            <button class="admin-btn admin-btn-sm admin-btn-ghost" data-act="edit">Editar</button>
+            <button class="admin-btn admin-btn-sm admin-btn-danger" data-act="del">Excluir</button>
+          </div>
+        </div>`;
+    }).join('');
+
+    el.querySelectorAll('.banner-item').forEach((item) => {
+      const id = item.dataset.id;
+      item.querySelector('[data-act="toggle"]').addEventListener('click', async () => {
+        const b = await getOne('banners', id); if (!b) return;
+        b.active = !b.active; await putOne('banners', b);
+        await loadBanners(); await renderBannerList(); await renderMetrics(); refreshFront();
+      });
+      item.querySelector('[data-act="edit"]').addEventListener('click', () => editBanner(id));
+      item.querySelector('[data-act="del"]').addEventListener('click', async () => {
+        if (!confirm('Excluir este banner permanentemente?')) return;
+        await delOne('banners', id);
+        await loadBanners(); await renderBannerList(); await renderMetrics(); refreshFront();
+        toast('Banner excluído.');
+      });
+    });
+  }
+
+  let editingImageData = null; // base64 em edição
+  function setPlacementsUI(placements) {
+    const wrap = $('banner-placements');
+    const set = new Set((placements && placements.length) ? placements : ['all']);
+    wrap.querySelectorAll('input[type=checkbox]').forEach((cb) => {
+      cb.checked = set.has(cb.value);
+      cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
+    });
+  }
+  function readPlacementsUI() {
+    return [...$('banner-placements').querySelectorAll('input:checked')].map((c) => c.value);
+  }
+
+  async function editBanner(id) {
+    const b = await getOne('banners', id); if (!b) return;
+    $('banner-id').value = b.id;
+    $('banner-title').value = b.title || '';
+    $('banner-link').value = b.linkUrl || '';
+    $('banner-start').value = b.startDate || '';
+    $('banner-end').value = b.endDate || '';
+    $('banner-weight').value = b.weight || 1;
+    $('banner-active').checked = b.active !== false;
+    setPlacementsUI(b.placements);
+    editingImageData = b.imageUrl || null;
+    $('banner-image-preview').innerHTML = editingImageData
+      ? `<img src="${esc(editingImageData)}" style="max-height:70px;border-radius:2px;border:1px solid rgba(250,248,244,.2);">` : '';
+    $('banner-save-btn').textContent = 'Atualizar banner';
+    $('banner-cancel-btn').hidden = false;
+    $('view-admin').scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetBannerForm() {
+    $('banner-form').reset();
+    $('banner-id').value = '';
+    editingImageData = null;
+    $('banner-image-preview').innerHTML = '';
+    $('banner-save-btn').textContent = 'Salvar banner';
+    $('banner-cancel-btn').hidden = true;
+    $('banner-error').textContent = '';
+    setPlacementsUI(['all']);
+    $('banner-active').checked = true;
+    $('banner-weight').value = 1;
+  }
+
+  function fileToDataURL(file) {
+    return new Promise((res, rej) => {
+      const r = new FileReader();
+      r.onload = () => res(r.result);
+      r.onerror = () => rej(r.error);
+      r.readAsDataURL(file);
+    });
+  }
+
+  // ---------- usuários admin ----------
+  async function renderUsers() {
+    const users = await getAll('admins');
+    const el = $('admin-users-list');
+    el.innerHTML = users.map((u) => `
+      <div class="user-item" data-id="${esc(u.id)}">
+        <div>
+          <div class="ui-name">${esc(u.name || u.username)}${u.id === currentAdmin?.id ? ' <span class="status-tag on" style="margin-left:.3rem;">você</span>' : ''}</div>
+          <div class="ui-sub">@${esc(u.username)}</div>
+        </div>
+        <button class="admin-btn admin-btn-sm admin-btn-danger" data-act="del-user" ${users.length <= 1 ? 'disabled style="opacity:.4;cursor:not-allowed;"' : ''}>Remover</button>
+      </div>`).join('');
+    el.querySelectorAll('[data-act="del-user"]').forEach((btn) => {
+      btn.addEventListener('click', async () => {
+        const id = btn.closest('.user-item').dataset.id;
+        const users2 = await getAll('admins');
+        if (users2.length <= 1) { toast('Deve existir ao menos um administrador.'); return; }
+        if (id === currentAdmin?.id && !confirm('Você está removendo a própria conta. Continuar?')) return;
+        if (!confirm('Remover este administrador?')) return;
+        await delOne('admins', id);
+        if (id === currentAdmin?.id) { localStorage.removeItem(ADMIN_SESSION_KEY); currentAdmin = null; return enterAdmin(); }
+        renderUsers();
+        toast('Usuário removido.');
+      });
+    });
+  }
+
+  function toast(msg) { try { window.showToast ? window.showToast(msg) : console.log(msg); } catch (_) { console.log(msg); } }
+
+  // re-render do front (carrosséis/ad-slots) após mudanças
+  async function refreshFront() {
+    await loadBanners();
+    document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => { el.dataset.sig = ''; });
+    renderAll();
+  }
+
+  // ---------- binds do painel ----------
+  function bindAdmin() {
+    // login
+    $('admin-login-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const u = $('admin-login-user').value.trim().toLowerCase();
+      const p = $('admin-login-pass').value;
+      const err = $('admin-login-error'); err.textContent = '';
+      const found = await getByIndex('admins', 'username', u);
+      if (!found || found.password !== p) { err.textContent = 'Usuário ou senha incorretos.'; return; }
+      currentAdmin = found;
+      localStorage.setItem(ADMIN_SESSION_KEY, found.id);
+      $('admin-login-form').reset();
+      showDash();
+    });
+
+    // cadastro do 1º admin (só aparece se não existir nenhum)
+    $('admin-register-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = $('admin-reg-error'); err.textContent = '';
+      if (await adminExists()) { showAuth(true); return; } // trava: já existe
+      const name = $('admin-reg-name').value.trim();
+      const username = $('admin-reg-user').value.trim().toLowerCase();
+      const password = $('admin-reg-pass').value;
+      if (!username || !password) { err.textContent = 'Preencha usuário e senha.'; return; }
+      const admin = { id: uid('admin_'), name, username, password, createdAt: Date.now() };
+      try { await putOne('admins', admin); }
+      catch (_) { err.textContent = 'Não foi possível criar (usuário já existe?).'; return; }
+      currentAdmin = admin;
+      localStorage.setItem(ADMIN_SESSION_KEY, admin.id);
+      $('admin-register-form').reset();
+      toast('Administrador criado!');
+      showDash();
+    });
+
+    // sair
+    $('admin-logout').addEventListener('click', () => {
+      localStorage.removeItem(ADMIN_SESSION_KEY);
+      currentAdmin = null;
+      enterAdmin();
+    });
+    $('admin-back-portal').addEventListener('click', () => { window.location.hash = ''; window.location.reload(); });
+
+    // chips de placement
+    $('banner-placements').addEventListener('change', (e) => {
+      const cb = e.target;
+      if (cb.value === 'all' && cb.checked) {
+        // "todo lugar" exclusivo
+        $('banner-placements').querySelectorAll('input').forEach((o) => { if (o !== cb) { o.checked = false; o.closest('.placement-chip').classList.remove('checked'); } });
+      } else if (cb.value !== 'all' && cb.checked) {
+        const allCb = $('banner-placements').querySelector('input[value="all"]');
+        if (allCb) { allCb.checked = false; allCb.closest('.placement-chip').classList.remove('checked'); }
+      }
+      cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
+    });
+
+    // preview de imagem
+    $('banner-image').addEventListener('change', async (e) => {
+      const f = e.target.files?.[0];
+      if (!f) return;
+      editingImageData = await fileToDataURL(f);
+      $('banner-image-preview').innerHTML = `<img src="${esc(editingImageData)}" style="max-height:70px;border-radius:2px;border:1px solid rgba(250,248,244,.2);">`;
+    });
+
+    // salvar banner
+    $('banner-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = $('banner-error'); err.textContent = '';
+      const id = $('banner-id').value || uid('banner_');
+      const existing = $('banner-id').value ? await getOne('banners', id) : null;
+      const placements = readPlacementsUI();
+      if (!placements.length) { err.textContent = 'Escolha ao menos um local de exibição.'; return; }
+      const start = $('banner-start').value;
+      const end = $('banner-end').value;
+      if (start && end && start > end) { err.textContent = 'A data de início não pode ser depois do fim.'; return; }
+      const banner = {
+        id,
+        title: $('banner-title').value.trim(),
+        imageUrl: editingImageData || existing?.imageUrl || '',
+        linkUrl: $('banner-link').value.trim(),
+        placements,
+        startDate: start || '',
+        endDate: end || '',
+        weight: Math.max(1, parseInt($('banner-weight').value, 10) || 1),
+        active: $('banner-active').checked,
+        impressions: existing?.impressions || 0,
+        clicks: existing?.clicks || 0,
+        createdAt: existing?.createdAt || Date.now(),
+        updatedAt: Date.now(),
+      };
+      await putOne('banners', banner);
+      resetBannerForm();
+      await renderBannerList(); await renderMetrics(); refreshFront();
+      toast(existing ? 'Banner atualizado.' : 'Banner criado.');
+    });
+    $('banner-cancel-btn').addEventListener('click', resetBannerForm);
+
+    // cadastrar usuário admin (a partir do painel)
+    $('admin-user-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = $('admin-user-error'); err.textContent = '';
+      const name = $('new-admin-name').value.trim();
+      const username = $('new-admin-user').value.trim().toLowerCase();
+      const password = $('new-admin-pass').value;
+      if (!username || !password) { err.textContent = 'Preencha usuário e senha.'; return; }
+      if (await getByIndex('admins', 'username', username)) { err.textContent = 'Já existe um usuário com este login.'; return; }
+      await putOne('admins', { id: uid('admin_'), name, username, password, createdAt: Date.now() });
+      $('admin-user-form').reset();
+      renderUsers();
+      toast('Usuário cadastrado.');
+    });
+  }
+
+  // ============================================================
+  // API pública + boot
+  // ============================================================
+  window.__admin = { enter: enterAdmin };
+  window.__mon = {
+    trackLogin: (b) => { bumpMetric('logins', 1); },
+    trackActive: () => {},
+    mount: renderAll,
+  };
+
+  async function start() {
+    try {
+      await openDB();
+      await countAccessOncePerSession();
+      await loadBanners();
+      bindAdmin();
+      renderAll();
+
+      // se a rota já é #admin, garante a entrada no painel
+      if (window.location.hash === '#admin') { showView2('view-admin'); enterAdmin(); }
+    } catch (e) {
+      console.warn('Painel/monetização indisponível:', e?.message || e);
+    }
+
+    // re-render quando a navegação muda de tela
+    const reRender = () => setTimeout(renderAll, 40);
+    document.addEventListener('click', (ev) => { if (ev.target.closest('.nav-item,.mobile-tab,.auth-tab')) reRender(); });
+    window.addEventListener('hashchange', () => {
+      if (window.location.hash === '#admin') { showView2('view-admin'); enterAdmin(); }
+      reRender();
+    });
+  }
+
+  // fallback de troca de view, caso o app ainda não tenha exposto showView
+  function showView2(id) {
+    if (typeof window.showViewGlobal === 'function') return window.showViewGlobal(id);
+    document.querySelectorAll('.view').forEach((v) => v.classList.remove('active'));
+    document.getElementById(id)?.classList.add('active');
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start);
+  else start();
 })();
 </script>
 </body>
