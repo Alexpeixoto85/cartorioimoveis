@@ -111,16 +111,21 @@ img { max-width: 100%; }
    AD SLOTS / BANNERS DE MONETIZAÇÃO
    ============================================================ */
 .ad-slot:empty { display: none; }
-.ad-slot { margin: 0 0 1.25rem; }
+.ad-slot { margin: 0 auto 1.25rem; max-width: 760px; }
 .ad-banner {
   display: block; position: relative; text-decoration: none;
-  border: 1px solid var(--line); border-radius: var(--radius);
+  border: 1px solid var(--line-soft); border-radius: var(--radius);
   overflow: hidden; background: var(--ink); box-shadow: var(--shadow-card);
 }
-.ad-banner img { display: block; width: 100%; height: auto; }
+/* faixa enxuta e elegante: recorta proporcionalmente em vez de esticar a altura */
+.ad-banner img {
+  display: block; width: 100%; height: auto;
+  max-height: 108px; object-fit: cover; object-position: center;
+}
+@media (max-width: 640px) { .ad-banner img { max-height: 74px; } }
 .ad-banner .ad-fallback {
-  padding: 1.4rem 1.5rem; color: var(--paper); text-align: center;
-  font-family: var(--font-display); font-weight: 600; font-size: 1.15rem;
+  padding: 0.9rem 1.5rem; color: var(--paper); text-align: center;
+  font-family: var(--font-display); font-weight: 600; font-size: 1.02rem;
 }
 .ad-banner .ad-flag {
   position: absolute; top: 8px; right: 8px;
@@ -971,7 +976,7 @@ img { max-width: 100%; }
    PORTAL GERAL PÚBLICO (todos os corretores — client-facing)
    ============================================================ */
 .view-portal.active { display: block; min-height: var(--vh-full); }
-.portal-header { background: var(--ink); color: var(--paper); padding: 2.5rem 4vw 2rem; }
+.portal-header { background: var(--ink); color: var(--paper); padding: 1.9rem 4vw 1.5rem; }
 .portal-header-inner { max-width: 72rem; margin: 0 auto; display: flex; justify-content: space-between; align-items: flex-start; }
 .portal-brand { font-family: var(--font-display); font-size: 2rem; font-weight: 600; margin: 0 0 0.3rem; line-height: 1.1; }
 .portal-brand-sub { color: #9D988C; font-size: 0.92rem; margin: 0; }
