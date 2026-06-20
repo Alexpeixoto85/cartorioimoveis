@@ -27,7 +27,7 @@
 <link rel="apple-touch-icon" sizes="120x120" href="icons/apple-touch-icon-120.png">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,700&family=Montserrat:wght@700;800&family=Oswald:wght@500;600&family=Lora:ital,wght@0,600;1,600&family=DM+Serif+Display:ital@0;1&family=Space+Grotesk:wght@600;700&family=Raleway:wght@700;800&display=swap" rel="stylesheet">
 <style>
 /* ============================================================
    DESIGN TOKENS
@@ -130,8 +130,82 @@ img { max-width: 100%; }
   min-height: 80px; display: flex; align-items: center; justify-content: center;
   position: relative; overflow: hidden;
 }
-@media (max-width: 640px) { .ad-banner .ad-fallback { min-height: 56px; font-size: .88rem; } }
+@media (max-width: 640px) { .ad-banner .ad-fallback { min-height: 56px; font-size: .88rem; padding: .7rem 1rem; } }
 .ad-fallback-text { position: relative; z-index: 1; }
+
+/* ---- CTA "Clique aqui" nos banners com link ---- */
+.ad-cta {
+  position: absolute; bottom: 8px; right: 10px; z-index: 2;
+  display: inline-flex; align-items: center; gap: .28rem;
+  background: rgba(255,255,255,.18); backdrop-filter: blur(4px);
+  border: 1px solid rgba(255,255,255,.32);
+  color: #fff; font-family: 'Inter', sans-serif;
+  font-size: .62rem; font-weight: 700; letter-spacing: .07em; text-transform: uppercase;
+  padding: .22rem .55rem; border-radius: 999px;
+  pointer-events: none; line-height: 1.4;
+  text-shadow: 0 1px 3px rgba(0,0,0,.35);
+  transition: background .15s;
+}
+.ad-cta svg { width: 9px; height: 9px; fill: currentColor; flex-shrink: 0; }
+.ad-banner:hover .ad-cta { background: rgba(255,255,255,.28); }
+/* quando o banner tem imagem, o CTA sobe para não cobrir o centro */
+.ad-banner img ~ .ad-cta { bottom: 6px; }
+
+/* ---- Estilos de layout do texto do banner ---- */
+/* layout: centered (padrão) */
+.ad-fallback[data-layout="centered"] { flex-direction: column; text-align: center; }
+/* layout: left — texto alinhado à esquerda */
+.ad-fallback[data-layout="left"] { flex-direction: column; align-items: flex-start; text-align: left; padding-left: 1.6rem; }
+/* layout: badge+title */
+.ad-fallback[data-layout="badge"] { flex-direction: column; gap: .35rem; text-align: center; }
+.ad-fallback-badge {
+  font-family: 'JetBrains Mono', monospace; font-size: .58rem; font-weight: 700;
+  letter-spacing: .14em; text-transform: uppercase;
+  background: rgba(255,255,255,.18); border: 1px solid rgba(255,255,255,.3);
+  padding: .18rem .55rem; border-radius: 999px; position: relative; z-index: 1;
+}
+/* layout: title+sub */
+.ad-fallback[data-layout="titlesub"] { flex-direction: column; gap: .2rem; text-align: center; }
+.ad-fallback-sub {
+  font-size: .72em; font-weight: 400; opacity: .78; position: relative; z-index: 1;
+  font-family: 'Inter', sans-serif; letter-spacing: .01em;
+}
+/* layout: split — ícone à esq + texto à dir */
+.ad-fallback[data-layout="split"] { flex-direction: row; gap: .9rem; text-align: left; padding: .7rem 1.4rem; }
+.ad-fallback-icon { font-size: 1.9rem; line-height: 1; position: relative; z-index: 1; flex-shrink: 0; }
+/* layout: large — título bem grande */
+.ad-fallback[data-layout="large"] .ad-fallback-text { font-size: 1.4em; letter-spacing: -.01em; }
+
+/* ---- Font picker (admin) ---- */
+.font-picker { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .5rem; }
+.font-picker-opt {
+  padding: .32rem .7rem; border-radius: 4px; cursor: pointer;
+  border: 2px solid rgba(250,248,244,.18); background: rgba(250,248,244,.06);
+  color: rgba(250,248,244,.8); font-size: .95rem; white-space: nowrap;
+  transition: border-color .15s, background .15s;
+}
+.font-picker-opt:hover { border-color: rgba(250,248,244,.45); background: rgba(250,248,244,.12); }
+.font-picker-opt.selected { border-color: var(--terracotta); background: rgba(21,96,107,.25); color: #fff; }
+
+/* ---- Layout picker (admin) ---- */
+.layout-picker { display: flex; flex-wrap: wrap; gap: .45rem; margin-top: .5rem; }
+.layout-picker-opt {
+  display: flex; flex-direction: column; align-items: center; gap: .25rem;
+  padding: .45rem .6rem; border-radius: 4px; cursor: pointer;
+  border: 2px solid rgba(250,248,244,.18); background: rgba(250,248,244,.06);
+  color: rgba(250,248,244,.75); font-size: .65rem; font-weight: 600;
+  letter-spacing: .04em; text-transform: uppercase; white-space: nowrap;
+  transition: border-color .15s, background .15s; min-width: 64px;
+}
+.layout-picker-opt:hover { border-color: rgba(250,248,244,.45); background: rgba(250,248,244,.12); }
+.layout-picker-opt.selected { border-color: var(--terracotta); background: rgba(21,96,107,.25); color: #fff; }
+.layout-picker-opt svg { width: 32px; height: 20px; }
+
+/* ---- Subtitle field (admin) ---- */
+#banner-subtitle-wrap { display: none; }
+#banner-subtitle-wrap.visible { display: block; }
+#banner-icon-wrap { display: none; }
+#banner-icon-wrap.visible { display: block; }
 
 /* ---- Background theme picker (admin) ---- */
 .bg-theme-picker { display: flex; flex-wrap: wrap; gap: .5rem; margin-top: .5rem; }
@@ -2087,6 +2161,24 @@ img { max-width: 100%; }
           <label>Plano de fundo (usado quando não há imagem)</label>
           <div class="bg-theme-picker" id="banner-bg-picker"></div>
           <input type="hidden" id="banner-bg-style">
+        </div>
+        <div class="admin-field full">
+          <label>Fonte do texto</label>
+          <div class="font-picker" id="banner-font-picker"></div>
+          <input type="hidden" id="banner-font-style">
+        </div>
+        <div class="admin-field full">
+          <label>Layout / formato do texto</label>
+          <div class="layout-picker" id="banner-layout-picker"></div>
+          <input type="hidden" id="banner-layout">
+        </div>
+        <div class="admin-field full" id="banner-subtitle-wrap">
+          <label for="banner-subtitle">Subtítulo <span style="font-weight:400;opacity:.5">(linha menor abaixo do título)</span></label>
+          <input type="text" id="banner-subtitle" placeholder="Ex.: Condições especiais este mês">
+        </div>
+        <div class="admin-field full" id="banner-icon-wrap">
+          <label for="banner-icon">Ícone / emoji <span style="font-weight:400;opacity:.5">(aparece ao lado do texto)</span></label>
+          <input type="text" id="banner-icon" placeholder="Ex.: 🏠 ou 🔑 ou 💰" maxlength="4">
         </div>
         <div class="admin-field full">
           <label for="banner-link">Link de destino (URL)</label>
@@ -4555,10 +4647,51 @@ function escapeHtml(str) {
     return pool[0];
   };
 
+  const BANNER_FONTS = {
+    fraunces:  { family: "'Fraunces', serif",           label: 'Fraunces' },
+    playfair:  { family: "'Playfair Display', serif",   label: 'Playfair' },
+    montserrat:{ family: "'Montserrat', sans-serif",     label: 'Montserrat' },
+    oswald:    { family: "'Oswald', sans-serif",         label: 'Oswald' },
+    lora:      { family: "'Lora', serif",               label: 'Lora' },
+    dm:        { family: "'DM Serif Display', serif",   label: 'DM Serif' },
+    space:     { family: "'Space Grotesk', sans-serif", label: 'Space Grotesk' },
+    raleway:   { family: "'Raleway', sans-serif",       label: 'Raleway' },
+    inter:     { family: "'Inter', sans-serif",         label: 'Inter' },
+  };
+
+  const CTA_SVG = `<svg viewBox="0 0 10 10" xmlns="http://www.w3.org/2000/svg"><path d="M1 5h8M5.5 1.5L9 5l-3.5 3.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/></svg>`;
+
   function bannerMediaHtml(b) {
-    if (b.imageUrl) return `<img src="${esc(b.imageUrl)}" alt="${esc(b.title || '')}" loading="lazy">`;
-    const style = b.bgStyle || 'background:#14262C;';
-    return `<div class="ad-fallback" style="${esc(style)}"><span class="ad-fallback-text">${esc(b.title || 'Publicidade')}</span></div>`;
+    // ── banner com imagem ──────────────────────────────────────────────────
+    if (b.imageUrl) {
+      const cta = b.linkUrl ? `<span class="ad-cta">${CTA_SVG} Clique aqui</span>` : '';
+      return `<img src="${esc(b.imageUrl)}" alt="${esc(b.title || '')}" loading="lazy">${cta}`;
+    }
+
+    // ── banner sem imagem: monta o conteúdo de texto ──────────────────────
+    const bgStyle  = b.bgStyle  || 'background:#14262C;';
+    const layout   = b.layout   || 'centered';
+    const fontKey  = b.fontStyle && BANNER_FONTS[b.fontStyle] ? b.fontStyle : 'fraunces';
+    const fontFam  = BANNER_FONTS[fontKey].family;
+    const subtitle = b.subtitle ? b.subtitle : '';
+    const icon     = b.icon     ? b.icon     : '';
+    const cta      = b.linkUrl  ? `<span class="ad-cta">${CTA_SVG} Clique aqui</span>` : '';
+
+    const titleHtml = `<span class="ad-fallback-text">${esc(b.title || 'Publicidade')}</span>`;
+
+    let inner = '';
+    if (layout === 'badge') {
+      inner = `<span class="ad-fallback-badge">${esc(icon || '★ Destaque')}</span>${titleHtml}`;
+    } else if (layout === 'titlesub' && subtitle) {
+      inner = `${titleHtml}<span class="ad-fallback-sub">${esc(subtitle)}</span>`;
+    } else if (layout === 'split') {
+      const ico = icon || '🏠';
+      inner = `<span class="ad-fallback-icon">${esc(ico)}</span><span class="ad-fallback-text">${esc(b.title || 'Publicidade')}${subtitle ? `<br><span class="ad-fallback-sub">${esc(subtitle)}</span>` : ''}</span>`;
+    } else {
+      inner = titleHtml;
+    }
+
+    return `<div class="ad-fallback" data-layout="${esc(layout)}" style="${esc(bgStyle)}font-family:${fontFam};">${inner}${cta}</div>`;
   }
 
   // ---------- render: ad-slots inline (banner único, ponderado) ----------
@@ -4816,6 +4949,11 @@ function escapeHtml(str) {
     $('banner-image-preview').innerHTML = editingImageData
       ? `<img src="${esc(editingImageData)}" style="max-height:70px;border-radius:2px;border:1px solid rgba(250,248,244,.2);">` : '';
     selectBgTheme(b.bgStyle || '');
+    selectFontOpt(b.fontStyle || 'fraunces');
+    selectLayoutOpt(b.layout || 'centered');
+    $('banner-subtitle').value = b.subtitle || '';
+    $('banner-icon').value = b.icon || '';
+    updateLayoutDependentFields(b.layout || 'centered');
     $('banner-save-btn').textContent = 'Atualizar banner';
     $('banner-cancel-btn').hidden = false;
     $('view-admin').scrollTo({ top: 0, behavior: 'smooth' });
@@ -4835,6 +4973,11 @@ function escapeHtml(str) {
     $('banner-active').checked = true;
     $('banner-weight').value = 1;
     selectBgTheme('');
+    selectFontOpt('fraunces');
+    selectLayoutOpt('centered');
+    $('banner-subtitle').value = '';
+    $('banner-icon').value = '';
+    updateLayoutDependentFields('centered');
   }
 
   function fileToDataURL(file) {
@@ -4895,6 +5038,76 @@ function escapeHtml(str) {
     { key: 'geral_rosa',    label: 'Rosa',     style: 'background:linear-gradient(135deg,#9D174D 0%,#EC4899 100%);' },
   ];
 
+  function buildFontPicker() {
+    const picker = $('banner-font-picker');
+    if (!picker) return;
+    const fonts = [
+      { key: 'fraunces',   label: 'Fraunces',      style: "font-family:'Fraunces',serif; font-weight:600;" },
+      { key: 'playfair',   label: 'Playfair',       style: "font-family:'Playfair Display',serif; font-weight:700; font-style:italic;" },
+      { key: 'montserrat', label: 'Montserrat',     style: "font-family:'Montserrat',sans-serif; font-weight:800; letter-spacing:-.01em;" },
+      { key: 'oswald',     label: 'Oswald',         style: "font-family:'Oswald',sans-serif; font-weight:600; letter-spacing:.04em; text-transform:uppercase;" },
+      { key: 'lora',       label: 'Lora',           style: "font-family:'Lora',serif; font-weight:600;" },
+      { key: 'dm',         label: 'DM Serif',       style: "font-family:'DM Serif Display',serif; font-weight:400;" },
+      { key: 'space',      label: 'Space Grotesk',  style: "font-family:'Space Grotesk',sans-serif; font-weight:700;" },
+      { key: 'raleway',    label: 'Raleway',        style: "font-family:'Raleway',sans-serif; font-weight:800; letter-spacing:.02em;" },
+      { key: 'inter',      label: 'Inter',          style: "font-family:'Inter',sans-serif; font-weight:700;" },
+    ];
+    picker.innerHTML = fonts.map((f) =>
+      `<div class="font-picker-opt${f.key === 'fraunces' ? ' selected' : ''}" data-key="${f.key}" style="${f.style}" title="${f.label}">${f.label}</div>`
+    ).join('');
+    picker.addEventListener('click', (e) => {
+      const opt = e.target.closest('.font-picker-opt');
+      if (!opt) return;
+      selectFontOpt(opt.dataset.key);
+    });
+  }
+
+  function selectFontOpt(key) {
+    const picker = $('banner-font-picker');
+    if (!picker) return;
+    $('banner-font-style').value = key || 'fraunces';
+    picker.querySelectorAll('.font-picker-opt').forEach((o) => o.classList.toggle('selected', o.dataset.key === (key || 'fraunces')));
+  }
+
+  // SVG previews para cada layout
+  const LAYOUT_SVGS = {
+    centered: `<svg viewBox="0 0 32 20" fill="none"><rect x="6" y="7" width="20" height="3" rx="1" fill="currentColor" opacity=".8"/><rect x="9" y="12" width="14" height="2" rx="1" fill="currentColor" opacity=".4"/></svg>`,
+    left:     `<svg viewBox="0 0 32 20" fill="none"><rect x="4" y="6" width="18" height="3" rx="1" fill="currentColor" opacity=".8"/><rect x="4" y="12" width="13" height="2" rx="1" fill="currentColor" opacity=".4"/></svg>`,
+    badge:    `<svg viewBox="0 0 32 20" fill="none"><rect x="10" y="4" width="12" height="3" rx="1.5" fill="currentColor" opacity=".5"/><rect x="6" y="10" width="20" height="3" rx="1" fill="currentColor" opacity=".85"/></svg>`,
+    titlesub: `<svg viewBox="0 0 32 20" fill="none"><rect x="4" y="5" width="24" height="4" rx="1" fill="currentColor" opacity=".85"/><rect x="7" y="12" width="18" height="2.5" rx="1" fill="currentColor" opacity=".4"/></svg>`,
+    split:    `<svg viewBox="0 0 32 20" fill="none"><rect x="2" y="6" width="8" height="8" rx="2" fill="currentColor" opacity=".4"/><rect x="13" y="7" width="17" height="3" rx="1" fill="currentColor" opacity=".85"/><rect x="13" y="12" width="12" height="2" rx="1" fill="currentColor" opacity=".4"/></svg>`,
+    large:    `<svg viewBox="0 0 32 20" fill="none"><rect x="3" y="6" width="26" height="5" rx="1" fill="currentColor" opacity=".85"/></svg>`,
+  };
+  const LAYOUT_LABELS = { centered: 'Centralizado', left: 'À esquerda', badge: 'Badge + título', titlesub: 'Título + sub', split: 'Ícone + texto', large: 'Título grande' };
+
+  function buildLayoutPicker() {
+    const picker = $('banner-layout-picker');
+    if (!picker) return;
+    picker.innerHTML = Object.entries(LAYOUT_LABELS).map(([key, label]) =>
+      `<div class="layout-picker-opt${key === 'centered' ? ' selected' : ''}" data-key="${key}" title="${label}">${LAYOUT_SVGS[key]}<span>${label}</span></div>`
+    ).join('');
+    picker.addEventListener('click', (e) => {
+      const opt = e.target.closest('.layout-picker-opt');
+      if (!opt) return;
+      selectLayoutOpt(opt.dataset.key);
+      updateLayoutDependentFields(opt.dataset.key);
+    });
+  }
+
+  function selectLayoutOpt(key) {
+    const picker = $('banner-layout-picker');
+    if (!picker) return;
+    $('banner-layout').value = key || 'centered';
+    picker.querySelectorAll('.layout-picker-opt').forEach((o) => o.classList.toggle('selected', o.dataset.key === (key || 'centered')));
+  }
+
+  function updateLayoutDependentFields(key) {
+    const needsSub  = key === 'titlesub' || key === 'split';
+    const needsIcon = key === 'badge'    || key === 'split';
+    $('banner-subtitle-wrap').classList.toggle('visible', needsSub);
+    $('banner-icon-wrap').classList.toggle('visible', needsIcon);
+  }
+
   function buildBgPicker() {
     const picker = $('banner-bg-picker');
     if (!picker) return;
@@ -4943,6 +5156,8 @@ function escapeHtml(str) {
   // ---------- binds do painel ----------
   function bindAdmin() {
     buildBgPicker();
+    buildFontPicker();
+    buildLayoutPicker();
     // login
     $('admin-login-form').addEventListener('submit', async (e) => {
       e.preventDefault();
@@ -5046,8 +5261,12 @@ function escapeHtml(str) {
       const banner = {
         id,
         title: $('banner-title').value.trim(),
+        subtitle: $('banner-subtitle').value.trim(),
+        icon: $('banner-icon').value.trim(),
         imageUrl,
         bgStyle: $('banner-bg-style').value || '',
+        fontStyle: $('banner-font-style').value || 'fraunces',
+        layout: $('banner-layout').value || 'centered',
         linkUrl: $('banner-link').value.trim(),
         placements,
         positions,
