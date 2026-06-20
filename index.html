@@ -112,6 +112,7 @@ img { max-width: 100%; }
    ============================================================ */
 .ad-slot:empty { display: none; }
 .ad-slot { margin: 0 auto 1.25rem; max-width: 760px; }
+.ad-slot-login { margin-top: 1.5rem; }
 .ad-banner {
   display: block; position: relative; text-decoration: none;
   border: 1px solid var(--line-soft); border-radius: var(--radius);
@@ -1463,6 +1464,10 @@ img { max-width: 100%; }
         <p class="field-error" id="signup-error"></p>
         <button type="submit" class="btn btn-primary btn-block">Criar minha conta</button>
       </form>
+
+      <!-- Banner da tela de login (abaixo do botão "Entrar no portal").
+           data-anypos: ignora a divisão cabeçalho/rodapé — aqui há um único espaço. -->
+      <div class="ad-slot ad-slot-login" data-placement="login" data-anypos="1"></div>
     </div>
 
     <div style="text-align:center;margin-top:1.4rem;">
@@ -2077,7 +2082,7 @@ img { max-width: 100%; }
           <label class="admin-toggle"><input type="checkbox" id="banner-active" checked> Ativo</label>
         </div>
         <div class="admin-field full">
-          <label>Onde exibir</label>
+          <label>Onde exibir <span style="font-weight:400;opacity:.6">(em quais telas)</span></label>
           <div class="placements-row" id="banner-placements">
             <label class="placement-chip checked"><input type="checkbox" value="all" checked> Em todo lugar</label>
             <label class="placement-chip"><input type="checkbox" value="portal"> Portal geral</label>
@@ -2085,6 +2090,14 @@ img { max-width: 100%; }
             <label class="placement-chip"><input type="checkbox" value="dashboard"> Painel do corretor</label>
             <label class="placement-chip"><input type="checkbox" value="explore"> Vitrine geral</label>
             <label class="placement-chip"><input type="checkbox" value="chat"> Mensagens</label>
+            <label class="placement-chip"><input type="checkbox" value="login"> Tela de login</label>
+          </div>
+        </div>
+        <div class="admin-field full">
+          <label>Posição na tela <span style="font-weight:400;opacity:.6">(escolha cabeçalho, rodapé ou ambos)</span></label>
+          <div class="placements-row" id="banner-positions">
+            <label class="placement-chip checked"><input type="checkbox" value="header" checked> Cabeçalho (faixa no topo)</label>
+            <label class="placement-chip checked"><input type="checkbox" value="footer" checked> Rodapé (carrossel fixo)</label>
           </div>
         </div>
         <p class="admin-error full" id="banner-error"></p>
@@ -4473,10 +4486,17 @@ function escapeHtml(str) {
     const pl = (b.placements && b.placements.length) ? b.placements : ['all'];
     return pl.some((p) => p === 'all' || p === placement);
   }
+  // posição na tela: 'header' (faixa do topo) ou 'footer' (carrossel fixo).
+  // Banners antigos sem o campo aparecem nos dois lugares (compatibilidade).
+  function matchesPosition(b, position) {
+    if (!position) return true;
+    const ps = (b.positions && b.positions.length) ? b.positions : ['header', 'footer'];
+    return ps.includes(position);
+  }
   let _banners = [];
   async function loadBanners() { _banners = await getAll('banners'); return _banners; }
-  function liveFor(placement) {
-    return _banners.filter((b) => isLive(b) && matchesPlacement(b, placement));
+  function liveFor(placement, position) {
+    return _banners.filter((b) => isLive(b) && matchesPlacement(b, placement) && matchesPosition(b, position));
   }
 
   // dedupe de impressões por sessão
@@ -4522,7 +4542,10 @@ function escapeHtml(str) {
 
   function renderAdSlots() {
     document.querySelectorAll('.ad-slot[data-placement]').forEach((slot) => {
-      const b = weightedPick(liveFor(slot.dataset.placement));
+      // faixas comuns mostram só banners de "cabeçalho"; a da tela de login
+      // (data-anypos) é um espaço único e aceita qualquer posição.
+      const pos = slot.dataset.anypos ? null : 'header';
+      const b = weightedPick(liveFor(slot.dataset.placement, pos));
       if (!b) { slot.innerHTML = ''; return; }
       if (slot.firstElementChild?.dataset?.bannerId === b.id) return;
       slot.innerHTML = `<a class="ad-banner" data-banner-id="${esc(b.id)}" href="${esc(b.linkUrl || '#')}" target="_blank" rel="noopener nofollow sponsored"><span class="ad-flag">Publicidade</span>${bannerMediaHtml(b)}</a>`;
@@ -4536,7 +4559,7 @@ function escapeHtml(str) {
   const carouselTimers = new WeakMap();
   function renderCarousels() {
     document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => {
-      const pool = liveFor(el.dataset.carousel);
+      const pool = liveFor(el.dataset.carousel, 'footer');
       // sinal de já renderizado com o mesmo conjunto de banners
       const signature = pool.map((b) => b.id).join(',');
       if (el.dataset.sig === signature) return;
@@ -4558,7 +4581,7 @@ function escapeHtml(str) {
       const dots = pool.length > 1
         ? `<div class="banner-carousel-dots">${pool.map((_, i) => `<button data-i="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Banner ${i + 1}"></button>`).join('')}</div>`
         : '';
-      el.innerHTML = `<span class="banner-carousel-label">Publicidade</span><div class="banner-carousel-track">${slides}</div>${dots}`;
+      el.innerHTML = `<div class="banner-carousel-track">${slides}</div>${dots}`;
 
       const track = el.querySelector('.banner-carousel-track');
       const dotEls = [...el.querySelectorAll('.banner-carousel-dots button')];
@@ -4672,7 +4695,8 @@ function escapeHtml(str) {
   }
 
   // ---------- lista de banners ----------
-  const PLACEMENT_LABELS = { all: 'Todo lugar', portal: 'Portal', portfolio: 'Catálogo', dashboard: 'Painel corretor', explore: 'Vitrine', chat: 'Mensagens' };
+  const PLACEMENT_LABELS = { all: 'Todo lugar', portal: 'Portal', portfolio: 'Catálogo', dashboard: 'Painel corretor', explore: 'Vitrine', chat: 'Mensagens', login: 'Login' };
+  const POSITION_LABELS = { header: 'Cabeçalho', footer: 'Rodapé' };
   async function renderBannerList() {
     const list = (await getAll('banners')).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
     const el = $('banner-list');
@@ -4686,6 +4710,7 @@ function escapeHtml(str) {
       const period = (b.startDate || b.endDate)
         ? `${b.startDate || '—'} → ${b.endDate || '∞'}` : 'Sem período definido';
       const pls = ((b.placements && b.placements.length) ? b.placements : ['all']).map((p) => PLACEMENT_LABELS[p] || p).join(', ');
+      const poss = ((b.positions && b.positions.length) ? b.positions : ['header', 'footer']).map((p) => POSITION_LABELS[p] || p).join(' + ');
       return `
         <div class="banner-item" data-id="${esc(b.id)}">
           <div class="thumb">${b.imageUrl ? `<img src="${esc(b.imageUrl)}" alt="">` : '<span class="noimg">SEM IMG</span>'}</div>
@@ -4693,6 +4718,7 @@ function escapeHtml(str) {
             <div class="bt">${esc(b.title || 'Sem título')} ${tag}</div>
             <div class="bs">
               <span>📍 ${esc(pls)}</span>
+              <span>📐 ${esc(poss)}</span>
               <span>🗓 ${esc(period)}</span>
               <span>👁 ${b.impressions || 0}</span>
               <span>🖱 ${b.clicks || 0}</span>
@@ -4737,6 +4763,16 @@ function escapeHtml(str) {
   function readPlacementsUI() {
     return [...$('banner-placements').querySelectorAll('input:checked')].map((c) => c.value);
   }
+  function setPositionsUI(positions) {
+    const set = new Set((positions && positions.length) ? positions : ['header', 'footer']);
+    $('banner-positions').querySelectorAll('input[type=checkbox]').forEach((cb) => {
+      cb.checked = set.has(cb.value);
+      cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
+    });
+  }
+  function readPositionsUI() {
+    return [...$('banner-positions').querySelectorAll('input:checked')].map((c) => c.value);
+  }
 
   async function editBanner(id) {
     const b = await getOne('banners', id); if (!b) return;
@@ -4748,6 +4784,7 @@ function escapeHtml(str) {
     $('banner-weight').value = b.weight || 1;
     $('banner-active').checked = b.active !== false;
     setPlacementsUI(b.placements);
+    setPositionsUI(b.positions);
     editingImageData = b.imageUrl || null;
     editingImageFile = null;
     $('banner-image-preview').innerHTML = editingImageData
@@ -4767,6 +4804,7 @@ function escapeHtml(str) {
     $('banner-cancel-btn').hidden = true;
     $('banner-error').textContent = '';
     setPlacementsUI(['all']);
+    setPositionsUI(['header', 'footer']);
     $('banner-active').checked = true;
     $('banner-weight').value = 1;
   }
@@ -4872,7 +4910,11 @@ function escapeHtml(str) {
       cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
     });
 
-    // preview de imagem (guarda o File para enviar ao Storage quando há nuvem)
+    // chips de posição (cabeçalho / rodapé)
+    $('banner-positions').addEventListener('change', (e) => {
+      const cb = e.target;
+      cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
+    });
     $('banner-image').addEventListener('change', async (e) => {
       const f = e.target.files?.[0];
       if (!f) return;
@@ -4890,6 +4932,8 @@ function escapeHtml(str) {
       const existing = $('banner-id').value ? await getOne('banners', id) : null;
       const placements = readPlacementsUI();
       if (!placements.length) { err.textContent = 'Escolha ao menos um local de exibição.'; return; }
+      const positions = readPositionsUI();
+      if (!positions.length) { err.textContent = 'Escolha ao menos uma posição: cabeçalho ou rodapé.'; return; }
       const start = $('banner-start').value;
       const end = $('banner-end').value;
       if (start && end && start > end) { err.textContent = 'A data de início não pode ser depois do fim.'; return; }
@@ -4918,6 +4962,7 @@ function escapeHtml(str) {
         imageUrl,
         linkUrl: $('banner-link').value.trim(),
         placements,
+        positions,
         startDate: start || '',
         endDate: end || '',
         weight: Math.max(1, parseInt($('banner-weight').value, 10) || 1),
