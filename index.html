@@ -1717,10 +1717,20 @@ img { max-width: 100%; }
         </div>
       </div>
       <div class="share-card">
+        <div class="share-stamp">LINK CURTO</div>
+        <p class="share-desc">
+          Link curto e fácil de divulgar, com o <strong>seu nome</strong>. Ideal para cartão, bio de redes sociais e WhatsApp.
+        </p>
+        <div class="share-link-row">
+          <input type="text" id="short-link-input" readonly>
+          <button class="btn btn-primary" id="btn-copy-short-link">Copiar link</button>
+        </div>
+      </div>
+      <div class="share-card" style="margin-top:1.5rem;">
         <div class="share-stamp">MEU PORTFÓLIO</div>
         <p class="share-desc">
-          Este é o link permanente do seu portfólio. Ele mostra apenas os imóveis marcados como
-          <strong>"visível para todos"</strong>. Envie para qualquer cliente — não é preciso login.
+          Link permanente do seu portfólio. Ele mostra apenas os imóveis marcados como
+          <strong>"visível para todos"</strong>. Funciona mesmo sem a configuração do link curto.
         </p>
         <div class="share-link-row">
           <input type="text" id="share-link-input" readonly>
@@ -2527,7 +2537,46 @@ const CloudService = {
 // BROKERS
 // ============================================================
 
+// apelido (slug) do corretor para o LINK CURTO: minúsculo, sem acento, com "_"
+// ex.: "Alex Peixoto" -> "alex_peixoto"
+function brokerSlugBase(name) {
+  return String(name || '')
+    .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '') || 'corretor';
+}
+
+// garante um slug único entre todos os corretores (acrescenta _2, _3… se repetir)
+async function uniqueBrokerSlug(name, excludeId) {
+  const base = brokerSlugBase(name);
+  let all = [];
+  try { all = await getAllBrokers(); } catch (_) {}
+  const taken = new Set(all.filter((b) => b.id !== excludeId).map((b) => (b.slug || brokerSlugBase(b.name))));
+  if (!taken.has(base)) return base;
+  let n = 2;
+  while (taken.has(base + '_' + n)) n++;
+  return base + '_' + n;
+}
+
+// encontra um corretor pelo slug do link curto (slug salvo ou derivado do nome)
+async function findBrokerBySlug(slug) {
+  if (!slug) return null;
+  const target = String(slug).toLowerCase();
+  if (isCloudActive()) {
+    try {
+      const { collection, query, where, getDocs } = _firestoreMod;
+      const snap = await getDocs(query(collection(firestoreDB, 'brokers'), where('slug', '==', target)));
+      if (!snap.empty) return snap.docs[0].data();
+    } catch (e) { console.error('findBrokerBySlug (nuvem):', e); }
+  }
+  let all = [];
+  try { all = await getAllBrokers(); } catch (_) {}
+  return all.find((b) => (b.slug || brokerSlugBase(b.name)) === target) || null;
+}
+
 async function createBroker({ name, creci, email, password, whatsapp }) {
+  const slug = await uniqueBrokerSlug(name);
   if (isCloudActive()) {
     const { collection, query, where, getDocs, doc, setDoc } = _firestoreMod;
     const brokersRef = collection(firestoreDB, 'brokers');
@@ -2542,6 +2591,7 @@ async function createBroker({ name, creci, email, password, whatsapp }) {
       email: email.toLowerCase(),
       password, // nota: hashing real exigiria backend; aqui é armazenamento simples
       whatsapp: whatsapp || '',
+      slug,
       createdAt: Date.now(),
     };
     await setDoc(doc(firestoreDB, 'brokers', broker.id), broker);
@@ -2566,6 +2616,7 @@ async function createBroker({ name, creci, email, password, whatsapp }) {
     email: email.toLowerCase(),
     password,
     whatsapp: whatsapp || '',
+    slug,
     createdAt: Date.now(),
   };
 
@@ -2818,6 +2869,9 @@ const DB = {
   findBrokerByEmail,
   getBrokerById,
   getAllBrokers,
+  findBrokerBySlug,
+  uniqueBrokerSlug,
+  brokerSlugBase,
   createProperty,
   updateProperty,
   deleteProperty,
@@ -3111,15 +3165,19 @@ async function boot() {
   const isPublicRoute = hash.startsWith('#portfolio/');
   const isPortalRoute = hash === '#portal';
   const isAdminRoute = hash === '#admin';
+  // LINK CURTO: caminho tipo /alex_peixoto (sem #). Requer rewrite no servidor
+  // (qualquer caminho -> index.html). Sem isso, o servidor responde 404.
+  const pathSlug = getPathSlug();
+  const isPrettyRoute = !!pathSlug && !isPublicRoute && !isPortalRoute && !isAdminRoute;
 
   if (CloudService.isConfigured()) {
     const result = await CloudService.initFirebase();
     if (!result.ok) {
       console.error('Firebase configurado mas não foi possível conectar:', result.reason);
-      if (!isPublicRoute && !isPortalRoute && !isAdminRoute) {
+      if (!isPublicRoute && !isPortalRoute && !isAdminRoute && !isPrettyRoute) {
         showToast('Nuvem: ' + (result.reason || 'falha desconhecida') + ' — usando dados locais.', 6000);
       }
-    } else if (!isPublicRoute && !isPortalRoute && !isAdminRoute) {
+    } else if (!isPublicRoute && !isPortalRoute && !isAdminRoute && !isPrettyRoute) {
       const chatViaCloud = ChatService.isUsingFirebase();
       console.info('Nuvem conectada. Chat sincronizado entre dispositivos:', chatViaCloud);
       if (!chatViaCloud) {
@@ -3131,6 +3189,12 @@ async function boot() {
   // Sinaliza ao painel administrativo que a nuvem já foi inicializada (ou que
   // falhou), para que ele leia banners/métricas/admins do lugar certo.
   try { _resolveCloudReady(!!window.CloudBridge?.isActive()); } catch (_) {}
+
+  if (isPrettyRoute) {
+    const broker = await DB.findBrokerBySlug(pathSlug);
+    if (broker) { await renderPublicPortfolio(broker.id); return; }
+    // apelido não encontrado: segue para o fluxo normal do app (tela de login)
+  }
 
   if (isAdminRoute) {
     showView('view-admin');
@@ -3245,6 +3309,7 @@ function bindGlobalEvents() {
   document.getElementById('chat-search').addEventListener('input', (e) => renderChatContacts(e.target.value));
 
   // share
+  document.getElementById('btn-copy-short-link').addEventListener('click', copyShortLink);
   document.getElementById('btn-copy-link').addEventListener('click', copyShareLink);
   document.getElementById('btn-copy-portal-link').addEventListener('click', copyPortalLink);
   document.getElementById('btn-preview-portfolio').addEventListener('click', () => {
@@ -3256,13 +3321,12 @@ function bindGlobalEvents() {
   });
   document.getElementById('public-back-link').addEventListener('click', (e) => {
     e.preventDefault();
-    window.location.hash = '';
-    window.location.reload();
+    // sai do link curto/portfólio e abre o portal geral a partir da raiz do site
+    window.location.href = window.location.origin + '/#portal';
   });
   document.getElementById('portal-back-link').addEventListener('click', (e) => {
     e.preventDefault();
-    window.location.hash = '';
-    window.location.reload();
+    window.location.href = window.location.origin + '/';
   });
 
   // perfil do corretor
@@ -3393,7 +3457,7 @@ async function switchScreen(viewName) {
     await renderChatContacts('');
     closeMobileChatConversation();
   } else if (viewName === 'share') {
-    renderShareScreen();
+    await renderShareScreen();
   }
 }
 
@@ -3796,14 +3860,50 @@ function buildPublicUrl(brokerId, brokerName) {
   return `${base}#portfolio/${brokerId}${slug ? '-' + slug : ''}`;
 }
 
+// LINK CURTO: https://dominio/alex_peixoto  (precisa do rewrite no servidor)
+function buildShortUrl(slug) {
+  return `${window.location.origin}/${slug}`;
+}
+
+// lê o "apelido" do caminho da URL (ex.: /alex_peixoto). Ignora arquivos e raiz.
+function getPathSlug() {
+  try {
+    const seg = decodeURIComponent((window.location.pathname || '/').split('/').filter(Boolean)[0] || '');
+    if (!seg) return '';
+    if (/\.(html?|js|css|json|png|jpe?g|svg|ico|webmanifest|map|txt|xml)$/i.test(seg)) return '';
+    return seg.toLowerCase();
+  } catch (_) { return ''; }
+}
+
 function buildPortalUrl() {
   const base = window.location.href.split('#')[0];
   return `${base}#portal`;
 }
 
-function renderShareScreen() {
+async function renderShareScreen() {
+  // garante que o corretor tenha um apelido (slug) salvo para o link curto
+  if (currentBroker && !currentBroker.slug) {
+    try {
+      const slug = await DB.uniqueBrokerSlug(currentBroker.name, currentBroker.id);
+      const updated = await DB.updateBroker(currentBroker.id, { slug });
+      currentBroker = updated || { ...currentBroker, slug };
+    } catch (e) { console.error('Não foi possível gerar o apelido do link curto:', e); }
+  }
+  const slug = (currentBroker && currentBroker.slug) || DB.brokerSlugBase(currentBroker?.name);
+  const shortInput = document.getElementById('short-link-input');
+  if (shortInput) shortInput.value = buildShortUrl(slug);
   document.getElementById('share-link-input').value = buildPublicUrl(currentBroker.id, currentBroker.name);
   document.getElementById('portal-link-input').value = buildPortalUrl();
+}
+
+function copyShortLink() {
+  const input = document.getElementById('short-link-input');
+  if (!input) return;
+  input.select();
+  navigator.clipboard
+    .writeText(input.value)
+    .then(() => showToast('Link curto copiado!'))
+    .catch(() => { document.execCommand('copy'); showToast('Link curto copiado!'); });
 }
 
 function copyShareLink() {
