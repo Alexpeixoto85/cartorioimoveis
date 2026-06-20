@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
 <title>Vitrine Imobiliária — Portal de Corretores</title>
-<meta name="theme-color" content="#1C1E1D">
+<meta name="theme-color" content="#14262C">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Vitrine Imob.">
@@ -33,19 +33,21 @@
    DESIGN TOKENS
    ============================================================ */
 :root {
-  /* paleta */
-  --ink: #1C1E1D;
-  --paper: #FAF8F4;
-  --paper-dim: #F0ECE3;
-  --line: #D8D2C4;
-  --line-soft: #E8E3D7;
-  --terracotta: #B5512A;
-  --terracotta-deep: #8F3F1F;
-  --olive: #5C6650;
-  --olive-deep: #444C3B;
-  --rust: #9C3B2E;
-  --amber: #B7872E;
-  --ink-soft: #5A5650;
+  /* paleta — "Petróleo & Latão": premium, sóbria e coerente com o mercado imobiliário.
+     Petróleo profundo (confiança) + latão/dourado (sofisticação) + marfim quente (acolhimento).
+     Os nomes de token foram mantidos por compatibilidade; só os valores mudaram. */
+  --ink: #14262C;          /* petróleo-carvão — texto e superfícies escuras */
+  --paper: #F7F5EF;        /* marfim quente */
+  --paper-dim: #EBE7DC;    /* pedra suave */
+  --line: #D6D0C2;
+  --line-soft: #E6E1D4;
+  --terracotta: #15606B;       /* marca primária — petróleo (CTAs, ativo, links) */
+  --terracotta-deep: #0E4954;  /* petróleo profundo (hover / links) */
+  --olive: #4C6A68;            /* secundária — verde-ardósia */
+  --olive-deep: #36504E;
+  --rust: #B23A2E;             /* erro / alerta — tijolo quente */
+  --amber: #B5893A;            /* destaque premium — latão/dourado */
+  --ink-soft: #5C6566;         /* texto atenuado */
 
   /* tipografia */
   --font-display: 'Fraunces', serif;
@@ -54,8 +56,8 @@
 
   /* layout */
   --radius: 2px;
-  --shadow-card: 0 1px 0 rgba(28,30,29,0.04), 0 8px 24px -12px rgba(28,30,29,0.18);
-  --shadow-modal: 0 24px 64px -16px rgba(28,30,29,0.35);
+  --shadow-card: 0 1px 0 rgba(20,38,44,0.04), 0 8px 24px -12px rgba(20,38,44,0.18);
+  --shadow-modal: 0 24px 64px -16px rgba(20,38,44,0.35);
 
   /* safe areas (notch / home indicator) */
   --sat: env(safe-area-inset-top, 0px);
@@ -115,8 +117,7 @@ img { max-width: 100%; }
   border: 1px solid var(--line); border-radius: var(--radius);
   overflow: hidden; background: var(--ink); box-shadow: var(--shadow-card);
 }
-.ad-banner { max-width: 760px; margin-left: auto; margin-right: auto; }
-.ad-banner img { display: block; width: 100%; height: auto; max-height: 170px; object-fit: cover; }
+.ad-banner img { display: block; width: 100%; height: auto; }
 .ad-banner .ad-fallback {
   padding: 1.4rem 1.5rem; color: var(--paper); text-align: center;
   font-family: var(--font-display); font-weight: 600; font-size: 1.15rem;
@@ -124,7 +125,7 @@ img { max-width: 100%; }
 .ad-banner .ad-flag {
   position: absolute; top: 8px; right: 8px;
   font-family: var(--font-mono); font-size: .56rem; letter-spacing: .1em;
-  color: rgba(250,248,244,.78); background: rgba(28,30,29,.55);
+  color: rgba(250,248,244,.78); background: rgba(20,38,44,.55);
   padding: .15rem .4rem; border-radius: 2px; text-transform: uppercase;
 }
 .chat-layout + .ad-slot, #screen-chat .ad-slot { max-width: none; }
@@ -425,7 +426,7 @@ img { max-width: 100%; }
 .mobile-menu-overlay {
   display: none;
   position: fixed; inset: 0;
-  background: rgba(28,30,29,0.5);
+  background: rgba(20,38,44,0.5);
   z-index: 90;
 }
 .mobile-menu-overlay.active { display: flex; align-items: flex-start; justify-content: center; }
@@ -539,7 +540,7 @@ img { max-width: 100%; }
   position: absolute; top: 0.7rem; left: 0.7rem;
   font-size: 0.65rem; font-weight: 700; font-family: var(--font-mono);
   padding: 0.25rem 0.5rem; border-radius: var(--radius);
-  background: rgba(28,30,29,0.78); color: var(--paper);
+  background: rgba(20,38,44,0.78); color: var(--paper);
 }
 
 .property-body { padding: 1rem 1.1rem 1.1rem; display: flex; flex-direction: column; gap: 0.5rem; flex: 1; }
@@ -575,7 +576,7 @@ img { max-width: 100%; }
    ============================================================ */
 .modal-overlay {
   display: none;
-  position: fixed; inset: 0; background: rgba(28,30,29,0.5);
+  position: fixed; inset: 0; background: rgba(20,38,44,0.5);
   align-items: center; justify-content: center; z-index: 100;
   padding: 2rem;
 }
@@ -610,7 +611,7 @@ img { max-width: 100%; }
 .photo-preview-item { position: relative; width: 80px; height: 80px; border-radius: var(--radius); overflow: hidden; border: 1px solid var(--line); }
 .photo-preview-item img { width: 100%; height: 100%; object-fit: cover; }
 .photo-preview-remove {
-  position: absolute; top: 2px; right: 2px; background: rgba(28,30,29,0.75); color: #fff;
+  position: absolute; top: 2px; right: 2px; background: rgba(20,38,44,0.75); color: #fff;
   border: none; width: 18px; height: 18px; font-size: 0.7rem; border-radius: 999px; line-height: 1;
 }
 
@@ -936,7 +937,7 @@ img { max-width: 100%; }
   display: flex; flex-direction: column; gap: 0.1rem;
   margin: -0.1rem -0.2rem 0.5rem; padding: 0.45rem 0.6rem;
   border-radius: var(--radius);
-  background: rgba(181,81,42,0.10); border: 1px solid rgba(181,81,42,0.25);
+  background: rgba(21,96,107,0.10); border: 1px solid rgba(21,96,107,0.25);
 }
 .chat-bubble-mine .chat-property-ref { background: rgba(250,248,244,0.14); border-color: rgba(250,248,244,0.25); }
 .chat-property-ref-tag {
@@ -1233,8 +1234,7 @@ img { max-width: 100%; }
    CARROSSEL DE BANNERS (rodapé do portal / catálogos / painel)
    ============================================================ */
 .banner-carousel {
-  position: relative; width: 100%; max-width: 760px; margin-left: auto; margin-right: auto;
-  overflow: hidden;
+  position: relative; width: 100%; overflow: hidden;
   background: var(--paper-dim); border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -1247,20 +1247,19 @@ img { max-width: 100%; }
   padding: .12rem .5rem; border-radius: 999px; pointer-events: none;
 }
 .banner-carousel-track {
-  display: flex; will-change: transform; width: 100%;
-  transition: transform .7s cubic-bezier(.4, 0, .15, 1);
+  display: flex; will-change: transform;
+  transition: transform .9s cubic-bezier(.4, 0, .15, 1);
 }
 .banner-carousel-slide {
-  flex: 0 0 100%; min-width: 100%; width: 100%; height: 150px;
-  display: block; overflow: hidden;
+  flex: 0 0 100%; min-width: 100%;
+  display: flex; align-items: center; justify-content: center;
 }
-.banner-carousel-slide > a,
-.banner-carousel-slide > .banner-video {
-  display: block; position: relative; width: 100%; height: 100%;
-  text-decoration: none; background: var(--ink);
+.banner-carousel-slide a {
+  display: block; position: relative; width: 100%; text-decoration: none;
+  background: var(--ink);
 }
 .banner-carousel-slide img {
-  display: block; width: 100%; height: 100%;
+  display: block; width: 100%; height: auto; max-height: 160px;
   object-fit: cover; object-position: center;
 }
 .banner-carousel-slide .ad-fallback {
@@ -1268,86 +1267,29 @@ img { max-width: 100%; }
   font-family: var(--font-display); font-weight: 600; font-size: 1.2rem;
 }
 .banner-carousel-slide .ad-flag {
-  position: absolute; top: 8px; left: 8px; z-index: 2;
+  position: absolute; top: 8px; right: 8px; z-index: 2;
   font-family: var(--font-mono); font-size: .54rem; letter-spacing: .1em;
-  color: rgba(250,248,244,.82); background: rgba(28,30,29,.55);
+  color: rgba(250,248,244,.82); background: rgba(20,38,44,.55);
   padding: .15rem .4rem; border-radius: 2px; text-transform: uppercase;
 }
-/* botão de ocultar publicidade (sobretudo no celular) */
-.banner-carousel-close {
-  position: absolute; top: 6px; right: 6px; z-index: 5;
-  width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer;
-  background: rgba(28,30,29,.62); color: #fff; font-size: 1.05rem; line-height: 1;
-  display: none; align-items: center; justify-content: center; padding: 0;
-}
-.banner-carousel-close:hover { background: rgba(28,30,29,.85); }
 .banner-carousel-dots {
   position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
   z-index: 3; display: flex; gap: 6px;
 }
 .banner-carousel-dots button {
   width: 7px; height: 7px; padding: 0; border: none; border-radius: 50%;
-  background: rgba(28,30,29,.28); cursor: pointer; transition: background .25s, transform .25s;
+  background: rgba(20,38,44,.28); cursor: pointer; transition: background .25s, transform .25s;
 }
 .banner-carousel-dots button.active { background: var(--terracotta); transform: scale(1.25); }
 /* rodapé fixo do portal/catálogo */
 .banner-carousel-fixed {
   position: sticky; bottom: 0; left: 0; right: 0; z-index: 40;
-  box-shadow: 0 -6px 20px -12px rgba(28,30,29,.4);
+  box-shadow: 0 -6px 20px -12px rgba(20,38,44,.4);
   padding-bottom: var(--sab);
 }
 /* dentro do app (painel do corretor), respeita a tab bar no mobile */
 @media (max-width: 768px) {
   .view-app .banner-carousel-fixed { bottom: calc(var(--tabbar-h) + var(--sab)); padding-bottom: 0; }
-  .banner-carousel-close { display: flex; }
-}
-/* carrossel de cabeçalho (topo da tela, fluindo com o conteúdo) */
-.banner-carousel-top {
-  position: relative; z-index: 1; max-width: 760px; margin: 0 auto 1.25rem;
-  border-top: 1px solid var(--line); border-radius: var(--radius);
-}
-.banner-carousel-top:empty, .banner-carousel-top.is-empty { display: none; }
-
-/* ============================================================
-   BANNER EM VÍDEO (YouTube) + MODAL DE VÍDEO NA PLATAFORMA
-   ============================================================ */
-.banner-video { position: relative; width: 100%; height: 100%; display: block; cursor: pointer; background: #000; overflow: hidden; }
-.banner-video img { width: 100%; height: 100%; object-fit: cover; display: block; }
-.banner-video .bv-preview { position: absolute; inset: 0; z-index: 1; background: #000; }
-.banner-video .bv-preview iframe { width: 100%; height: 100%; border: 0; display: block; pointer-events: none; }
-.banner-video-play {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;
-  width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer;
-  background: rgba(28,30,29,.72); color: #fff; font-size: 1.05rem;
-  display: flex; align-items: center; justify-content: center; padding-left: 3px;
-  transition: background .2s, transform .2s, opacity .2s;
-}
-.banner-video:hover .banner-video-play { background: var(--terracotta); transform: translate(-50%, -50%) scale(1.08); }
-.banner-video.previewing .banner-video-play { opacity: .85; }
-
-.video-modal-overlay {
-  position: fixed; inset: 0; z-index: 200; background: rgba(10,11,10,.88);
-  display: none; align-items: center; justify-content: center; padding: 1.2rem;
-}
-.video-modal-overlay.active { display: flex; }
-.video-modal { position: relative; width: 100%; max-width: 880px; aspect-ratio: 16 / 9; background: #000; border-radius: 6px; overflow: hidden; box-shadow: 0 20px 60px -20px rgba(0,0,0,.8); }
-.video-modal .video-modal-frame, .video-modal iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
-.video-modal-close {
-  position: absolute; top: -2.7rem; right: 0; background: none; border: none;
-  color: #fff; font-size: 2rem; line-height: 1; cursor: pointer;
-}
-@media (max-width: 640px) { .video-modal-close { top: .2rem; right: .4rem; z-index: 2; text-shadow: 0 1px 4px rgba(0,0,0,.8); } }
-
-/* ============================================================
-   GOOGLE ADSENSE SLOTS
-   ============================================================ */
-.google-ad-slot { width: 100%; max-width: 760px; margin: 0 auto 1.25rem; text-align: center; }
-.google-ad-slot:empty { display: none; }
-.google-ad-slot ins { display: block; }
-.google-ad-slot.google-ad-fixed {
-  position: sticky; bottom: 0; left: 0; right: 0; z-index: 39;
-  margin-bottom: 0; padding-bottom: var(--sab); background: var(--paper-dim);
-  border-top: 1px solid var(--line);
 }
 
 /* ============================================================
@@ -1388,16 +1330,16 @@ img { max-width: 100%; }
 .admin-field input::placeholder, .admin-field textarea::placeholder { color: rgba(250,248,244,.35); }
 .admin-field input:focus, .admin-field select:focus, .admin-field textarea:focus {
   outline: 2px solid var(--terracotta); outline-offset: 1px; }
-.admin-field select option { color: #1C1E1D; }
-.admin-error { color: #E8957F; font-size: .82rem; min-height: 1em; margin: .2rem 0 .6rem; }
+.admin-field select option { color: #14262C; }
+.admin-error { color: #E59076; font-size: .82rem; min-height: 1em; margin: .2rem 0 .6rem; }
 .admin-btn { background: var(--terracotta); color: var(--paper); border: none;
   border-radius: var(--radius); padding: .7rem 1rem; font-size: .92rem; font-weight: 600; width: 100%; }
 .admin-btn:hover { background: var(--terracotta-deep); }
 .admin-btn-sm { width: auto; padding: .5rem .85rem; font-size: .82rem; }
 .admin-btn-ghost { background: none; border: 1px solid rgba(250,248,244,.25); color: var(--paper); }
 .admin-btn-ghost:hover { border-color: var(--terracotta); color: var(--terracotta); background: none; }
-.admin-btn-danger { background: none; border: 1px solid rgba(232,149,127,.5); color: #E8957F; }
-.admin-btn-danger:hover { background: rgba(232,149,127,.12); }
+.admin-btn-danger { background: none; border: 1px solid rgba(229,144,118,.5); color: #E59076; }
+.admin-btn-danger:hover { background: rgba(229,144,118,.12); }
 
 /* métricas */
 .admin-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
@@ -1408,7 +1350,7 @@ img { max-width: 100%; }
   color: var(--paper); line-height: 1; }
 .metric-card .metric-label { font-family: var(--font-mono); font-size: .62rem; letter-spacing: .12em;
   text-transform: uppercase; color: var(--amber); margin-top: .5rem; }
-.metric-card.accent { border-color: rgba(181,81,42,.5); background: rgba(181,81,42,.12); }
+.metric-card.accent { border-color: rgba(21,96,107,.5); background: rgba(21,96,107,.12); }
 
 .admin-section { margin-bottom: 2.4rem; }
 .admin-section-head { display: flex; align-items: center; justify-content: space-between;
@@ -1428,7 +1370,7 @@ img { max-width: 100%; }
   background: rgba(250,248,244,.06); border: 1px solid rgba(250,248,244,.18);
   border-radius: 999px; padding: .3rem .7rem; font-size: .78rem; cursor: pointer; user-select: none; }
 .placement-chip input { accent-color: var(--terracotta); }
-.placement-chip.checked { background: rgba(181,81,42,.2); border-color: var(--terracotta); }
+.placement-chip.checked { background: rgba(21,96,107,.2); border-color: var(--terracotta); }
 
 .banner-list { display: grid; gap: .8rem; }
 .banner-item { display: flex; gap: .9rem; align-items: center;
@@ -1447,7 +1389,7 @@ img { max-width: 100%; }
 .status-tag { font-family: var(--font-mono); font-size: .58rem; letter-spacing: .08em;
   text-transform: uppercase; padding: .12rem .45rem; border-radius: 2px; }
 .status-tag.on { background: rgba(92,102,80,.4); color: #C9D6BA; }
-.status-tag.off { background: rgba(28,30,29,.5); color: rgba(250,248,244,.5); }
+.status-tag.off { background: rgba(20,38,44,.5); color: rgba(250,248,244,.5); }
 .status-tag.sched { background: rgba(183,135,46,.3); color: #E6C77E; }
 
 .users-list { display: grid; gap: .6rem; }
@@ -1534,8 +1476,7 @@ img { max-width: 100%; }
   </header>
   <main class="public-main">
     <div class="public-intro" id="public-intro"></div>
-    <div class="banner-carousel banner-carousel-top is-empty" data-carousel="portfolio" data-position="header"></div>
-    <div class="google-ad-slot" data-placement="portfolio" data-position="header"></div>
+    <div class="ad-slot" data-placement="portfolio"></div>
     <div class="grid-properties" id="public-properties-grid"></div>
     <div class="empty-state" id="public-empty" hidden>
       <p>Este corretor ainda não publicou imóveis no portfólio público.</p>
@@ -1545,8 +1486,7 @@ img { max-width: 100%; }
     <span>Gerado pelo Cartório de Imóveis</span>
     <a href="#" id="public-back-link">Acessar o portal</a>
   </footer>
-  <div class="google-ad-slot google-ad-fixed" data-placement="portfolio" data-position="footer"></div>
-  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="portfolio" data-position="footer"></div>
+  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="portfolio"></div>
 </div>
 
 <!-- ============ TELA: PORTAL GERAL (todos os corretores — link do cliente) ============ -->
@@ -1564,8 +1504,7 @@ img { max-width: 100%; }
     <input type="search" id="portal-search" class="search-input" placeholder="Buscar por cidade, bairro, tipo, título…" style="max-width:38rem;width:100%;">
   </div>
   <main class="portal-main">
-    <div class="banner-carousel banner-carousel-top is-empty" data-carousel="portal" data-position="header"></div>
-    <div class="google-ad-slot" data-placement="portal" data-position="header"></div>
+    <div class="ad-slot" data-placement="portal"></div>
     <div class="grid-properties" id="portal-properties-grid"></div>
     <div class="empty-state" id="portal-empty" hidden>
       <p>Nenhum imóvel disponível no portal no momento.</p>
@@ -1575,8 +1514,7 @@ img { max-width: 100%; }
     <span>Gerado pelo Cartório de Imóveis</span>
     <a href="#" id="portal-back-link">Acessar o portal</a>
   </footer>
-  <div class="google-ad-slot google-ad-fixed" data-placement="portal" data-position="footer"></div>
-  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="portal" data-position="footer"></div>
+  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="portal"></div>
 </div>
 
 <!-- ============ APP PRINCIPAL (autenticado) ============ -->
@@ -1668,8 +1606,7 @@ img { max-width: 100%; }
         <button class="btn btn-primary" id="btn-new-property">+ Cadastrar imóvel</button>
       </div>
 
-      <div class="banner-carousel banner-carousel-top is-empty" data-carousel="dashboard" data-position="header"></div>
-      <div class="google-ad-slot" data-placement="dashboard" data-position="header"></div>
+      <div class="ad-slot" data-placement="dashboard"></div>
 
       <div class="filter-bar">
         <button class="filter-chip active" data-filter="all">Todos</button>
@@ -1695,8 +1632,7 @@ img { max-width: 100%; }
           <h2 class="screen-title">Vitrine geral</h2>
         </div>
       </div>
-      <div class="banner-carousel banner-carousel-top is-empty" data-carousel="explore" data-position="header"></div>
-      <div class="google-ad-slot" data-placement="explore" data-position="header"></div>
+      <div class="ad-slot" data-placement="explore"></div>
       <div class="filter-bar">
         <input type="search" id="explore-search" class="search-input" placeholder="Buscar por cidade, bairro, tipo...">
       </div>
@@ -1708,8 +1644,7 @@ img { max-width: 100%; }
 
     <!-- ---- CHAT ---- -->
     <section class="screen" id="screen-chat">
-      <div class="banner-carousel banner-carousel-top is-empty" data-carousel="chat" data-position="header"></div>
-      <div class="google-ad-slot" data-placement="chat" data-position="header"></div>
+      <div class="ad-slot" data-placement="chat"></div>
       <div class="chat-layout" id="chat-layout">
         <div class="chat-contacts" id="chat-contacts-panel">
           <div class="chat-contacts-head">
@@ -1779,8 +1714,7 @@ img { max-width: 100%; }
     </section>
 
   </main>
-  <div class="google-ad-slot google-ad-fixed" data-placement="dashboard" data-position="footer"></div>
-  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="dashboard" data-position="footer"></div>
+  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="dashboard"></div>
 </div>
 
 <!-- ============ MODAL: CADASTRAR / EDITAR IMÓVEL ============ -->
@@ -1963,9 +1897,10 @@ img { max-width: 100%; }
     </div>
     <div class="modal-body">
       <p class="firebase-explain">
-        Este app já está conectado à nuvem por padrão. Use esta tela apenas se quiser
-        apontar para um projeto Firebase diferente do seu, ou para desconectar e voltar
-        a salvar tudo localmente neste navegador.
+        Este app já está conectado à nuvem por padrão. Tudo é sincronizado e compartilhado
+        entre todos os usuários: corretores, imóveis, fotos dos imóveis, mensagens, banners,
+        métricas e administradores. Use esta tela apenas se quiser apontar para um projeto
+        Firebase diferente, ou desconectar e voltar a salvar tudo localmente neste navegador.
       </p>
       <label class="field">
         <span class="field-label">apiKey</span>
@@ -2114,13 +2049,8 @@ img { max-width: 100%; }
         <div class="admin-field full">
           <label for="banner-image">Imagem do banner</label>
           <input type="file" id="banner-image" accept="image/*">
-          <small style="color:rgba(250,248,244,.45);font-size:.72rem;">Recomendado: proporção larga, ex. 1200×300px. A imagem é salva no Firebase Storage (mesma nuvem das fotos dos imóveis) quando a nuvem está conectada.</small>
+          <small style="color:rgba(250,248,244,.45);font-size:.72rem;">Recomendado: 1200×300px. Com a nuvem ativa, a imagem é enviada ao Firebase Storage e fica visível para todos os usuários.</small>
           <div id="banner-image-preview" style="margin-top:.5rem;"></div>
-        </div>
-        <div class="admin-field full">
-          <label for="banner-video">Vídeo do YouTube (URL) <span style="font-weight:400;opacity:.6">(opcional)</span></label>
-          <input type="url" id="banner-video" placeholder="https://www.youtube.com/watch?v=...">
-          <small style="color:rgba(250,248,244,.45);font-size:.72rem;">Se preenchido, o banner vira um vídeo: aparece a miniatura com botão de play e o vídeo toca dentro da própria plataforma, sem sair. Tem prioridade sobre a imagem.</small>
         </div>
         <div class="admin-field full">
           <label for="banner-link">Link de destino (URL)</label>
@@ -2140,13 +2070,6 @@ img { max-width: 100%; }
         </div>
         <div class="admin-field">
           <label class="admin-toggle"><input type="checkbox" id="banner-active" checked> Ativo</label>
-        </div>
-        <div class="admin-field full">
-          <label>Posição na tela <span style="font-weight:400;opacity:.6">(escolha apenas uma)</span></label>
-          <div class="placements-row" id="banner-position">
-            <label class="placement-chip checked"><input type="radio" name="banner-pos" value="header" checked> Cabeçalho (parte de cima)</label>
-            <label class="placement-chip"><input type="radio" name="banner-pos" value="footer"> Rodapé (parte de baixo)</label>
-          </div>
         </div>
         <div class="admin-field full">
           <label>Onde exibir</label>
@@ -2170,50 +2093,6 @@ img { max-width: 100%; }
         <span class="eyebrow-mono">Banners cadastrados</span>
         <div class="banner-list" id="banner-list" style="margin-top:.6rem;"></div>
       </div>
-    </div>
-
-    <!-- ANÚNCIOS DO GOOGLE (ADSENSE) -->
-    <div class="admin-section">
-      <div class="admin-section-head">
-        <div><span class="eyebrow-mono">Monetização</span><h3>Anúncios do Google (AdSense)</h3></div>
-      </div>
-      <p class="firebase-explain" style="color:rgba(250,248,244,.6);margin-bottom:1rem;">
-        Exibe anúncios automáticos do Google AdSense. Informe o ID do publisher e o ID do bloco de anúncio
-        criados no painel do AdSense. Os anúncios aparecem nos locais e na posição que você escolher.
-      </p>
-      <form class="admin-grid-form" id="adsense-form">
-        <div class="admin-field full">
-          <label class="admin-toggle"><input type="checkbox" id="adsense-enabled"> Ativar anúncios do Google</label>
-        </div>
-        <div class="admin-field">
-          <label for="adsense-client">ID do publisher (data-ad-client)</label>
-          <input type="text" id="adsense-client" placeholder="ca-pub-0000000000000000">
-        </div>
-        <div class="admin-field">
-          <label for="adsense-slot">ID do bloco (data-ad-slot)</label>
-          <input type="text" id="adsense-slot" placeholder="1234567890">
-        </div>
-        <div class="admin-field full">
-          <label>Posição na tela <span style="font-weight:400;opacity:.6">(escolha apenas uma)</span></label>
-          <div class="placements-row" id="adsense-position">
-            <label class="placement-chip checked"><input type="radio" name="adsense-pos" value="footer" checked> Rodapé</label>
-            <label class="placement-chip"><input type="radio" name="adsense-pos" value="header"> Cabeçalho</label>
-          </div>
-        </div>
-        <div class="admin-field full">
-          <label>Onde exibir</label>
-          <div class="placements-row" id="adsense-placements">
-            <label class="placement-chip checked"><input type="checkbox" value="all" checked> Em todo lugar</label>
-            <label class="placement-chip"><input type="checkbox" value="portal"> Portal geral</label>
-            <label class="placement-chip"><input type="checkbox" value="portfolio"> Catálogo do cliente</label>
-            <label class="placement-chip"><input type="checkbox" value="dashboard"> Painel do corretor</label>
-          </div>
-        </div>
-        <p class="admin-error full" id="adsense-error"></p>
-        <div class="full" style="display:flex;gap:.6rem;">
-          <button type="submit" class="admin-btn admin-btn-sm" id="adsense-save-btn">Salvar anúncios do Google</button>
-        </div>
-      </form>
     </div>
 
     <!-- USUÁRIOS -->
@@ -2269,8 +2148,12 @@ img { max-width: 100%; }
 //   - properties-> Firestore, coleção "properties"
 //   - fotos     -> Firebase Storage, pasta "property-photos/"
 //   - chat      -> Realtime Database, nó "conversations/"
-// Sem configuração, tudo cai de volta para IndexedDB + localStorage,
-// e o app funciona normalmente, só sem sincronizar entre dispositivos.
+//   - banners   -> Firestore, coleção "banners" (imagens em Storage "banner-images/")
+//   - métricas  -> Firestore, coleção "metrics"  (incremento atômico)
+//   - admins    -> Firestore, coleção "admins"
+// Ou seja: TODO o sistema é compartilhado entre todos os usuários. Sem
+// configuração, tudo cai de volta para IndexedDB + localStorage, e o app
+// funciona normalmente, só sem sincronizar entre dispositivos.
 // ============================================================
 
 const DB_NAME = 'cartorio-imoveis';
@@ -2291,7 +2174,7 @@ function ensureStores(db) {
     properties.createIndex('brokerId', 'brokerId', { unique: false });
     properties.createIndex('visibility', 'visibility', { unique: false });
   }
-  // --- Painel administrativo / monetização (sempre em IndexedDB) ---
+  // --- Painel administrativo / monetização (fallback local; com nuvem ativa vão ao Firestore) ---
   if (!db.objectStoreNames.contains('admins')) {
     const admins = db.createObjectStore('admins', { keyPath: 'id' });
     admins.createIndex('username', 'username', { unique: true });
@@ -2894,7 +2777,8 @@ const DB = {
 
 // Ponte para o painel administrativo (script separado). Os contadores usam a
 // mesma abstração do app, então funcionam tanto no IndexedDB local quanto na
-// nuvem, caso o Firebase esteja ativo. Banners/admins ficam sempre no IndexedDB.
+// nuvem. Com o Firebase ativo, banners, métricas e admins vão para o Firestore
+// (via window.CloudBridge) e são compartilhados entre todos os usuários.
 window.AppDB = DB;
 window.AppBridge = {
   async getBrokerCount() {
@@ -2909,69 +2793,99 @@ window.AppBridge = {
   async getAllBrokers() {
     try { return await getAllBrokers(); } catch (_) { return []; }
   },
+};
 
-  // --- Sincronização em nuvem do painel admin (banners / admins / métricas) ---
-  // Quando o Firebase está ativo, banners, administradores e métricas passam a
-  // viver no Firestore — assim o painel e todos os recursos ficam sincronizados
-  // entre dispositivos, igual aos imóveis. Sem nuvem, o painel cai no IndexedDB.
-  cloud() { return isCloudActive(); },
-  async cloudGetAll(coll) {
+
+// ============================================================
+// CloudBridge — API genérica de nuvem usada pelo painel administrativo
+// (banners, métricas e administradores). Antes esses dados ficavam SÓ no
+// IndexedDB de cada navegador, então um banner publicado por um usuário não
+// aparecia para os outros. Agora, com o Firebase ativo, tudo é gravado no
+// Firestore/Storage e COMPARTILHADO entre todos os usuários do sistema.
+//
+// Exposto cedo (de forma síncrona) para existir independentemente do momento
+// em que o módulo administrativo subir. `window.CloudReady` resolve quando a
+// inicialização do Firebase termina (com sucesso ou não).
+// ============================================================
+let _resolveCloudReady;
+window.CloudReady = new Promise((res) => { _resolveCloudReady = res; });
+
+window.CloudBridge = {
+  // true quando o Firestore está conectado (dados vão para a nuvem)
+  isActive: () => !!firestoreDB,
+
+  // lê todos os documentos de uma coleção
+  async getAll(coll) {
     const { collection, getDocs } = _firestoreMod;
     const snap = await getDocs(collection(firestoreDB, coll));
     return snap.docs.map((d) => d.data());
   },
-  async cloudGetOne(coll, id) {
+
+  // lê um documento pelo id
+  async getOne(coll, id) {
     const { doc, getDoc } = _firestoreMod;
     const snap = await getDoc(doc(firestoreDB, coll, String(id)));
     return snap.exists() ? snap.data() : null;
   },
-  async cloudPut(coll, obj) {
+
+  // grava (cria/atualiza) um documento. keyField define o nome do campo-chave
+  // ('id' para a maioria; 'key' para métricas).
+  async put(coll, obj, keyField = 'id') {
     const { doc, setDoc } = _firestoreMod;
-    const id = String(coll === 'metrics' ? obj.key : obj.id);
-    await setDoc(doc(firestoreDB, coll, id), obj);
+    await setDoc(doc(firestoreDB, coll, String(obj[keyField])), obj);
     return obj;
   },
-  async cloudDelete(coll, id) {
+
+  // apaga um documento pelo id
+  async del(coll, id) {
     const { doc, deleteDoc } = _firestoreMod;
     await deleteDoc(doc(firestoreDB, coll, String(id)));
     return true;
   },
-  async cloudGetAdminByUsername(username) {
+
+  // busca o primeiro documento onde field == value (ex.: admins por username)
+  async getByField(coll, field, value) {
     const { collection, query, where, getDocs } = _firestoreMod;
-    const snap = await getDocs(query(collection(firestoreDB, 'admins'), where('username', '==', username)));
+    const snap = await getDocs(query(collection(firestoreDB, coll), where(field, '==', value)));
     return snap.empty ? null : snap.docs[0].data();
   },
 
-  // Upload da imagem do banner para o Firebase Storage (mesma pasta-mãe das
-  // fotos dos imóveis). Sem nuvem, devolve base64 — preview/persistência local.
-  async uploadBannerImage(file) {
-    if (isCloudActive() && storageRef) {
-      const { ref, uploadBytes, getDownloadURL } = _storageMod;
-      const path = `banner-images/${uid('banner_')}_${(file.name || 'img').replace(/[^\w.\-]/g, '_')}`;
-      const fileRef = ref(storageRef, path);
-      await uploadBytes(fileRef, file);
-      return await getDownloadURL(fileRef);
+  // ouvinte em tempo real: dispara cb(docs[]) sempre que a coleção muda na nuvem.
+  // É isso que faz um banner novo aparecer para todos sem precisar recarregar.
+  subscribe(coll, cb) {
+    try {
+      const { collection, onSnapshot } = _firestoreMod;
+      return onSnapshot(
+        collection(firestoreDB, coll),
+        (snap) => cb(snap.docs.map((d) => d.data())),
+        (err) => console.error('CloudBridge.subscribe(' + coll + '):', err)
+      );
+    } catch (err) {
+      console.error('CloudBridge.subscribe indisponível:', err);
+      return () => {};
     }
-    return await new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = reject;
-      reader.readAsDataURL(file);
-    });
   },
 
-  // Config dos anúncios do Google (AdSense) — em nuvem (settings/ads) + local.
-  async getAdConfig() {
-    if (isCloudActive()) {
-      try { return await this.cloudGetOne('settings', 'ads'); } catch (_) {}
-    }
-    try { return JSON.parse(localStorage.getItem('cartorio-ads-config') || 'null'); } catch (_) { return null; }
+  // incremento atômico de métrica (evita corrida entre vários usuários)
+  async bumpMetric(key, n = 1) {
+    const { doc, setDoc, increment } = _firestoreMod;
+    await setDoc(doc(firestoreDB, 'metrics', String(key)), { key: String(key), value: increment(n) }, { merge: true });
   },
-  async saveAdConfig(cfg) {
-    const obj = { id: 'ads', ...cfg };
-    if (isCloudActive()) { try { await this.cloudPut('settings', obj); } catch (_) {} }
-    try { localStorage.setItem('cartorio-ads-config', JSON.stringify(cfg)); } catch (_) {}
-    return obj;
+
+  // incremento atômico de um campo de um banner (impressões/cliques compartilhados)
+  async bumpField(coll, id, field, n = 1) {
+    const { doc, setDoc, increment } = _firestoreMod;
+    await setDoc(doc(firestoreDB, coll, String(id)), { [field]: increment(n) }, { merge: true });
+  },
+
+  // envia uma imagem (File) para o Storage e devolve a URL pública
+  async uploadImage(file, folder = 'banner-images') {
+    const { ref, uploadBytes, getDownloadURL } = _storageMod;
+    const safe = (file.name || 'img').replace(/[^\w.\-]+/g, '_');
+    const path = folder + '/' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8) + '_' + safe;
+    const fileRef = ref(storageRef, path);
+    await uploadBytes(fileRef, file);
+    return await getDownloadURL(fileRef);
   },
 };
 
@@ -3141,13 +3055,6 @@ async function boot() {
   const isPortalRoute = hash === '#portal';
   const isAdminRoute = hash === '#admin';
 
-  // Link compartilhado (portal/portfólio do corretor) => modo visitante:
-  // o destinatário é um cliente, então o cadastro de corretor/admin fica
-  // bloqueado neste navegador/sessão. Persistido por sessão (sessionStorage).
-  if (isPublicRoute || isPortalRoute) {
-    try { sessionStorage.setItem('ci-visitor', '1'); } catch (_) {}
-  }
-
   if (CloudService.isConfigured()) {
     const result = await CloudService.initFirebase();
     if (!result.ok) {
@@ -3164,6 +3071,10 @@ async function boot() {
     }
   }
 
+  // Sinaliza ao painel administrativo que a nuvem já foi inicializada (ou que
+  // falhou), para que ele leia banners/métricas/admins do lugar certo.
+  try { _resolveCloudReady(!!window.CloudBridge?.isActive()); } catch (_) {}
+
   if (isAdminRoute) {
     showView('view-admin');
     try { window.__admin?.enter(); } catch (_) {}
@@ -3173,18 +3084,12 @@ async function boot() {
   if (isPortalRoute) {
     await renderPublicPortal();
     document.getElementById('portal-search').addEventListener('input', (e) => renderPublicPortal(e.target.value));
-    // a nuvem já conectou aqui: recarrega banners/anúncios para o visitante
-    try { await window.__mon?.reload?.(); } catch (_) {}
     return;
   }
 
   if (isPublicRoute) {
-    const rest = hash.replace('#portfolio/', '');
-    const sep = rest.indexOf('/');
-    const brokerId = sep === -1 ? rest : rest.slice(0, sep);
-    const brokerName = sep === -1 ? '' : decodeURIComponent(rest.slice(sep + 1));
-    await renderPublicPortfolio(brokerId, brokerName);
-    try { await window.__mon?.reload?.(); } catch (_) {}
+    const brokerId = hash.replace('#portfolio/', '');
+    await renderPublicPortfolio(brokerId);
     return;
   }
 
@@ -3206,35 +3111,10 @@ function showView(viewId) {
 }
 window.showViewGlobal = showView;
 
-// Modo visitante: ativado quando o app foi aberto por um link compartilhado
-// (portal/portfólio). Nesse caso, o cadastro de corretor e o painel admin não
-// devem ficar acessíveis para quem recebeu o link.
-function isVisitor() {
-  try { return sessionStorage.getItem('ci-visitor') === '1'; } catch (_) { return false; }
-}
-window.isVisitorMode = isVisitor;
-
-function applyVisitorRestrictions() {
-  if (!isVisitor()) return;
-  // some a aba/cadastro de "Criar conta"
-  const signupTab = document.querySelector('.auth-tab[data-tab="signup"]');
-  const signupForm = document.getElementById('form-signup');
-  const loginTab = document.querySelector('.auth-tab[data-tab="login"]');
-  const loginForm = document.getElementById('form-login');
-  if (signupTab) signupTab.style.display = 'none';
-  if (signupForm) signupForm.classList.remove('active');
-  if (loginTab) loginTab.classList.add('active');
-  if (loginForm) loginForm.classList.add('active');
-  // some o link do painel administrativo
-  const adminLink = document.getElementById('btn-open-admin');
-  if (adminLink) adminLink.style.display = 'none';
-}
-
 // ---------------------------------------------------------------
 // AUTH
 // ---------------------------------------------------------------
 function bindGlobalEvents() {
-  applyVisitorRestrictions();
   // tabs login/signup
   document.querySelectorAll('.auth-tab').forEach((tab) => {
     tab.addEventListener('click', () => {
@@ -3250,7 +3130,6 @@ function bindGlobalEvents() {
 
   // abrir painel administrativo a partir da tela de login
   document.getElementById('btn-open-admin')?.addEventListener('click', () => {
-    if (isVisitor()) { showToast('Cadastro/painel indisponível em link compartilhado.', 4000); return; }
     window.location.hash = '#admin';
     showView('view-admin');
     try { window.__admin?.enter(); } catch (_) {}
@@ -3383,11 +3262,6 @@ async function handleLogin(e) {
 
 async function handleSignup(e) {
   e.preventDefault();
-  if (isVisitor()) {
-    const errEl = document.getElementById('signup-error');
-    if (errEl) errEl.textContent = 'O cadastro não está disponível a partir de um link compartilhado.';
-    return;
-  }
   const name = document.getElementById('signup-name').value.trim();
   const creci = document.getElementById('signup-creci').value.trim();
   const email = document.getElementById('signup-email').value.trim();
@@ -3424,7 +3298,7 @@ async function enterApp() {
   renderSidebarBroker();
   switchScreen('dashboard');
   allBrokersCache = await DB.getAllBrokers();
-  try { window.__mon?.trackActive(currentBroker); window.__mon?.mount(); window.__mon?.reload?.(); } catch (_) {}
+  try { window.__mon?.trackActive(currentBroker); window.__mon?.mount(); } catch (_) {}
 }
 
 function renderSidebarBroker() {
@@ -3847,15 +3721,9 @@ async function renderExplore(searchTerm) {
 // ---------------------------------------------------------------
 // SHARE SCREEN
 // ---------------------------------------------------------------
-function slugifyName(name) {
-  return encodeURIComponent(String(name || '').trim());
-}
-
-function buildPublicUrl(brokerId, brokerName) {
+function buildPublicUrl(brokerId) {
   const base = window.location.href.split('#')[0];
-  const name = brokerName != null ? brokerName : (currentBroker && currentBroker.name) || '';
-  const slug = slugifyName(name);
-  return slug ? `${base}#portfolio/${brokerId}/${slug}` : `${base}#portfolio/${brokerId}`;
+  return `${base}#portfolio/${brokerId}`;
 }
 
 function buildPortalUrl() {
@@ -3895,18 +3763,8 @@ function copyPortalLink() {
 // ---------------------------------------------------------------
 // PUBLIC PORTFOLIO PAGE (no login required)
 // ---------------------------------------------------------------
-async function renderPublicPortfolio(brokerId, brokerNameFromLink = '') {
+async function renderPublicPortfolio(brokerId) {
   showView('view-public');
-
-  // O link já carrega o nome do corretor: mostramos de imediato, antes mesmo de
-  // a nuvem responder, para o cliente ver de quem é o portfólio.
-  if (brokerNameFromLink) {
-    document.getElementById('public-broker-info').innerHTML =
-      `<h1 class="public-broker-name">${escapeHtml(brokerNameFromLink)}</h1>`;
-    document.getElementById('public-intro').textContent =
-      `Confira os imóveis disponíveis no portfólio de ${brokerNameFromLink}.`;
-  }
-
   const broker = await DB.getBrokerById(brokerId);
 
   if (!broker) {
@@ -3914,10 +3772,10 @@ async function renderPublicPortfolio(brokerId, brokerNameFromLink = '') {
     // dados localmente — o problema é de conexão/configuração, não do link.
     if (!CloudService.isCloudActive()) {
       console.error('Portfólio público aberto sem nuvem ativa — os dados só existem no dispositivo do corretor.');
-      document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">${escapeHtml(brokerNameFromLink || 'Portfólio indisponível')}</h1>`;
+      document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">Portfólio indisponível</h1>`;
       document.getElementById('public-intro').textContent = 'Este portfólio está temporariamente indisponível. Tente novamente mais tarde.';
     } else {
-      document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">${escapeHtml(brokerNameFromLink || 'Corretor não encontrado')}</h1>`;
+      document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">Corretor não encontrado</h1>`;
       document.getElementById('public-intro').textContent = 'Verifique se o link está correto.';
     }
     return;
@@ -4529,35 +4387,42 @@ function escapeHtml(str) {
   }
   const reqP = (r) => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
 
-  // Coleções do painel que sincronizam em nuvem quando o Firebase está ativo.
-  const CLOUD_COLLS = new Set(['banners', 'admins', 'metrics']);
-  const bridge = () => window.AppBridge || {};
-  const cloudOn = (name) => CLOUD_COLLS.has(name) && typeof bridge().cloud === 'function' && bridge().cloud();
+  // ---------- persistência: NUVEM (compartilhada) com fallback LOCAL ----------
+  // Quando o Firebase está ativo, banners/métricas/admins vão para o Firestore e
+  // são vistos por TODOS os usuários. Sem nuvem, cai no IndexedDB deste navegador.
+  const cloud = () => (window.CloudBridge && window.CloudBridge.isActive()) ? window.CloudBridge : null;
+  // campo-chave de cada coleção (métricas usam 'key'; o resto usa 'id')
+  const KEY_FIELD = { metrics: 'key', banners: 'id', admins: 'id' };
+  const keyFieldOf = (name) => KEY_FIELD[name] || 'id';
 
-  async function localGetAll(name) { return reqP((await store(name)).getAll()).then((x) => x || []); }
-  async function localPut(name, val) { try { return reqP((await store(name, 'readwrite')).put(val)).then(() => val); } catch (_) { return val; } }
+  async function getAllLocal(name) { return reqP((await store(name)).getAll()).then((x) => x || []); }
+  async function getOneLocal(name, key) { return reqP((await store(name)).get(key)).then((x) => x || null); }
+  async function putOneLocal(name, val) { return reqP((await store(name, 'readwrite')).put(val)).then(() => val); }
+  async function delOneLocal(name, key) { return reqP((await store(name, 'readwrite')).delete(key)); }
 
   async function getAll(name) {
-    if (cloudOn(name)) { try { return await bridge().cloudGetAll(name); } catch (e) { console.warn('cloudGetAll falhou, usando local:', e?.message || e); } }
-    return localGetAll(name);
+    const c = cloud();
+    if (c) { try { return await c.getAll(name); } catch (e) { console.error('getAll nuvem falhou, usando local:', e); } }
+    return getAllLocal(name);
   }
   async function getOne(name, key) {
-    if (cloudOn(name)) { try { return await bridge().cloudGetOne(name, key); } catch (e) { console.warn('cloudGetOne falhou, usando local:', e?.message || e); } }
-    return reqP((await store(name)).get(key)).then((x) => x || null);
+    const c = cloud();
+    if (c) { try { return await c.getOne(name, key); } catch (e) { console.error('getOne nuvem falhou, usando local:', e); } }
+    return getOneLocal(name, key);
   }
   async function putOne(name, val) {
-    if (cloudOn(name)) { try { await bridge().cloudPut(name, val); } catch (e) { console.warn('cloudPut falhou:', e?.message || e); } }
-    await localPut(name, val); // mantém cópia local (cache/fallback offline)
-    return val;
+    const c = cloud();
+    if (c) { try { await c.put(name, val, keyFieldOf(name)); return val; } catch (e) { console.error('putOne nuvem falhou, usando local:', e); } }
+    return putOneLocal(name, val);
   }
   async function delOne(name, key) {
-    if (cloudOn(name)) { try { await bridge().cloudDelete(name, key); } catch (e) { console.warn('cloudDelete falhou:', e?.message || e); } }
-    try { await reqP((await store(name, 'readwrite')).delete(key)); } catch (_) {}
+    const c = cloud();
+    if (c) { try { return await c.del(name, key); } catch (e) { console.error('delOne nuvem falhou, usando local:', e); } }
+    return delOneLocal(name, key);
   }
   async function getByIndex(name, idx, val) {
-    if (name === 'admins' && idx === 'username' && cloudOn('admins')) {
-      try { return await bridge().cloudGetAdminByUsername(val); } catch (e) { console.warn('cloudGetAdminByUsername falhou, usando local:', e?.message || e); }
-    }
+    const c = cloud();
+    if (c) { try { return await c.getByField(name, idx, val); } catch (e) { console.error('getByIndex nuvem falhou, usando local:', e); } }
     const s = await store(name);
     return reqP(s.index(idx).get(val)).then((x) => x || null);
   }
@@ -4569,9 +4434,14 @@ function escapeHtml(str) {
 
   // ---------- métricas ----------
   async function bumpMetric(key, n = 1) {
-    const cur = (await getOne('metrics', key)) || { key, value: 0 };
+    const c = cloud();
+    if (c) {
+      // incremento atômico na nuvem: somatório correto mesmo com vários usuários
+      try { await c.bumpMetric(key, n); return; } catch (e) { console.error('bumpMetric nuvem falhou, usando local:', e); }
+    }
+    const cur = (await getOneLocal('metrics', key)) || { key, value: 0 };
     cur.value = (cur.value || 0) + n;
-    await putOne('metrics', cur);
+    await putOneLocal('metrics', cur);
     return cur.value;
   }
   async function getMetric(key) { return ((await getOne('metrics', key)) || {}).value || 0; }
@@ -4598,18 +4468,10 @@ function escapeHtml(str) {
     const pl = (b.placements && b.placements.length) ? b.placements : ['all'];
     return pl.some((p) => p === 'all' || p === placement);
   }
-  function matchesPosition(b, position) {
-    const pos = (b.position === 'footer') ? 'footer' : 'header';
-    return pos === position;
-  }
   let _banners = [];
   async function loadBanners() { _banners = await getAll('banners'); return _banners; }
   function liveFor(placement) {
     return _banners.filter((b) => isLive(b) && matchesPlacement(b, placement));
-  }
-  // banners vivos para um local E uma posição (cabeçalho/rodapé)
-  function liveForAt(placement, position) {
-    return _banners.filter((b) => isLive(b) && matchesPlacement(b, placement) && matchesPosition(b, position));
   }
 
   // dedupe de impressões por sessão
@@ -4619,13 +4481,19 @@ function escapeHtml(str) {
     if (!id || seenImp.has(id)) return;
     seenImp.add(id); persistSeen();
     const b = _banners.find((x) => x.id === id);
-    if (b) { b.impressions = (b.impressions || 0) + 1; putOne('banners', b); }
+    if (b) b.impressions = (b.impressions || 0) + 1;
+    const c = cloud();
+    if (c) { try { await c.bumpField('banners', id, 'impressions', 1); } catch (e) { console.error(e); if (b) putOneLocal('banners', b); } }
+    else if (b) { putOneLocal('banners', b); }
     bumpMetric('impressions', 1);
   }
   async function countClick(id) {
     if (!id) return;
     const b = _banners.find((x) => x.id === id);
-    if (b) { b.clicks = (b.clicks || 0) + 1; putOne('banners', b); }
+    if (b) b.clicks = (b.clicks || 0) + 1;
+    const c = cloud();
+    if (c) { try { await c.bumpField('banners', id, 'clicks', 1); } catch (e) { console.error(e); if (b) putOneLocal('banners', b); } }
+    else if (b) { putOneLocal('banners', b); }
     bumpMetric('clicks', 1);
   }
   const weightedPick = (pool) => {
@@ -4636,69 +4504,10 @@ function escapeHtml(str) {
     return pool[0];
   };
 
-  // Extrai o ID do vídeo de uma URL do YouTube (watch, youtu.be, embed, shorts, live).
-  function youtubeId(url) {
-    if (!url) return '';
-    const s = String(url).trim();
-    if (/^[\w-]{11}$/.test(s)) return s; // já é um ID
-    const m = s.match(/(?:youtube\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/)|youtu\.be\/)([\w-]{11})/);
-    return m ? m[1] : '';
-  }
-
-  // Modal de vídeo: toca o YouTube embutido, DENTRO da plataforma (sem sair).
-  function ensureVideoModal() {
-    let ov = document.getElementById('video-modal-overlay');
-    if (ov) return ov;
-    ov = document.createElement('div');
-    ov.id = 'video-modal-overlay';
-    ov.className = 'video-modal-overlay';
-    ov.innerHTML = `<div class="video-modal"><button type="button" class="video-modal-close" aria-label="Fechar">×</button><div class="video-modal-frame"></div></div>`;
-    document.body.appendChild(ov);
-    const close = () => {
-      ov.classList.remove('active');
-      ov.querySelector('.video-modal-frame').innerHTML = ''; // para o vídeo
-      document.body.classList.remove('modal-open');
-    };
-    ov.addEventListener('click', (e) => { if (e.target === ov) close(); });
-    ov.querySelector('.video-modal-close').addEventListener('click', close);
-    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && ov.classList.contains('active')) close(); });
-    return ov;
-  }
-  function openVideoModal(id, title) {
-    if (!id) return;
-    const ov = ensureVideoModal();
-    ov.querySelector('.video-modal-frame').innerHTML =
-      `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1&rel=0&modestbranding=1&playsinline=1" title="${esc(title || 'Vídeo')}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>`;
-    ov.classList.add('active');
-    document.body.classList.add('modal-open');
-  }
-
-  function bannerThumb(b) {
-    if (b.youtubeId) return `https://img.youtube.com/vi/${b.youtubeId}/hqdefault.jpg`;
-    return b.imageUrl || '';
-  }
-
   function bannerMediaHtml(b) {
-    const thumb = bannerThumb(b);
-    return thumb
-      ? `<img src="${esc(thumb)}" alt="${esc(b.title || '')}" loading="lazy">`
+    return b.imageUrl
+      ? `<img src="${esc(b.imageUrl)}" alt="${esc(b.title || '')}" loading="lazy">`
       : `<div class="ad-fallback">${esc(b.title || 'Publicidade')}</div>`;
-  }
-
-  // markup interno do slide: vídeo (thumb + play, abre modal) ou imagem (link).
-  function bannerSlideInner(b) {
-    const flag = `<span class="ad-flag">Publicidade</span>`;
-    if (b.youtubeId) {
-      return `<div class="banner-video" data-yt="${esc(b.youtubeId)}" data-banner-id="${esc(b.id)}" title="${esc(b.title || 'Reproduzir vídeo')}">
-          <img src="${esc(bannerThumb(b))}" alt="${esc(b.title || '')}" loading="lazy">
-          <div class="bv-preview"></div>
-          <button type="button" class="banner-video-play" aria-label="Reproduzir vídeo">▶</button>
-          ${flag}
-        </div>`;
-    }
-    return `<a data-banner-id="${esc(b.id)}" href="${esc(b.linkUrl || '#')}" target="_blank" rel="noopener nofollow sponsored">
-          ${flag}${bannerMediaHtml(b)}
-        </a>`;
   }
 
   // ---------- render: ad-slots inline (banner único, ponderado) ----------
@@ -4718,38 +4527,13 @@ function escapeHtml(str) {
     });
   }
 
-  // ---------- render: carrossel (deslizando suavemente) ----------
-  // Em celulares, TODOS os banners vão para o cabeçalho (rodapé fica vazio).
-  // O visitante pode ocultar com o "×"; volta só ao atualizar a página
-  // (estado em memória, não persistido).
-  const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
-  let bannersDismissed = false;
-  function dismissAllCarousels() {
-    document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => {
-      const prev = carouselTimers.get(el); if (prev) clearInterval(prev);
-      el.classList.add('is-empty'); el.innerHTML = ''; el.dataset.sig = '__off__';
-    });
-  }
-
+  // ---------- render: carrossel de rodapé (deslizando suavemente) ----------
   const carouselTimers = new WeakMap();
   function renderCarousels() {
-    const mobile = isMobile();
     document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => {
-      // ocultado pelo visitante: mantém vazio até atualizar a página
-      if (bannersDismissed) {
-        const prev0 = carouselTimers.get(el); if (prev0) clearInterval(prev0);
-        el.classList.add('is-empty'); el.innerHTML = ''; el.dataset.sig = '__off__';
-        return;
-      }
-
-      const declaredPos = el.dataset.position === 'header' ? 'header' : 'footer';
-      // celular: cabeçalho recebe tudo; rodapé não exibe nada
-      const pool = mobile
-        ? (declaredPos === 'header' ? liveFor(el.dataset.carousel) : [])
-        : liveForAt(el.dataset.carousel, declaredPos);
-
-      // sinal de já renderizado (inclui o modo, p/ re-render ao trocar mobile/desktop)
-      const signature = (mobile ? 'm:' : 'd:') + pool.map((b) => b.id).join(',');
+      const pool = liveFor(el.dataset.carousel);
+      // sinal de já renderizado com o mesmo conjunto de banners
+      const signature = pool.map((b) => b.id).join(',');
       if (el.dataset.sig === signature) return;
       el.dataset.sig = signature;
 
@@ -4762,20 +4546,14 @@ function escapeHtml(str) {
 
       const slides = pool.map((b) => `
         <div class="banner-carousel-slide">
-          ${bannerSlideInner(b)}
+          <a data-banner-id="${esc(b.id)}" href="${esc(b.linkUrl || '#')}" target="_blank" rel="noopener nofollow sponsored">
+            <span class="ad-flag">Publicidade</span>${bannerMediaHtml(b)}
+          </a>
         </div>`).join('');
       const dots = pool.length > 1
         ? `<div class="banner-carousel-dots">${pool.map((_, i) => `<button data-i="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Banner ${i + 1}"></button>`).join('')}</div>`
         : '';
-      const closeBtn = `<button type="button" class="banner-carousel-close" aria-label="Ocultar publicidade" title="Ocultar">×</button>`;
-      el.innerHTML = `${closeBtn}<div class="banner-carousel-track">${slides}</div>${dots}`;
-
-      const closeEl = el.querySelector('.banner-carousel-close');
-      if (closeEl) closeEl.addEventListener('click', (e) => {
-        e.preventDefault(); e.stopPropagation();
-        bannersDismissed = true;
-        dismissAllCarousels();
-      });
+      el.innerHTML = `<span class="banner-carousel-label">Publicidade</span><div class="banner-carousel-track">${slides}</div>${dots}`;
 
       const track = el.querySelector('.banner-carousel-track');
       const dotEls = [...el.querySelectorAll('.banner-carousel-dots button')];
@@ -4789,32 +4567,6 @@ function escapeHtml(str) {
         countImpression(pool[idx].id);
       };
       anchors.forEach((a) => a.addEventListener('click', () => countClick(a.dataset.bannerId)));
-      // vídeos: hover toca uma prévia muda embutida; clique abre o player na plataforma
-      el.querySelectorAll('.banner-video').forEach((v) => {
-        const id = v.dataset.yt;
-        const preview = v.querySelector('.bv-preview');
-        const startPreview = () => {
-          if (!preview || preview.dataset.on === '1') return;
-          preview.dataset.on = '1';
-          v.classList.add('previewing');
-          preview.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1&mute=1&controls=0&loop=1&playlist=${encodeURIComponent(id)}&modestbranding=1&rel=0&playsinline=1&disablekb=1&fs=0" title="Prévia" allow="autoplay; encrypted-media" tabindex="-1"></iframe>`;
-        };
-        const stopPreview = () => {
-          if (!preview) return;
-          preview.dataset.on = '';
-          preview.innerHTML = ''; // para a prévia
-          v.classList.remove('previewing');
-        };
-        v.addEventListener('mouseenter', startPreview);
-        v.addEventListener('mouseleave', stopPreview);
-        v.addEventListener('click', () => {
-          countClick(v.dataset.bannerId);
-          stop();
-          stopPreview();
-          const b = pool.find((x) => x.id === v.dataset.bannerId);
-          openVideoModal(id, b ? b.title : '');
-        });
-      });
       dotEls.forEach((d) => d.addEventListener('click', () => { show(Number(d.dataset.i)); restart(); }));
 
       countImpression(pool[0].id);
@@ -4841,50 +4593,7 @@ function escapeHtml(str) {
     });
   }
 
-  // ---------- render: anúncios do Google (AdSense) ----------
-  let _adConfig = null;
-  let _adsenseScriptClient = null; // client cujo script já foi injetado
-  async function loadAdConfig() {
-    try { _adConfig = (window.AppBridge?.getAdConfig) ? await window.AppBridge.getAdConfig() : null; }
-    catch (_) { _adConfig = null; }
-    return _adConfig;
-  }
-  function ensureAdsenseScript(client) {
-    if (!client || _adsenseScriptClient === client) return;
-    // não injeta em file:// (AdSense exige domínio http/https aprovado)
-    if (location.protocol === 'file:') return;
-    _adsenseScriptClient = client;
-    const s = document.createElement('script');
-    s.async = true;
-    s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(client);
-    s.crossOrigin = 'anonymous';
-    s.onerror = () => console.warn('AdSense: script bloqueado ou indisponível.');
-    document.head.appendChild(s);
-  }
-  function adMatches(cfg, placement, position) {
-    if (!cfg || !cfg.enabled || !cfg.client || !cfg.slot) return false;
-    const pos = cfg.position === 'header' ? 'header' : 'footer';
-    if (pos !== position) return false;
-    const pls = (cfg.placements && cfg.placements.length) ? cfg.placements : ['all'];
-    return pls.some((p) => p === 'all' || p === placement);
-  }
-  function renderGoogleAds() {
-    const cfg = _adConfig;
-    document.querySelectorAll('.google-ad-slot[data-placement]').forEach((slot) => {
-      const placement = slot.dataset.placement;
-      const position = slot.dataset.position === 'header' ? 'header' : 'footer';
-      if (!adMatches(cfg, placement, position)) { slot.innerHTML = ''; slot.dataset.adsig = ''; return; }
-      const sig = cfg.client + '|' + cfg.slot;
-      if (slot.dataset.adsig === sig) return; // já montado
-      slot.dataset.adsig = sig;
-      ensureAdsenseScript(cfg.client);
-      slot.innerHTML = `<ins class="adsbygoogle" style="display:block" data-ad-client="${esc(cfg.client)}" data-ad-slot="${esc(cfg.slot)}" data-ad-format="auto" data-full-width-responsive="true"></ins>`;
-      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); }
-      catch (e) { console.warn('AdSense push falhou:', e?.message || e); }
-    });
-  }
-
-  function renderAll() { renderAdSlots(); renderCarousels(); renderGoogleAds(); }
+  function renderAll() { renderAdSlots(); renderCarousels(); }
 
   // ============================================================
   // PAINEL ADMINISTRATIVO
@@ -4907,26 +4616,9 @@ function escapeHtml(str) {
     showAuth(exists);
   }
 
-  function isVisitorDevice() {
-    try { return sessionStorage.getItem('ci-visitor') === '1'; } catch (_) { return false; }
-  }
-
   function showAuth(exists) {
     $('admin-auth').hidden = false;
     $('admin-dash').hidden = true;
-
-    // Modo visitante (link compartilhado): nunca permitir CRIAR administrador
-    // neste navegador. Se já existe admin, mostra só o login; se não existe,
-    // bloqueia o cadastro com uma mensagem (o admin se cria na máquina dona).
-    const visitor = isVisitorDevice();
-    if (visitor && !exists) {
-      $('admin-login-form').hidden = true;
-      $('admin-register-form').hidden = true;
-      $('admin-auth-title').textContent = 'Cadastro indisponível';
-      $('admin-auth-sub').textContent = 'O administrador só pode ser criado no dispositivo do dono do portal. Este acesso veio de um link compartilhado.';
-      return;
-    }
-
     // cadastro único: se já existe admin, some o form de cadastro; só login.
     $('admin-login-form').hidden = exists ? false : true;
     $('admin-register-form').hidden = exists ? true : false;
@@ -4936,28 +4628,11 @@ function escapeHtml(str) {
       : 'Primeiro acesso: defina o administrador do portal. Isto é feito uma única vez.';
   }
 
-  // preenche o formulário de AdSense com a config salva
-  async function fillAdsenseForm() {
-    const cfg = await loadAdConfig();
-    if (!$('adsense-form')) return;
-    $('adsense-enabled').checked = !!(cfg && cfg.enabled);
-    $('adsense-client').value = (cfg && cfg.client) || '';
-    $('adsense-slot').value = (cfg && cfg.slot) || '';
-    const pos = (cfg && cfg.position === 'header') ? 'header' : 'footer';
-    $('adsense-position').querySelectorAll('input[type=radio]').forEach((r) => {
-      r.checked = r.value === pos; r.closest('.placement-chip').classList.toggle('checked', r.checked);
-    });
-    const set = new Set((cfg && cfg.placements && cfg.placements.length) ? cfg.placements : ['all']);
-    $('adsense-placements').querySelectorAll('input[type=checkbox]').forEach((cb) => {
-      cb.checked = set.has(cb.value); cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
-    });
-  }
-
   async function showDash() {
     $('admin-auth').hidden = true;
     $('admin-dash').hidden = false;
     $('admin-who').textContent = currentAdmin ? `Olá, ${currentAdmin.name || currentAdmin.username}` : '';
-    await Promise.all([renderMetrics(), renderBannerList(), renderUsers(), fillAdsenseForm()]);
+    await Promise.all([renderMetrics(), renderBannerList(), renderUsers()]);
   }
 
   // ---------- métricas no painel ----------
@@ -5006,17 +4681,13 @@ function escapeHtml(str) {
       const period = (b.startDate || b.endDate)
         ? `${b.startDate || '—'} → ${b.endDate || '∞'}` : 'Sem período definido';
       const pls = ((b.placements && b.placements.length) ? b.placements : ['all']).map((p) => PLACEMENT_LABELS[p] || p).join(', ');
-      const posLabel = (b.position === 'footer') ? 'Rodapé' : 'Cabeçalho';
-      const thumbSrc = bannerThumb(b);
-      const typeBadge = b.youtubeId ? '<span class="status-tag sched" style="margin-left:.3rem;">▶ vídeo</span>' : '';
       return `
         <div class="banner-item" data-id="${esc(b.id)}">
-          <div class="thumb">${thumbSrc ? `<img src="${esc(thumbSrc)}" alt="">` : '<span class="noimg">SEM IMG</span>'}</div>
+          <div class="thumb">${b.imageUrl ? `<img src="${esc(b.imageUrl)}" alt="">` : '<span class="noimg">SEM IMG</span>'}</div>
           <div class="meta">
-            <div class="bt">${esc(b.title || 'Sem título')} ${tag}${typeBadge}</div>
+            <div class="bt">${esc(b.title || 'Sem título')} ${tag}</div>
             <div class="bs">
               <span>📍 ${esc(pls)}</span>
-              <span>📐 ${esc(posLabel)}</span>
               <span>🗓 ${esc(period)}</span>
               <span>👁 ${b.impressions || 0}</span>
               <span>🖱 ${b.clicks || 0}</span>
@@ -5048,8 +4719,8 @@ function escapeHtml(str) {
     });
   }
 
-  let editingImageData = null; // URL/base64 atual (preview)
-  let editingImageFile = null; // File novo selecionado (vai p/ Storage no salvar)
+  let editingImageData = null; // base64/URL atual em edição (para preview)
+  let editingImageFile = null; // File novo selecionado (enviado ao Storage na nuvem)
   function setPlacementsUI(placements) {
     const wrap = $('banner-placements');
     const set = new Set((placements && placements.length) ? placements : ['all']);
@@ -5061,30 +4732,17 @@ function escapeHtml(str) {
   function readPlacementsUI() {
     return [...$('banner-placements').querySelectorAll('input:checked')].map((c) => c.value);
   }
-  function setPositionUI(position) {
-    const pos = position === 'footer' ? 'footer' : 'header';
-    $('banner-position').querySelectorAll('input[type=radio]').forEach((r) => {
-      r.checked = r.value === pos;
-      r.closest('.placement-chip').classList.toggle('checked', r.checked);
-    });
-  }
-  function readPositionUI() {
-    const r = $('banner-position').querySelector('input[type=radio]:checked');
-    return r ? r.value : 'header';
-  }
 
   async function editBanner(id) {
     const b = await getOne('banners', id); if (!b) return;
     $('banner-id').value = b.id;
     $('banner-title').value = b.title || '';
     $('banner-link').value = b.linkUrl || '';
-    $('banner-video').value = b.videoUrl || '';
     $('banner-start').value = b.startDate || '';
     $('banner-end').value = b.endDate || '';
     $('banner-weight').value = b.weight || 1;
     $('banner-active').checked = b.active !== false;
     setPlacementsUI(b.placements);
-    setPositionUI(b.position);
     editingImageData = b.imageUrl || null;
     editingImageFile = null;
     $('banner-image-preview').innerHTML = editingImageData
@@ -5104,7 +4762,6 @@ function escapeHtml(str) {
     $('banner-cancel-btn').hidden = true;
     $('banner-error').textContent = '';
     setPlacementsUI(['all']);
-    setPositionUI('header');
     $('banner-active').checked = true;
     $('banner-weight').value = 1;
   }
@@ -5150,9 +4807,7 @@ function escapeHtml(str) {
   // re-render do front (carrosséis/ad-slots) após mudanças
   async function refreshFront() {
     await loadBanners();
-    await loadAdConfig();
     document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => { el.dataset.sig = ''; });
-    document.querySelectorAll('.google-ad-slot[data-placement]').forEach((el) => { el.dataset.adsig = ''; });
     renderAll();
   }
 
@@ -5176,7 +4831,6 @@ function escapeHtml(str) {
     $('admin-register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const err = $('admin-reg-error'); err.textContent = '';
-      if (isVisitorDevice()) { err.textContent = 'Cadastro indisponível em link compartilhado.'; return; }
       if (await adminExists()) { showAuth(true); return; } // trava: já existe
       const name = $('admin-reg-name').value.trim();
       const username = $('admin-reg-user').value.trim().toLowerCase();
@@ -5213,19 +4867,12 @@ function escapeHtml(str) {
       cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
     });
 
-    // posição (cabeçalho/rodapé) — radios exclusivos
-    $('banner-position').addEventListener('change', (e) => {
-      $('banner-position').querySelectorAll('input[type=radio]').forEach((r) => {
-        r.closest('.placement-chip').classList.toggle('checked', r.checked);
-      });
-    });
-
-    // preview de imagem (guarda o File para enviar ao Storage no salvar)
+    // preview de imagem (guarda o File para enviar ao Storage quando há nuvem)
     $('banner-image').addEventListener('change', async (e) => {
       const f = e.target.files?.[0];
       if (!f) return;
       editingImageFile = f;
-      editingImageData = await fileToDataURL(f); // só preview
+      editingImageData = await fileToDataURL(f); // base64 só para o preview / fallback local
       $('banner-image-preview').innerHTML = `<img src="${esc(editingImageData)}" style="max-height:70px;border-radius:2px;border:1px solid rgba(250,248,244,.2);">`;
     });
 
@@ -5233,6 +4880,7 @@ function escapeHtml(str) {
     $('banner-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const err = $('banner-error'); err.textContent = '';
+      const saveBtn = $('banner-save-btn');
       const id = $('banner-id').value || uid('banner_');
       const existing = $('banner-id').value ? await getOne('banners', id) : null;
       const placements = readPlacementsUI();
@@ -5241,42 +4889,30 @@ function escapeHtml(str) {
       const end = $('banner-end').value;
       if (start && end && start > end) { err.textContent = 'A data de início não pode ser depois do fim.'; return; }
 
-      // vídeo do YouTube (opcional): valida e extrai o ID
-      const videoRaw = $('banner-video').value.trim();
-      let ytId = '';
-      if (videoRaw) {
-        ytId = youtubeId(videoRaw);
-        if (!ytId) { err.textContent = 'Link do YouTube inválido. Cole a URL completa do vídeo.'; return; }
-      }
-
-      // imagem: se há um arquivo novo, envia ao Firebase Storage e usa a URL;
-      // senão, mantém a imagem que já existia no banner.
-      let imageUrl = existing?.imageUrl || '';
-      if (editingImageFile) {
-        const saveBtn = $('banner-save-btn');
+      // Resolve a imagem: com nuvem ativa e um arquivo novo, envia ao Storage e
+      // guarda só a URL (leve, dentro do limite do Firestore e visível a todos).
+      let imageUrl = editingImageData || existing?.imageUrl || '';
+      const c = cloud();
+      if (editingImageFile && c) {
         const prevLabel = saveBtn.textContent;
-        saveBtn.disabled = true; saveBtn.textContent = 'Enviando imagem...';
+        saveBtn.disabled = true; saveBtn.textContent = 'Enviando imagem…';
         try {
-          imageUrl = await (window.AppBridge?.uploadBannerImage
-            ? window.AppBridge.uploadBannerImage(editingImageFile)
-            : fileToDataURL(editingImageFile));
+          imageUrl = await c.uploadImage(editingImageFile, 'banner-images');
         } catch (upErr) {
-          console.warn('Falha no upload da imagem do banner, usando base64 local:', upErr?.message || upErr);
-          imageUrl = await fileToDataURL(editingImageFile);
-        } finally {
+          console.error('Falha ao enviar imagem do banner ao Storage:', upErr);
+          err.textContent = 'Não foi possível enviar a imagem para a nuvem. Verifique as regras do Storage e tente novamente.';
           saveBtn.disabled = false; saveBtn.textContent = prevLabel;
+          return;
         }
+        saveBtn.disabled = false; saveBtn.textContent = prevLabel;
       }
 
       const banner = {
         id,
         title: $('banner-title').value.trim(),
         imageUrl,
-        videoUrl: videoRaw,
-        youtubeId: ytId,
         linkUrl: $('banner-link').value.trim(),
         placements,
-        position: readPositionUI(),
         startDate: start || '',
         endDate: end || '',
         weight: Math.max(1, parseInt($('banner-weight').value, 10) || 1),
@@ -5288,55 +4924,11 @@ function escapeHtml(str) {
       };
       await putOne('banners', banner);
       resetBannerForm();
+      await loadBanners();
       await renderBannerList(); await renderMetrics(); refreshFront();
       toast(existing ? 'Banner atualizado.' : 'Banner criado.');
     });
     $('banner-cancel-btn').addEventListener('click', resetBannerForm);
-
-    // ---------- Anúncios do Google (AdSense) ----------
-    $('adsense-position').addEventListener('change', () => {
-      $('adsense-position').querySelectorAll('input[type=radio]').forEach((r) => {
-        r.closest('.placement-chip').classList.toggle('checked', r.checked);
-      });
-    });
-    $('adsense-placements').addEventListener('change', (e) => {
-      const cb = e.target;
-      if (cb.value === 'all' && cb.checked) {
-        $('adsense-placements').querySelectorAll('input').forEach((o) => { if (o !== cb) { o.checked = false; o.closest('.placement-chip').classList.remove('checked'); } });
-      } else if (cb.value !== 'all' && cb.checked) {
-        const allCb = $('adsense-placements').querySelector('input[value="all"]');
-        if (allCb) { allCb.checked = false; allCb.closest('.placement-chip').classList.remove('checked'); }
-      }
-      cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
-    });
-    $('adsense-form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const err = $('adsense-error'); err.textContent = '';
-      const enabled = $('adsense-enabled').checked;
-      const client = $('adsense-client').value.trim();
-      const slot = $('adsense-slot').value.trim();
-      if (enabled && (!client || !slot)) {
-        err.textContent = 'Para ativar, informe o ID do publisher e o ID do bloco.';
-        return;
-      }
-      if (client && !/^ca-pub-\d+$/.test(client)) {
-        err.textContent = 'O ID do publisher deve ter o formato ca-pub-0000000000000000.';
-        return;
-      }
-      const placements = [...$('adsense-placements').querySelectorAll('input:checked')].map((c) => c.value);
-      const posR = $('adsense-position').querySelector('input[type=radio]:checked');
-      const cfg = {
-        enabled,
-        client,
-        slot,
-        position: posR ? posR.value : 'footer',
-        placements: placements.length ? placements : ['all'],
-        updatedAt: Date.now(),
-      };
-      try { await window.AppBridge?.saveAdConfig(cfg); } catch (_) {}
-      toast('Anúncios do Google salvos.');
-      refreshFront();
-    });
 
     // cadastrar usuário admin (a partir do painel)
     $('admin-user-form').addEventListener('submit', async (e) => {
@@ -5362,17 +4954,39 @@ function escapeHtml(str) {
     trackLogin: (b) => { bumpMetric('logins', 1); },
     trackActive: () => {},
     mount: renderAll,
-    // recarrega banners e config de anúncios da nuvem e re-renderiza tudo.
-    // Chamado pelo app após a nuvem conectar (ver boot()).
-    reload: refreshFront,
   };
+
+  // assina mudanças de banners na nuvem em tempo real (compartilhado entre todos)
+  let _bannerUnsub = null;
+  function subscribeBannersLive() {
+    const c = cloud();
+    if (!c || _bannerUnsub) return;
+    _bannerUnsub = c.subscribe('banners', (docs) => {
+      _banners = docs || [];
+      // re-renderiza a vitrine pública (carrosséis/ad-slots)
+      document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => { el.dataset.sig = ''; });
+      renderAll();
+      // se o painel está aberto, atualiza a lista e as métricas
+      if (!$('admin-dash')?.hidden) { renderBannerList(); renderMetrics(); }
+    });
+  }
 
   async function start() {
     try {
       await openDB();
+
+      // Espera a nuvem inicializar (com teto de segurança), para ler banners/
+      // métricas/admins do lugar certo — nuvem compartilhada quando disponível.
+      try {
+        await Promise.race([
+          window.CloudReady || Promise.resolve(),
+          new Promise((r) => setTimeout(r, 8000)),
+        ]);
+      } catch (_) {}
+
       await countAccessOncePerSession();
       await loadBanners();
-      await loadAdConfig();
+      subscribeBannersLive();
       bindAdmin();
       renderAll();
 
@@ -5385,9 +4999,6 @@ function escapeHtml(str) {
     // re-render quando a navegação muda de tela
     const reRender = () => setTimeout(renderAll, 40);
     document.addEventListener('click', (ev) => { if (ev.target.closest('.nav-item,.mobile-tab,.auth-tab')) reRender(); });
-    // re-render ao cruzar o breakpoint mobile/desktop (move banners p/ o cabeçalho)
-    let _rzT = null;
-    window.addEventListener('resize', () => { clearTimeout(_rzT); _rzT = setTimeout(renderAll, 200); });
     window.addEventListener('hashchange', () => {
       if (window.location.hash === '#admin') { showView2('view-admin'); enterAdmin(); }
       reRender();
