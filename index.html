@@ -1233,7 +1233,8 @@ img { max-width: 100%; }
    CARROSSEL DE BANNERS (rodapé do portal / catálogos / painel)
    ============================================================ */
 .banner-carousel {
-  position: relative; width: 100%; overflow: hidden;
+  position: relative; width: 100%; max-width: 760px; margin-left: auto; margin-right: auto;
+  overflow: hidden;
   background: var(--paper-dim); border-top: 1px solid var(--line);
   border-bottom: 1px solid var(--line);
 }
@@ -1246,15 +1247,16 @@ img { max-width: 100%; }
   padding: .12rem .5rem; border-radius: 999px; pointer-events: none;
 }
 .banner-carousel-track {
-  display: flex; will-change: transform;
-  max-width: 760px; margin: 0 auto;
+  display: flex; will-change: transform; width: 100%;
   transition: transform .7s cubic-bezier(.4, 0, .15, 1);
 }
 .banner-carousel-slide {
-  flex: 0 0 100%; min-width: 100%; width: 100%; display: block;
+  flex: 0 0 100%; min-width: 100%; width: 100%; height: 150px;
+  display: block; overflow: hidden;
 }
-.banner-carousel-slide a {
-  display: block; position: relative; width: 100%; height: 150px;
+.banner-carousel-slide > a,
+.banner-carousel-slide > .banner-video {
+  display: block; position: relative; width: 100%; height: 100%;
   text-decoration: none; background: var(--ink);
 }
 .banner-carousel-slide img {
@@ -1300,16 +1302,19 @@ img { max-width: 100%; }
 /* ============================================================
    BANNER EM VÍDEO (YouTube) + MODAL DE VÍDEO NA PLATAFORMA
    ============================================================ */
-.banner-video { position: relative; width: 100%; height: 100%; display: block; cursor: pointer; background: #000; }
+.banner-video { position: relative; width: 100%; height: 100%; display: block; cursor: pointer; background: #000; overflow: hidden; }
 .banner-video img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.banner-video .bv-preview { position: absolute; inset: 0; z-index: 1; background: #000; }
+.banner-video .bv-preview iframe { width: 100%; height: 100%; border: 0; display: block; pointer-events: none; }
 .banner-video-play {
-  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 2;
   width: 48px; height: 48px; border-radius: 50%; border: none; cursor: pointer;
   background: rgba(28,30,29,.72); color: #fff; font-size: 1.05rem;
   display: flex; align-items: center; justify-content: center; padding-left: 3px;
-  transition: background .2s, transform .2s;
+  transition: background .2s, transform .2s, opacity .2s;
 }
 .banner-video:hover .banner-video-play { background: var(--terracotta); transform: translate(-50%, -50%) scale(1.08); }
+.banner-video.previewing .banner-video-play { opacity: .85; }
 
 .video-modal-overlay {
   position: fixed; inset: 0; z-index: 200; background: rgba(10,11,10,.88);
@@ -4677,6 +4682,7 @@ function escapeHtml(str) {
     if (b.youtubeId) {
       return `<div class="banner-video" data-yt="${esc(b.youtubeId)}" data-banner-id="${esc(b.id)}" title="${esc(b.title || 'Reproduzir vídeo')}">
           <img src="${esc(bannerThumb(b))}" alt="${esc(b.title || '')}" loading="lazy">
+          <div class="bv-preview"></div>
           <button type="button" class="banner-video-play" aria-label="Reproduzir vídeo">▶</button>
           ${flag}
         </div>`;
@@ -4742,13 +4748,30 @@ function escapeHtml(str) {
         countImpression(pool[idx].id);
       };
       anchors.forEach((a) => a.addEventListener('click', () => countClick(a.dataset.bannerId)));
-      // vídeos: clique abre o player embutido na plataforma (modal) e pausa a rotação
+      // vídeos: hover toca uma prévia muda embutida; clique abre o player na plataforma
       el.querySelectorAll('.banner-video').forEach((v) => {
+        const id = v.dataset.yt;
+        const preview = v.querySelector('.bv-preview');
+        const startPreview = () => {
+          if (!preview || preview.dataset.on === '1') return;
+          preview.dataset.on = '1';
+          v.classList.add('previewing');
+          preview.innerHTML = `<iframe src="https://www.youtube.com/embed/${encodeURIComponent(id)}?autoplay=1&mute=1&controls=0&loop=1&playlist=${encodeURIComponent(id)}&modestbranding=1&rel=0&playsinline=1&disablekb=1&fs=0" title="Prévia" allow="autoplay; encrypted-media" tabindex="-1"></iframe>`;
+        };
+        const stopPreview = () => {
+          if (!preview) return;
+          preview.dataset.on = '';
+          preview.innerHTML = ''; // para a prévia
+          v.classList.remove('previewing');
+        };
+        v.addEventListener('mouseenter', startPreview);
+        v.addEventListener('mouseleave', stopPreview);
         v.addEventListener('click', () => {
           countClick(v.dataset.bannerId);
           stop();
+          stopPreview();
           const b = pool.find((x) => x.id === v.dataset.bannerId);
-          openVideoModal(v.dataset.yt, b ? b.title : '');
+          openVideoModal(id, b ? b.title : '');
         });
       });
       dotEls.forEach((d) => d.addEventListener('click', () => { show(Number(d.dataset.i)); restart(); }));
