@@ -112,7 +112,9 @@ img { max-width: 100%; }
    ============================================================ */
 .ad-slot:empty { display: none; }
 .ad-slot { margin: 0 auto 1.25rem; max-width: 760px; }
-.ad-slot-login { margin-top: 1.5rem; }
+/* banner da tela de login: largura total do cartão (proporcional ao botão) */
+.ad-slot-login { margin: 1.5rem 0 0; max-width: none; width: 100%; align-self: stretch; }
+.ad-slot-login .ad-banner img { max-height: 280px; }
 .ad-banner {
   display: block; position: relative; text-decoration: none;
   border: 1px solid var(--line-soft); border-radius: var(--radius);
@@ -124,6 +126,13 @@ img { max-width: 100%; }
   max-height: 108px; object-fit: cover; object-position: center;
 }
 @media (max-width: 640px) { .ad-banner img { max-height: 74px; } }
+/* banner em vídeo (YouTube) — responsivo 16:9 */
+.ad-video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
+.ad-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
+/* em contextos largos (faixa do topo e carrossel do rodapé) limita a largura do
+   vídeo para a altura não ficar exagerada; na tela de login ocupa o cartão todo */
+.ad-slot .ad-video, .banner-carousel-slide .ad-video { max-width: 520px; margin: 0 auto; }
+.ad-slot-login .ad-video { max-width: none; }
 .ad-banner .ad-fallback {
   padding: 0.9rem 1.5rem; color: var(--paper); text-align: center;
   font-family: var(--font-display); font-weight: 600; font-size: 1.02rem;
@@ -2061,6 +2070,11 @@ img { max-width: 100%; }
           <input type="file" id="banner-image" accept="image/*">
           <small style="color:rgba(250,248,244,.45);font-size:.72rem;">Recomendado: 1200×300px. Com a nuvem ativa, a imagem é enviada ao Firebase Storage e fica visível para todos os usuários.</small>
           <div id="banner-image-preview" style="margin-top:.5rem;"></div>
+        </div>
+        <div class="admin-field full">
+          <label for="banner-video">Vídeo (link do YouTube)</label>
+          <input type="url" id="banner-video" placeholder="https://www.youtube.com/watch?v=... ou https://youtu.be/...">
+          <small style="color:rgba(250,248,244,.45);font-size:.72rem;">Opcional. Se preenchido, o banner exibe o vídeo (16:9, sem som, em repetição). Tem prioridade sobre a imagem.</small>
         </div>
         <div class="admin-field full">
           <label for="banner-link">Link de destino (URL)</label>
@@ -4529,7 +4543,18 @@ function escapeHtml(str) {
     return pool[0];
   };
 
+  // extrai o ID de 11 caracteres de um link do YouTube (watch, youtu.be, embed, shorts)
+  function youtubeId(url) {
+    if (!url) return null;
+    const m = String(url).match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/|v\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
   function bannerMediaHtml(b) {
+    const vid = youtubeId(b.videoUrl);
+    if (vid) {
+      const src = `https://www.youtube.com/embed/${vid}?autoplay=1&mute=1&loop=1&playlist=${vid}&controls=1&modestbranding=1&rel=0&playsinline=1`;
+      return `<div class="ad-video"><iframe src="${src}" title="${esc(b.title || 'Publicidade')}" frameborder="0" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+    }
     return b.imageUrl
       ? `<img src="${esc(b.imageUrl)}" alt="${esc(b.title || '')}" loading="lazy">`
       : `<div class="ad-fallback">${esc(b.title || 'Publicidade')}</div>`;
@@ -4713,7 +4738,7 @@ function escapeHtml(str) {
       const poss = ((b.positions && b.positions.length) ? b.positions : ['header', 'footer']).map((p) => POSITION_LABELS[p] || p).join(' + ');
       return `
         <div class="banner-item" data-id="${esc(b.id)}">
-          <div class="thumb">${b.imageUrl ? `<img src="${esc(b.imageUrl)}" alt="">` : '<span class="noimg">SEM IMG</span>'}</div>
+          <div class="thumb">${b.imageUrl ? `<img src="${esc(b.imageUrl)}" alt="">` : (youtubeId(b.videoUrl) ? '<span class="noimg">▶ VÍDEO</span>' : '<span class="noimg">SEM IMG</span>')}</div>
           <div class="meta">
             <div class="bt">${esc(b.title || 'Sem título')} ${tag}</div>
             <div class="bs">
@@ -4779,6 +4804,7 @@ function escapeHtml(str) {
     $('banner-id').value = b.id;
     $('banner-title').value = b.title || '';
     $('banner-link').value = b.linkUrl || '';
+    $('banner-video').value = b.videoUrl || '';
     $('banner-start').value = b.startDate || '';
     $('banner-end').value = b.endDate || '';
     $('banner-weight').value = b.weight || 1;
@@ -4937,6 +4963,11 @@ function escapeHtml(str) {
       const start = $('banner-start').value;
       const end = $('banner-end').value;
       if (start && end && start > end) { err.textContent = 'A data de início não pode ser depois do fim.'; return; }
+      const videoUrl = $('banner-video').value.trim();
+      if (videoUrl && !youtubeId(videoUrl)) {
+        err.textContent = 'Link de vídeo inválido. Use um link do YouTube (youtube.com/watch?v=… ou youtu.be/…).';
+        return;
+      }
 
       // Resolve a imagem: com nuvem ativa e um arquivo novo, envia ao Storage e
       // guarda só a URL (leve, dentro do limite do Firestore e visível a todos).
@@ -4960,6 +4991,7 @@ function escapeHtml(str) {
         id,
         title: $('banner-title').value.trim(),
         imageUrl,
+        videoUrl,
         linkUrl: $('banner-link').value.trim(),
         placements,
         positions,
