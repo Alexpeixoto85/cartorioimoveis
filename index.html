@@ -1268,11 +1268,19 @@ img { max-width: 100%; }
   font-family: var(--font-display); font-weight: 600; font-size: 1.2rem;
 }
 .banner-carousel-slide .ad-flag {
-  position: absolute; top: 8px; right: 8px; z-index: 2;
+  position: absolute; top: 8px; left: 8px; z-index: 2;
   font-family: var(--font-mono); font-size: .54rem; letter-spacing: .1em;
   color: rgba(250,248,244,.82); background: rgba(28,30,29,.55);
   padding: .15rem .4rem; border-radius: 2px; text-transform: uppercase;
 }
+/* botão de ocultar publicidade (sobretudo no celular) */
+.banner-carousel-close {
+  position: absolute; top: 6px; right: 6px; z-index: 5;
+  width: 26px; height: 26px; border-radius: 50%; border: none; cursor: pointer;
+  background: rgba(28,30,29,.62); color: #fff; font-size: 1.05rem; line-height: 1;
+  display: none; align-items: center; justify-content: center; padding: 0;
+}
+.banner-carousel-close:hover { background: rgba(28,30,29,.85); }
 .banner-carousel-dots {
   position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%);
   z-index: 3; display: flex; gap: 6px;
@@ -1291,6 +1299,7 @@ img { max-width: 100%; }
 /* dentro do app (painel do corretor), respeita a tab bar no mobile */
 @media (max-width: 768px) {
   .view-app .banner-carousel-fixed { bottom: calc(var(--tabbar-h) + var(--sab)); padding-bottom: 0; }
+  .banner-carousel-close { display: flex; }
 }
 /* carrossel de cabeçalho (topo da tela, fluindo com o conteúdo) */
 .banner-carousel-top {
@@ -4709,14 +4718,38 @@ function escapeHtml(str) {
     });
   }
 
-  // ---------- render: carrossel de rodapé (deslizando suavemente) ----------
+  // ---------- render: carrossel (deslizando suavemente) ----------
+  // Em celulares, TODOS os banners vão para o cabeçalho (rodapé fica vazio).
+  // O visitante pode ocultar com o "×"; volta só ao atualizar a página
+  // (estado em memória, não persistido).
+  const isMobile = () => window.matchMedia('(max-width: 768px)').matches;
+  let bannersDismissed = false;
+  function dismissAllCarousels() {
+    document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => {
+      const prev = carouselTimers.get(el); if (prev) clearInterval(prev);
+      el.classList.add('is-empty'); el.innerHTML = ''; el.dataset.sig = '__off__';
+    });
+  }
+
   const carouselTimers = new WeakMap();
   function renderCarousels() {
+    const mobile = isMobile();
     document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => {
-      const position = el.dataset.position === 'header' ? 'header' : 'footer';
-      const pool = liveForAt(el.dataset.carousel, position);
-      // sinal de já renderizado com o mesmo conjunto de banners
-      const signature = pool.map((b) => b.id).join(',');
+      // ocultado pelo visitante: mantém vazio até atualizar a página
+      if (bannersDismissed) {
+        const prev0 = carouselTimers.get(el); if (prev0) clearInterval(prev0);
+        el.classList.add('is-empty'); el.innerHTML = ''; el.dataset.sig = '__off__';
+        return;
+      }
+
+      const declaredPos = el.dataset.position === 'header' ? 'header' : 'footer';
+      // celular: cabeçalho recebe tudo; rodapé não exibe nada
+      const pool = mobile
+        ? (declaredPos === 'header' ? liveFor(el.dataset.carousel) : [])
+        : liveForAt(el.dataset.carousel, declaredPos);
+
+      // sinal de já renderizado (inclui o modo, p/ re-render ao trocar mobile/desktop)
+      const signature = (mobile ? 'm:' : 'd:') + pool.map((b) => b.id).join(',');
       if (el.dataset.sig === signature) return;
       el.dataset.sig = signature;
 
@@ -4734,7 +4767,15 @@ function escapeHtml(str) {
       const dots = pool.length > 1
         ? `<div class="banner-carousel-dots">${pool.map((_, i) => `<button data-i="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Banner ${i + 1}"></button>`).join('')}</div>`
         : '';
-      el.innerHTML = `<div class="banner-carousel-track">${slides}</div>${dots}`;
+      const closeBtn = `<button type="button" class="banner-carousel-close" aria-label="Ocultar publicidade" title="Ocultar">×</button>`;
+      el.innerHTML = `${closeBtn}<div class="banner-carousel-track">${slides}</div>${dots}`;
+
+      const closeEl = el.querySelector('.banner-carousel-close');
+      if (closeEl) closeEl.addEventListener('click', (e) => {
+        e.preventDefault(); e.stopPropagation();
+        bannersDismissed = true;
+        dismissAllCarousels();
+      });
 
       const track = el.querySelector('.banner-carousel-track');
       const dotEls = [...el.querySelectorAll('.banner-carousel-dots button')];
@@ -5344,6 +5385,9 @@ function escapeHtml(str) {
     // re-render quando a navegação muda de tela
     const reRender = () => setTimeout(renderAll, 40);
     document.addEventListener('click', (ev) => { if (ev.target.closest('.nav-item,.mobile-tab,.auth-tab')) reRender(); });
+    // re-render ao cruzar o breakpoint mobile/desktop (move banners p/ o cabeçalho)
+    let _rzT = null;
+    window.addEventListener('resize', () => { clearTimeout(_rzT); _rzT = setTimeout(renderAll, 200); });
     window.addEventListener('hashchange', () => {
       if (window.location.hash === '#admin') { showView2('view-admin'); enterAdmin(); }
       reRender();
