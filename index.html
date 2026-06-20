@@ -4640,7 +4640,7 @@ function escapeHtml(str) {
       const dots = pool.length > 1
         ? `<div class="banner-carousel-dots">${pool.map((_, i) => `<button data-i="${i}" class="${i === 0 ? 'active' : ''}" aria-label="Banner ${i + 1}"></button>`).join('')}</div>`
         : '';
-      el.innerHTML = `<span class="banner-carousel-label">Publicidade</span><div class="banner-carousel-track">${slides}</div>${dots}`;
+      el.innerHTML = `<div class="banner-carousel-track">${slides}</div>${dots}`;
 
       const track = el.querySelector('.banner-carousel-track');
       const dotEls = [...el.querySelectorAll('.banner-carousel-dots button')];
