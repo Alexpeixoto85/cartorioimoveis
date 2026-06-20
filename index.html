@@ -1247,18 +1247,18 @@ img { max-width: 100%; }
 }
 .banner-carousel-track {
   display: flex; will-change: transform;
-  transition: transform .9s cubic-bezier(.4, 0, .15, 1);
+  max-width: 760px; margin: 0 auto;
+  transition: transform .7s cubic-bezier(.4, 0, .15, 1);
 }
 .banner-carousel-slide {
-  flex: 0 0 100%; min-width: 100%;
-  display: flex; align-items: center; justify-content: center;
+  flex: 0 0 100%; min-width: 100%; width: 100%; display: block;
 }
 .banner-carousel-slide a {
-  display: block; position: relative; width: 100%; max-width: 760px;
-  margin: 0 auto; text-decoration: none; background: var(--ink);
+  display: block; position: relative; width: 100%; height: 150px;
+  text-decoration: none; background: var(--ink);
 }
 .banner-carousel-slide img {
-  display: block; width: 100%; height: 150px;
+  display: block; width: 100%; height: 100%;
   object-fit: cover; object-position: center;
 }
 .banner-carousel-slide .ad-fallback {
@@ -1292,8 +1292,8 @@ img { max-width: 100%; }
 }
 /* carrossel de cabeçalho (topo da tela, fluindo com o conteúdo) */
 .banner-carousel-top {
-  position: relative; z-index: 1; margin: 0 0 1rem;
-  border-top: none; border-radius: var(--radius);
+  position: relative; z-index: 1; max-width: 760px; margin: 0 auto 1.25rem;
+  border-top: 1px solid var(--line); border-radius: var(--radius);
 }
 .banner-carousel-top:empty, .banner-carousel-top.is-empty { display: none; }
 
@@ -1495,7 +1495,6 @@ img { max-width: 100%; }
     <div class="public-intro" id="public-intro"></div>
     <div class="banner-carousel banner-carousel-top is-empty" data-carousel="portfolio" data-position="header"></div>
     <div class="google-ad-slot" data-placement="portfolio" data-position="header"></div>
-    <div class="ad-slot" data-placement="portfolio"></div>
     <div class="grid-properties" id="public-properties-grid"></div>
     <div class="empty-state" id="public-empty" hidden>
       <p>Este corretor ainda não publicou imóveis no portfólio público.</p>
@@ -1526,7 +1525,6 @@ img { max-width: 100%; }
   <main class="portal-main">
     <div class="banner-carousel banner-carousel-top is-empty" data-carousel="portal" data-position="header"></div>
     <div class="google-ad-slot" data-placement="portal" data-position="header"></div>
-    <div class="ad-slot" data-placement="portal"></div>
     <div class="grid-properties" id="portal-properties-grid"></div>
     <div class="empty-state" id="portal-empty" hidden>
       <p>Nenhum imóvel disponível no portal no momento.</p>
@@ -1631,7 +1629,6 @@ img { max-width: 100%; }
 
       <div class="banner-carousel banner-carousel-top is-empty" data-carousel="dashboard" data-position="header"></div>
       <div class="google-ad-slot" data-placement="dashboard" data-position="header"></div>
-      <div class="ad-slot" data-placement="dashboard"></div>
 
       <div class="filter-bar">
         <button class="filter-chip active" data-filter="all">Todos</button>
@@ -1657,7 +1654,8 @@ img { max-width: 100%; }
           <h2 class="screen-title">Vitrine geral</h2>
         </div>
       </div>
-      <div class="ad-slot" data-placement="explore"></div>
+      <div class="banner-carousel banner-carousel-top is-empty" data-carousel="explore" data-position="header"></div>
+      <div class="google-ad-slot" data-placement="explore" data-position="header"></div>
       <div class="filter-bar">
         <input type="search" id="explore-search" class="search-input" placeholder="Buscar por cidade, bairro, tipo...">
       </div>
@@ -1669,7 +1667,8 @@ img { max-width: 100%; }
 
     <!-- ---- CHAT ---- -->
     <section class="screen" id="screen-chat">
-      <div class="ad-slot" data-placement="chat"></div>
+      <div class="banner-carousel banner-carousel-top is-empty" data-carousel="chat" data-position="header"></div>
+      <div class="google-ad-slot" data-placement="chat" data-position="header"></div>
       <div class="chat-layout" id="chat-layout">
         <div class="chat-contacts" id="chat-contacts-panel">
           <div class="chat-contacts-head">
@@ -2099,8 +2098,8 @@ img { max-width: 100%; }
         <div class="admin-field full">
           <label>Posição na tela <span style="font-weight:400;opacity:.6">(escolha apenas uma)</span></label>
           <div class="placements-row" id="banner-position">
-            <label class="placement-chip checked"><input type="radio" name="banner-pos" value="footer" checked> Rodapé (parte de baixo)</label>
-            <label class="placement-chip"><input type="radio" name="banner-pos" value="header"> Cabeçalho (parte de cima)</label>
+            <label class="placement-chip checked"><input type="radio" name="banner-pos" value="header" checked> Cabeçalho (parte de cima)</label>
+            <label class="placement-chip"><input type="radio" name="banner-pos" value="footer"> Rodapé (parte de baixo)</label>
           </div>
         </div>
         <div class="admin-field full">
@@ -4554,7 +4553,7 @@ function escapeHtml(str) {
     return pl.some((p) => p === 'all' || p === placement);
   }
   function matchesPosition(b, position) {
-    const pos = (b.position === 'header') ? 'header' : 'footer';
+    const pos = (b.position === 'footer') ? 'footer' : 'header';
     return pos === position;
   }
   let _banners = [];
@@ -4900,7 +4899,7 @@ function escapeHtml(str) {
     return [...$('banner-placements').querySelectorAll('input:checked')].map((c) => c.value);
   }
   function setPositionUI(position) {
-    const pos = position === 'header' ? 'header' : 'footer';
+    const pos = position === 'footer' ? 'footer' : 'header';
     $('banner-position').querySelectorAll('input[type=radio]').forEach((r) => {
       r.checked = r.value === pos;
       r.closest('.placement-chip').classList.toggle('checked', r.checked);
@@ -4908,7 +4907,7 @@ function escapeHtml(str) {
   }
   function readPositionUI() {
     const r = $('banner-position').querySelector('input[type=radio]:checked');
-    return r ? r.value : 'footer';
+    return r ? r.value : 'header';
   }
 
   async function editBanner(id) {
@@ -4941,7 +4940,7 @@ function escapeHtml(str) {
     $('banner-cancel-btn').hidden = true;
     $('banner-error').textContent = '';
     setPlacementsUI(['all']);
-    setPositionUI('footer');
+    setPositionUI('header');
     $('banner-active').checked = true;
     $('banner-weight').value = 1;
   }
