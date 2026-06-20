@@ -114,18 +114,18 @@ img { max-width: 100%; }
 .ad-slot { margin: 0 auto 1.25rem; max-width: 760px; }
 /* banner da tela de login: largura total do cartão (proporcional ao botão) */
 .ad-slot-login { margin: 1.5rem 0 0; max-width: none; width: 100%; align-self: stretch; }
-.ad-slot-login .ad-banner img { max-height: 280px; }
 .ad-banner {
   display: block; position: relative; text-decoration: none;
   border: 1px solid var(--line-soft); border-radius: var(--radius);
   overflow: hidden; background: var(--ink); box-shadow: var(--shadow-card);
 }
-/* faixa enxuta e elegante: recorta proporcionalmente em vez de esticar a altura */
+/* a arte do banner NUNCA é cortada: largura total, altura 100% proporcional
+   (sem max-height, sem object-fit:cover). O card cresce junto com a imagem,
+   então nenhum texto/botão desenhado na arte fica escondido ou sobreposto,
+   não importa o tamanho do conteúdo ou a largura da tela. */
 .ad-banner img {
-  display: block; width: 100%; height: auto;
-  max-height: 108px; object-fit: cover; object-position: center;
+  display: block; width: 100%; height: auto; max-width: 100%;
 }
-@media (max-width: 640px) { .ad-banner img { max-height: none; object-fit: contain; } }
 /* banner em vídeo (YouTube) — responsivo 16:9 */
 .ad-video { position: relative; width: 100%; aspect-ratio: 16 / 9; background: #000; }
 .ad-video iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; }
@@ -1288,8 +1288,7 @@ img { max-width: 100%; }
   background: var(--ink);
 }
 .banner-carousel-slide img {
-  display: block; width: 100%; height: auto; max-height: 160px;
-  object-fit: cover; object-position: center;
+  display: block; width: 100%; height: auto; max-width: 100%;
 }
 .banner-carousel-slide .ad-fallback {
   padding: 1.6rem 1.5rem; color: var(--paper); text-align: center;
