@@ -118,12 +118,16 @@ img { max-width: 100%; }
   border: 1px solid var(--line-soft); border-radius: var(--radius);
   overflow: hidden; background: var(--ink); box-shadow: var(--shadow-card);
 }
+/* wrapper interno: contexto de posicionamento para botões flutuantes */
+.ad-banner-inner {
+  display: block; position: relative; overflow: hidden;
+}
 /* faixa enxuta e elegante: recorta proporcionalmente em vez de esticar a altura */
-.ad-banner img {
+.ad-banner-inner img {
   display: block; width: 100%; height: auto;
   max-height: 108px; object-fit: cover; object-position: center;
 }
-@media (max-width: 640px) { .ad-banner img { max-height: 74px; } }
+@media (max-width: 640px) { .ad-banner-inner img { max-height: 74px; } }
 .ad-banner .ad-fallback {
   padding: 0.9rem 1.5rem; color: var(--paper); text-align: center;
   font-family: var(--font-display); font-weight: 600; font-size: 1.02rem;
@@ -133,7 +137,7 @@ img { max-width: 100%; }
 @media (max-width: 640px) { .ad-banner .ad-fallback { min-height: 56px; font-size: .88rem; padding: .7rem 1rem; } }
 .ad-fallback-text { position: relative; z-index: 1; }
 
-/* ---- CTA "Clique aqui" nos banners com link ---- */
+/* ---- CTA "Clique aqui" — posicionado dentro do ad-banner-inner ---- */
 .ad-cta {
   position: absolute; bottom: 8px; right: 10px; z-index: 2;
   display: inline-flex; align-items: center; gap: .28rem;
@@ -148,25 +152,23 @@ img { max-width: 100%; }
 }
 .ad-cta svg { width: 9px; height: 9px; fill: currentColor; flex-shrink: 0; }
 .ad-banner:hover .ad-cta { background: rgba(255,255,255,.28); }
-/* quando o banner tem imagem, o CTA sobe para não cobrir o centro */
-.ad-banner img ~ .ad-cta { bottom: 6px; }
 
-/* ---- Ícone WhatsApp flutuante no banner ---- */
+/* ---- Ícone WhatsApp flutuante — dentro do ad-banner-inner ---- */
 .ad-whatsapp-btn {
-  position: absolute; bottom: 8px; left: 10px; z-index: 3;
-  display: inline-flex; align-items: center; gap: .32rem;
+  position: absolute; bottom: 7px; left: 9px; z-index: 3;
+  display: inline-flex; align-items: center; gap: .3rem;
   background: #25D366; color: #fff;
   border: none; border-radius: 999px; cursor: pointer;
-  padding: .28rem .62rem .28rem .38rem;
-  font-family: 'Inter', sans-serif; font-size: .64rem; font-weight: 700;
+  padding: .25rem .58rem .25rem .34rem;
+  font-family: 'Inter', sans-serif; font-size: .62rem; font-weight: 700;
   letter-spacing: .04em; text-decoration: none; line-height: 1.4;
-  box-shadow: 0 2px 8px rgba(0,0,0,.28);
+  box-shadow: 0 2px 8px rgba(0,0,0,.3);
   transition: background .15s, transform .1s, box-shadow .15s;
   white-space: nowrap;
 }
 .ad-whatsapp-btn:hover { background: #1ebe5d; transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.35); }
 .ad-whatsapp-btn:active { transform: scale(.97); }
-.ad-whatsapp-btn svg { width: 14px; height: 14px; fill: currentColor; flex-shrink: 0; }
+.ad-whatsapp-btn svg { width: 13px; height: 13px; fill: currentColor; flex-shrink: 0; }
 
 /* ---- Estilos de layout do texto do banner ---- */
 /* layout: centered (padrão) */
@@ -4698,11 +4700,11 @@ function escapeHtml(str) {
   function bannerMediaHtml(b) {
     const waUrl  = whatsappUrl(b.whatsapp, b.whatsappMsg);
     const waBtn  = waUrl ? `<a class="ad-whatsapp-btn" href="${esc(waUrl)}" target="_blank" rel="noopener" data-wa="1">${WA_SVG} WhatsApp</a>` : '';
+    const cta    = b.linkUrl ? `<span class="ad-cta">${CTA_SVG} Clique aqui</span>` : '';
 
     // ── banner com imagem ──────────────────────────────────────────────────
     if (b.imageUrl) {
-      const cta = b.linkUrl ? `<span class="ad-cta">${CTA_SVG} Clique aqui</span>` : '';
-      return `<img src="${esc(b.imageUrl)}" alt="${esc(b.title || '')}" loading="lazy">${cta}${waBtn}`;
+      return `<span class="ad-banner-inner"><img src="${esc(b.imageUrl)}" alt="${esc(b.title || '')}" loading="lazy">${cta}${waBtn}</span>`;
     }
 
     // ── banner sem imagem: monta o conteúdo de texto ──────────────────────
@@ -4712,7 +4714,6 @@ function escapeHtml(str) {
     const fontFam  = BANNER_FONTS[fontKey].family;
     const subtitle = b.subtitle ? b.subtitle : '';
     const icon     = b.icon     ? b.icon     : '';
-    const cta      = b.linkUrl  ? `<span class="ad-cta">${CTA_SVG} Clique aqui</span>` : '';
 
     const titleHtml = `<span class="ad-fallback-text">${esc(b.title || 'Publicidade')}</span>`;
 
@@ -4728,7 +4729,7 @@ function escapeHtml(str) {
       inner = titleHtml;
     }
 
-    return `<div class="ad-fallback" data-layout="${esc(layout)}" style="${esc(bgStyle)}font-family:${fontFam};">${inner}${cta}${waBtn}</div>`;
+    return `<span class="ad-banner-inner"><div class="ad-fallback" data-layout="${esc(layout)}" style="${esc(bgStyle)}font-family:${fontFam};">${inner}</div>${cta}${waBtn}</span>`;
   }
 
   // ---------- render: ad-slots inline (banner único, ponderado) ----------
