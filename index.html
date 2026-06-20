@@ -115,7 +115,8 @@ img { max-width: 100%; }
   border: 1px solid var(--line); border-radius: var(--radius);
   overflow: hidden; background: var(--ink); box-shadow: var(--shadow-card);
 }
-.ad-banner img { display: block; width: 100%; height: auto; }
+.ad-banner { max-width: 760px; margin-left: auto; margin-right: auto; }
+.ad-banner img { display: block; width: 100%; height: auto; max-height: 170px; object-fit: cover; }
 .ad-banner .ad-fallback {
   padding: 1.4rem 1.5rem; color: var(--paper); text-align: center;
   font-family: var(--font-display); font-weight: 600; font-size: 1.15rem;
@@ -1253,11 +1254,11 @@ img { max-width: 100%; }
   display: flex; align-items: center; justify-content: center;
 }
 .banner-carousel-slide a {
-  display: block; position: relative; width: 100%; text-decoration: none;
-  background: var(--ink);
+  display: block; position: relative; width: 100%; max-width: 760px;
+  margin: 0 auto; text-decoration: none; background: var(--ink);
 }
 .banner-carousel-slide img {
-  display: block; width: 100%; height: auto; max-height: 160px;
+  display: block; width: 100%; height: 150px;
   object-fit: cover; object-position: center;
 }
 .banner-carousel-slide .ad-fallback {
@@ -1288,6 +1289,24 @@ img { max-width: 100%; }
 /* dentro do app (painel do corretor), respeita a tab bar no mobile */
 @media (max-width: 768px) {
   .view-app .banner-carousel-fixed { bottom: calc(var(--tabbar-h) + var(--sab)); padding-bottom: 0; }
+}
+/* carrossel de cabeçalho (topo da tela, fluindo com o conteúdo) */
+.banner-carousel-top {
+  position: relative; z-index: 1; margin: 0 0 1rem;
+  border-top: none; border-radius: var(--radius);
+}
+.banner-carousel-top:empty, .banner-carousel-top.is-empty { display: none; }
+
+/* ============================================================
+   GOOGLE ADSENSE SLOTS
+   ============================================================ */
+.google-ad-slot { width: 100%; max-width: 760px; margin: 0 auto 1.25rem; text-align: center; }
+.google-ad-slot:empty { display: none; }
+.google-ad-slot ins { display: block; }
+.google-ad-slot.google-ad-fixed {
+  position: sticky; bottom: 0; left: 0; right: 0; z-index: 39;
+  margin-bottom: 0; padding-bottom: var(--sab); background: var(--paper-dim);
+  border-top: 1px solid var(--line);
 }
 
 /* ============================================================
@@ -1474,6 +1493,8 @@ img { max-width: 100%; }
   </header>
   <main class="public-main">
     <div class="public-intro" id="public-intro"></div>
+    <div class="banner-carousel banner-carousel-top is-empty" data-carousel="portfolio" data-position="header"></div>
+    <div class="google-ad-slot" data-placement="portfolio" data-position="header"></div>
     <div class="ad-slot" data-placement="portfolio"></div>
     <div class="grid-properties" id="public-properties-grid"></div>
     <div class="empty-state" id="public-empty" hidden>
@@ -1484,7 +1505,8 @@ img { max-width: 100%; }
     <span>Gerado pelo Cartório de Imóveis</span>
     <a href="#" id="public-back-link">Acessar o portal</a>
   </footer>
-  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="portfolio"></div>
+  <div class="google-ad-slot google-ad-fixed" data-placement="portfolio" data-position="footer"></div>
+  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="portfolio" data-position="footer"></div>
 </div>
 
 <!-- ============ TELA: PORTAL GERAL (todos os corretores — link do cliente) ============ -->
@@ -1502,6 +1524,8 @@ img { max-width: 100%; }
     <input type="search" id="portal-search" class="search-input" placeholder="Buscar por cidade, bairro, tipo, título…" style="max-width:38rem;width:100%;">
   </div>
   <main class="portal-main">
+    <div class="banner-carousel banner-carousel-top is-empty" data-carousel="portal" data-position="header"></div>
+    <div class="google-ad-slot" data-placement="portal" data-position="header"></div>
     <div class="ad-slot" data-placement="portal"></div>
     <div class="grid-properties" id="portal-properties-grid"></div>
     <div class="empty-state" id="portal-empty" hidden>
@@ -1512,7 +1536,8 @@ img { max-width: 100%; }
     <span>Gerado pelo Cartório de Imóveis</span>
     <a href="#" id="portal-back-link">Acessar o portal</a>
   </footer>
-  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="portal"></div>
+  <div class="google-ad-slot google-ad-fixed" data-placement="portal" data-position="footer"></div>
+  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="portal" data-position="footer"></div>
 </div>
 
 <!-- ============ APP PRINCIPAL (autenticado) ============ -->
@@ -1604,6 +1629,8 @@ img { max-width: 100%; }
         <button class="btn btn-primary" id="btn-new-property">+ Cadastrar imóvel</button>
       </div>
 
+      <div class="banner-carousel banner-carousel-top is-empty" data-carousel="dashboard" data-position="header"></div>
+      <div class="google-ad-slot" data-placement="dashboard" data-position="header"></div>
       <div class="ad-slot" data-placement="dashboard"></div>
 
       <div class="filter-bar">
@@ -1712,7 +1739,8 @@ img { max-width: 100%; }
     </section>
 
   </main>
-  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="dashboard"></div>
+  <div class="google-ad-slot google-ad-fixed" data-placement="dashboard" data-position="footer"></div>
+  <div class="banner-carousel banner-carousel-fixed is-empty" data-carousel="dashboard" data-position="footer"></div>
 </div>
 
 <!-- ============ MODAL: CADASTRAR / EDITAR IMÓVEL ============ -->
@@ -2046,7 +2074,7 @@ img { max-width: 100%; }
         <div class="admin-field full">
           <label for="banner-image">Imagem do banner</label>
           <input type="file" id="banner-image" accept="image/*">
-          <small style="color:rgba(250,248,244,.45);font-size:.72rem;">Recomendado: 1200×300px. Fica salvo localmente (IndexedDB).</small>
+          <small style="color:rgba(250,248,244,.45);font-size:.72rem;">Recomendado: proporção larga, ex. 1200×300px. A imagem é salva no Firebase Storage (mesma nuvem das fotos dos imóveis) quando a nuvem está conectada.</small>
           <div id="banner-image-preview" style="margin-top:.5rem;"></div>
         </div>
         <div class="admin-field full">
@@ -2067,6 +2095,13 @@ img { max-width: 100%; }
         </div>
         <div class="admin-field">
           <label class="admin-toggle"><input type="checkbox" id="banner-active" checked> Ativo</label>
+        </div>
+        <div class="admin-field full">
+          <label>Posição na tela <span style="font-weight:400;opacity:.6">(escolha apenas uma)</span></label>
+          <div class="placements-row" id="banner-position">
+            <label class="placement-chip checked"><input type="radio" name="banner-pos" value="footer" checked> Rodapé (parte de baixo)</label>
+            <label class="placement-chip"><input type="radio" name="banner-pos" value="header"> Cabeçalho (parte de cima)</label>
+          </div>
         </div>
         <div class="admin-field full">
           <label>Onde exibir</label>
@@ -2090,6 +2125,50 @@ img { max-width: 100%; }
         <span class="eyebrow-mono">Banners cadastrados</span>
         <div class="banner-list" id="banner-list" style="margin-top:.6rem;"></div>
       </div>
+    </div>
+
+    <!-- ANÚNCIOS DO GOOGLE (ADSENSE) -->
+    <div class="admin-section">
+      <div class="admin-section-head">
+        <div><span class="eyebrow-mono">Monetização</span><h3>Anúncios do Google (AdSense)</h3></div>
+      </div>
+      <p class="firebase-explain" style="color:rgba(250,248,244,.6);margin-bottom:1rem;">
+        Exibe anúncios automáticos do Google AdSense. Informe o ID do publisher e o ID do bloco de anúncio
+        criados no painel do AdSense. Os anúncios aparecem nos locais e na posição que você escolher.
+      </p>
+      <form class="admin-grid-form" id="adsense-form">
+        <div class="admin-field full">
+          <label class="admin-toggle"><input type="checkbox" id="adsense-enabled"> Ativar anúncios do Google</label>
+        </div>
+        <div class="admin-field">
+          <label for="adsense-client">ID do publisher (data-ad-client)</label>
+          <input type="text" id="adsense-client" placeholder="ca-pub-0000000000000000">
+        </div>
+        <div class="admin-field">
+          <label for="adsense-slot">ID do bloco (data-ad-slot)</label>
+          <input type="text" id="adsense-slot" placeholder="1234567890">
+        </div>
+        <div class="admin-field full">
+          <label>Posição na tela <span style="font-weight:400;opacity:.6">(escolha apenas uma)</span></label>
+          <div class="placements-row" id="adsense-position">
+            <label class="placement-chip checked"><input type="radio" name="adsense-pos" value="footer" checked> Rodapé</label>
+            <label class="placement-chip"><input type="radio" name="adsense-pos" value="header"> Cabeçalho</label>
+          </div>
+        </div>
+        <div class="admin-field full">
+          <label>Onde exibir</label>
+          <div class="placements-row" id="adsense-placements">
+            <label class="placement-chip checked"><input type="checkbox" value="all" checked> Em todo lugar</label>
+            <label class="placement-chip"><input type="checkbox" value="portal"> Portal geral</label>
+            <label class="placement-chip"><input type="checkbox" value="portfolio"> Catálogo do cliente</label>
+            <label class="placement-chip"><input type="checkbox" value="dashboard"> Painel do corretor</label>
+          </div>
+        </div>
+        <p class="admin-error full" id="adsense-error"></p>
+        <div class="full" style="display:flex;gap:.6rem;">
+          <button type="submit" class="admin-btn admin-btn-sm" id="adsense-save-btn">Salvar anúncios do Google</button>
+        </div>
+      </form>
     </div>
 
     <!-- USUÁRIOS -->
@@ -2785,6 +2864,70 @@ window.AppBridge = {
   async getAllBrokers() {
     try { return await getAllBrokers(); } catch (_) { return []; }
   },
+
+  // --- Sincronização em nuvem do painel admin (banners / admins / métricas) ---
+  // Quando o Firebase está ativo, banners, administradores e métricas passam a
+  // viver no Firestore — assim o painel e todos os recursos ficam sincronizados
+  // entre dispositivos, igual aos imóveis. Sem nuvem, o painel cai no IndexedDB.
+  cloud() { return isCloudActive(); },
+  async cloudGetAll(coll) {
+    const { collection, getDocs } = _firestoreMod;
+    const snap = await getDocs(collection(firestoreDB, coll));
+    return snap.docs.map((d) => d.data());
+  },
+  async cloudGetOne(coll, id) {
+    const { doc, getDoc } = _firestoreMod;
+    const snap = await getDoc(doc(firestoreDB, coll, String(id)));
+    return snap.exists() ? snap.data() : null;
+  },
+  async cloudPut(coll, obj) {
+    const { doc, setDoc } = _firestoreMod;
+    const id = String(coll === 'metrics' ? obj.key : obj.id);
+    await setDoc(doc(firestoreDB, coll, id), obj);
+    return obj;
+  },
+  async cloudDelete(coll, id) {
+    const { doc, deleteDoc } = _firestoreMod;
+    await deleteDoc(doc(firestoreDB, coll, String(id)));
+    return true;
+  },
+  async cloudGetAdminByUsername(username) {
+    const { collection, query, where, getDocs } = _firestoreMod;
+    const snap = await getDocs(query(collection(firestoreDB, 'admins'), where('username', '==', username)));
+    return snap.empty ? null : snap.docs[0].data();
+  },
+
+  // Upload da imagem do banner para o Firebase Storage (mesma pasta-mãe das
+  // fotos dos imóveis). Sem nuvem, devolve base64 — preview/persistência local.
+  async uploadBannerImage(file) {
+    if (isCloudActive() && storageRef) {
+      const { ref, uploadBytes, getDownloadURL } = _storageMod;
+      const path = `banner-images/${uid('banner_')}_${(file.name || 'img').replace(/[^\w.\-]/g, '_')}`;
+      const fileRef = ref(storageRef, path);
+      await uploadBytes(fileRef, file);
+      return await getDownloadURL(fileRef);
+    }
+    return await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  },
+
+  // Config dos anúncios do Google (AdSense) — em nuvem (settings/ads) + local.
+  async getAdConfig() {
+    if (isCloudActive()) {
+      try { return await this.cloudGetOne('settings', 'ads'); } catch (_) {}
+    }
+    try { return JSON.parse(localStorage.getItem('cartorio-ads-config') || 'null'); } catch (_) { return null; }
+  },
+  async saveAdConfig(cfg) {
+    const obj = { id: 'ads', ...cfg };
+    if (isCloudActive()) { try { await this.cloudPut('settings', obj); } catch (_) {} }
+    try { localStorage.setItem('cartorio-ads-config', JSON.stringify(cfg)); } catch (_) {}
+    return obj;
+  },
 };
 
 
@@ -2953,6 +3096,13 @@ async function boot() {
   const isPortalRoute = hash === '#portal';
   const isAdminRoute = hash === '#admin';
 
+  // Link compartilhado (portal/portfólio do corretor) => modo visitante:
+  // o destinatário é um cliente, então o cadastro de corretor/admin fica
+  // bloqueado neste navegador/sessão. Persistido por sessão (sessionStorage).
+  if (isPublicRoute || isPortalRoute) {
+    try { sessionStorage.setItem('ci-visitor', '1'); } catch (_) {}
+  }
+
   if (CloudService.isConfigured()) {
     const result = await CloudService.initFirebase();
     if (!result.ok) {
@@ -2978,12 +3128,18 @@ async function boot() {
   if (isPortalRoute) {
     await renderPublicPortal();
     document.getElementById('portal-search').addEventListener('input', (e) => renderPublicPortal(e.target.value));
+    // a nuvem já conectou aqui: recarrega banners/anúncios para o visitante
+    try { await window.__mon?.reload?.(); } catch (_) {}
     return;
   }
 
   if (isPublicRoute) {
-    const brokerId = hash.replace('#portfolio/', '');
-    await renderPublicPortfolio(brokerId);
+    const rest = hash.replace('#portfolio/', '');
+    const sep = rest.indexOf('/');
+    const brokerId = sep === -1 ? rest : rest.slice(0, sep);
+    const brokerName = sep === -1 ? '' : decodeURIComponent(rest.slice(sep + 1));
+    await renderPublicPortfolio(brokerId, brokerName);
+    try { await window.__mon?.reload?.(); } catch (_) {}
     return;
   }
 
@@ -3005,10 +3161,35 @@ function showView(viewId) {
 }
 window.showViewGlobal = showView;
 
+// Modo visitante: ativado quando o app foi aberto por um link compartilhado
+// (portal/portfólio). Nesse caso, o cadastro de corretor e o painel admin não
+// devem ficar acessíveis para quem recebeu o link.
+function isVisitor() {
+  try { return sessionStorage.getItem('ci-visitor') === '1'; } catch (_) { return false; }
+}
+window.isVisitorMode = isVisitor;
+
+function applyVisitorRestrictions() {
+  if (!isVisitor()) return;
+  // some a aba/cadastro de "Criar conta"
+  const signupTab = document.querySelector('.auth-tab[data-tab="signup"]');
+  const signupForm = document.getElementById('form-signup');
+  const loginTab = document.querySelector('.auth-tab[data-tab="login"]');
+  const loginForm = document.getElementById('form-login');
+  if (signupTab) signupTab.style.display = 'none';
+  if (signupForm) signupForm.classList.remove('active');
+  if (loginTab) loginTab.classList.add('active');
+  if (loginForm) loginForm.classList.add('active');
+  // some o link do painel administrativo
+  const adminLink = document.getElementById('btn-open-admin');
+  if (adminLink) adminLink.style.display = 'none';
+}
+
 // ---------------------------------------------------------------
 // AUTH
 // ---------------------------------------------------------------
 function bindGlobalEvents() {
+  applyVisitorRestrictions();
   // tabs login/signup
   document.querySelectorAll('.auth-tab').forEach((tab) => {
     tab.addEventListener('click', () => {
@@ -3024,6 +3205,7 @@ function bindGlobalEvents() {
 
   // abrir painel administrativo a partir da tela de login
   document.getElementById('btn-open-admin')?.addEventListener('click', () => {
+    if (isVisitor()) { showToast('Cadastro/painel indisponível em link compartilhado.', 4000); return; }
     window.location.hash = '#admin';
     showView('view-admin');
     try { window.__admin?.enter(); } catch (_) {}
@@ -3156,6 +3338,11 @@ async function handleLogin(e) {
 
 async function handleSignup(e) {
   e.preventDefault();
+  if (isVisitor()) {
+    const errEl = document.getElementById('signup-error');
+    if (errEl) errEl.textContent = 'O cadastro não está disponível a partir de um link compartilhado.';
+    return;
+  }
   const name = document.getElementById('signup-name').value.trim();
   const creci = document.getElementById('signup-creci').value.trim();
   const email = document.getElementById('signup-email').value.trim();
@@ -3192,7 +3379,7 @@ async function enterApp() {
   renderSidebarBroker();
   switchScreen('dashboard');
   allBrokersCache = await DB.getAllBrokers();
-  try { window.__mon?.trackActive(currentBroker); window.__mon?.mount(); } catch (_) {}
+  try { window.__mon?.trackActive(currentBroker); window.__mon?.mount(); window.__mon?.reload?.(); } catch (_) {}
 }
 
 function renderSidebarBroker() {
@@ -3615,9 +3802,15 @@ async function renderExplore(searchTerm) {
 // ---------------------------------------------------------------
 // SHARE SCREEN
 // ---------------------------------------------------------------
-function buildPublicUrl(brokerId) {
+function slugifyName(name) {
+  return encodeURIComponent(String(name || '').trim());
+}
+
+function buildPublicUrl(brokerId, brokerName) {
   const base = window.location.href.split('#')[0];
-  return `${base}#portfolio/${brokerId}`;
+  const name = brokerName != null ? brokerName : (currentBroker && currentBroker.name) || '';
+  const slug = slugifyName(name);
+  return slug ? `${base}#portfolio/${brokerId}/${slug}` : `${base}#portfolio/${brokerId}`;
 }
 
 function buildPortalUrl() {
@@ -3657,8 +3850,18 @@ function copyPortalLink() {
 // ---------------------------------------------------------------
 // PUBLIC PORTFOLIO PAGE (no login required)
 // ---------------------------------------------------------------
-async function renderPublicPortfolio(brokerId) {
+async function renderPublicPortfolio(brokerId, brokerNameFromLink = '') {
   showView('view-public');
+
+  // O link já carrega o nome do corretor: mostramos de imediato, antes mesmo de
+  // a nuvem responder, para o cliente ver de quem é o portfólio.
+  if (brokerNameFromLink) {
+    document.getElementById('public-broker-info').innerHTML =
+      `<h1 class="public-broker-name">${escapeHtml(brokerNameFromLink)}</h1>`;
+    document.getElementById('public-intro').textContent =
+      `Confira os imóveis disponíveis no portfólio de ${brokerNameFromLink}.`;
+  }
+
   const broker = await DB.getBrokerById(brokerId);
 
   if (!broker) {
@@ -3666,10 +3869,10 @@ async function renderPublicPortfolio(brokerId) {
     // dados localmente — o problema é de conexão/configuração, não do link.
     if (!CloudService.isCloudActive()) {
       console.error('Portfólio público aberto sem nuvem ativa — os dados só existem no dispositivo do corretor.');
-      document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">Portfólio indisponível</h1>`;
+      document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">${escapeHtml(brokerNameFromLink || 'Portfólio indisponível')}</h1>`;
       document.getElementById('public-intro').textContent = 'Este portfólio está temporariamente indisponível. Tente novamente mais tarde.';
     } else {
-      document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">Corretor não encontrado</h1>`;
+      document.getElementById('public-broker-info').innerHTML = `<h1 class="public-broker-name">${escapeHtml(brokerNameFromLink || 'Corretor não encontrado')}</h1>`;
       document.getElementById('public-intro').textContent = 'Verifique se o link está correto.';
     }
     return;
@@ -4281,11 +4484,35 @@ function escapeHtml(str) {
   }
   const reqP = (r) => new Promise((res, rej) => { r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
 
-  async function getAll(name) { return reqP((await store(name)).getAll()).then((x) => x || []); }
-  async function getOne(name, key) { return reqP((await store(name)).get(key)).then((x) => x || null); }
-  async function putOne(name, val) { return reqP((await store(name, 'readwrite')).put(val)).then(() => val); }
-  async function delOne(name, key) { return reqP((await store(name, 'readwrite')).delete(key)); }
+  // Coleções do painel que sincronizam em nuvem quando o Firebase está ativo.
+  const CLOUD_COLLS = new Set(['banners', 'admins', 'metrics']);
+  const bridge = () => window.AppBridge || {};
+  const cloudOn = (name) => CLOUD_COLLS.has(name) && typeof bridge().cloud === 'function' && bridge().cloud();
+
+  async function localGetAll(name) { return reqP((await store(name)).getAll()).then((x) => x || []); }
+  async function localPut(name, val) { try { return reqP((await store(name, 'readwrite')).put(val)).then(() => val); } catch (_) { return val; } }
+
+  async function getAll(name) {
+    if (cloudOn(name)) { try { return await bridge().cloudGetAll(name); } catch (e) { console.warn('cloudGetAll falhou, usando local:', e?.message || e); } }
+    return localGetAll(name);
+  }
+  async function getOne(name, key) {
+    if (cloudOn(name)) { try { return await bridge().cloudGetOne(name, key); } catch (e) { console.warn('cloudGetOne falhou, usando local:', e?.message || e); } }
+    return reqP((await store(name)).get(key)).then((x) => x || null);
+  }
+  async function putOne(name, val) {
+    if (cloudOn(name)) { try { await bridge().cloudPut(name, val); } catch (e) { console.warn('cloudPut falhou:', e?.message || e); } }
+    await localPut(name, val); // mantém cópia local (cache/fallback offline)
+    return val;
+  }
+  async function delOne(name, key) {
+    if (cloudOn(name)) { try { await bridge().cloudDelete(name, key); } catch (e) { console.warn('cloudDelete falhou:', e?.message || e); } }
+    try { await reqP((await store(name, 'readwrite')).delete(key)); } catch (_) {}
+  }
   async function getByIndex(name, idx, val) {
+    if (name === 'admins' && idx === 'username' && cloudOn('admins')) {
+      try { return await bridge().cloudGetAdminByUsername(val); } catch (e) { console.warn('cloudGetAdminByUsername falhou, usando local:', e?.message || e); }
+    }
     const s = await store(name);
     return reqP(s.index(idx).get(val)).then((x) => x || null);
   }
@@ -4326,10 +4553,18 @@ function escapeHtml(str) {
     const pl = (b.placements && b.placements.length) ? b.placements : ['all'];
     return pl.some((p) => p === 'all' || p === placement);
   }
+  function matchesPosition(b, position) {
+    const pos = (b.position === 'header') ? 'header' : 'footer';
+    return pos === position;
+  }
   let _banners = [];
   async function loadBanners() { _banners = await getAll('banners'); return _banners; }
   function liveFor(placement) {
     return _banners.filter((b) => isLive(b) && matchesPlacement(b, placement));
+  }
+  // banners vivos para um local E uma posição (cabeçalho/rodapé)
+  function liveForAt(placement, position) {
+    return _banners.filter((b) => isLive(b) && matchesPlacement(b, placement) && matchesPosition(b, position));
   }
 
   // dedupe de impressões por sessão
@@ -4383,7 +4618,8 @@ function escapeHtml(str) {
   const carouselTimers = new WeakMap();
   function renderCarousels() {
     document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => {
-      const pool = liveFor(el.dataset.carousel);
+      const position = el.dataset.position === 'header' ? 'header' : 'footer';
+      const pool = liveForAt(el.dataset.carousel, position);
       // sinal de já renderizado com o mesmo conjunto de banners
       const signature = pool.map((b) => b.id).join(',');
       if (el.dataset.sig === signature) return;
@@ -4445,7 +4681,50 @@ function escapeHtml(str) {
     });
   }
 
-  function renderAll() { renderAdSlots(); renderCarousels(); }
+  // ---------- render: anúncios do Google (AdSense) ----------
+  let _adConfig = null;
+  let _adsenseScriptClient = null; // client cujo script já foi injetado
+  async function loadAdConfig() {
+    try { _adConfig = (window.AppBridge?.getAdConfig) ? await window.AppBridge.getAdConfig() : null; }
+    catch (_) { _adConfig = null; }
+    return _adConfig;
+  }
+  function ensureAdsenseScript(client) {
+    if (!client || _adsenseScriptClient === client) return;
+    // não injeta em file:// (AdSense exige domínio http/https aprovado)
+    if (location.protocol === 'file:') return;
+    _adsenseScriptClient = client;
+    const s = document.createElement('script');
+    s.async = true;
+    s.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + encodeURIComponent(client);
+    s.crossOrigin = 'anonymous';
+    s.onerror = () => console.warn('AdSense: script bloqueado ou indisponível.');
+    document.head.appendChild(s);
+  }
+  function adMatches(cfg, placement, position) {
+    if (!cfg || !cfg.enabled || !cfg.client || !cfg.slot) return false;
+    const pos = cfg.position === 'header' ? 'header' : 'footer';
+    if (pos !== position) return false;
+    const pls = (cfg.placements && cfg.placements.length) ? cfg.placements : ['all'];
+    return pls.some((p) => p === 'all' || p === placement);
+  }
+  function renderGoogleAds() {
+    const cfg = _adConfig;
+    document.querySelectorAll('.google-ad-slot[data-placement]').forEach((slot) => {
+      const placement = slot.dataset.placement;
+      const position = slot.dataset.position === 'header' ? 'header' : 'footer';
+      if (!adMatches(cfg, placement, position)) { slot.innerHTML = ''; slot.dataset.adsig = ''; return; }
+      const sig = cfg.client + '|' + cfg.slot;
+      if (slot.dataset.adsig === sig) return; // já montado
+      slot.dataset.adsig = sig;
+      ensureAdsenseScript(cfg.client);
+      slot.innerHTML = `<ins class="adsbygoogle" style="display:block" data-ad-client="${esc(cfg.client)}" data-ad-slot="${esc(cfg.slot)}" data-ad-format="auto" data-full-width-responsive="true"></ins>`;
+      try { (window.adsbygoogle = window.adsbygoogle || []).push({}); }
+      catch (e) { console.warn('AdSense push falhou:', e?.message || e); }
+    });
+  }
+
+  function renderAll() { renderAdSlots(); renderCarousels(); renderGoogleAds(); }
 
   // ============================================================
   // PAINEL ADMINISTRATIVO
@@ -4468,9 +4747,26 @@ function escapeHtml(str) {
     showAuth(exists);
   }
 
+  function isVisitorDevice() {
+    try { return sessionStorage.getItem('ci-visitor') === '1'; } catch (_) { return false; }
+  }
+
   function showAuth(exists) {
     $('admin-auth').hidden = false;
     $('admin-dash').hidden = true;
+
+    // Modo visitante (link compartilhado): nunca permitir CRIAR administrador
+    // neste navegador. Se já existe admin, mostra só o login; se não existe,
+    // bloqueia o cadastro com uma mensagem (o admin se cria na máquina dona).
+    const visitor = isVisitorDevice();
+    if (visitor && !exists) {
+      $('admin-login-form').hidden = true;
+      $('admin-register-form').hidden = true;
+      $('admin-auth-title').textContent = 'Cadastro indisponível';
+      $('admin-auth-sub').textContent = 'O administrador só pode ser criado no dispositivo do dono do portal. Este acesso veio de um link compartilhado.';
+      return;
+    }
+
     // cadastro único: se já existe admin, some o form de cadastro; só login.
     $('admin-login-form').hidden = exists ? false : true;
     $('admin-register-form').hidden = exists ? true : false;
@@ -4480,11 +4776,28 @@ function escapeHtml(str) {
       : 'Primeiro acesso: defina o administrador do portal. Isto é feito uma única vez.';
   }
 
+  // preenche o formulário de AdSense com a config salva
+  async function fillAdsenseForm() {
+    const cfg = await loadAdConfig();
+    if (!$('adsense-form')) return;
+    $('adsense-enabled').checked = !!(cfg && cfg.enabled);
+    $('adsense-client').value = (cfg && cfg.client) || '';
+    $('adsense-slot').value = (cfg && cfg.slot) || '';
+    const pos = (cfg && cfg.position === 'header') ? 'header' : 'footer';
+    $('adsense-position').querySelectorAll('input[type=radio]').forEach((r) => {
+      r.checked = r.value === pos; r.closest('.placement-chip').classList.toggle('checked', r.checked);
+    });
+    const set = new Set((cfg && cfg.placements && cfg.placements.length) ? cfg.placements : ['all']);
+    $('adsense-placements').querySelectorAll('input[type=checkbox]').forEach((cb) => {
+      cb.checked = set.has(cb.value); cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
+    });
+  }
+
   async function showDash() {
     $('admin-auth').hidden = true;
     $('admin-dash').hidden = false;
     $('admin-who').textContent = currentAdmin ? `Olá, ${currentAdmin.name || currentAdmin.username}` : '';
-    await Promise.all([renderMetrics(), renderBannerList(), renderUsers()]);
+    await Promise.all([renderMetrics(), renderBannerList(), renderUsers(), fillAdsenseForm()]);
   }
 
   // ---------- métricas no painel ----------
@@ -4533,6 +4846,7 @@ function escapeHtml(str) {
       const period = (b.startDate || b.endDate)
         ? `${b.startDate || '—'} → ${b.endDate || '∞'}` : 'Sem período definido';
       const pls = ((b.placements && b.placements.length) ? b.placements : ['all']).map((p) => PLACEMENT_LABELS[p] || p).join(', ');
+      const posLabel = (b.position === 'header') ? 'Cabeçalho' : 'Rodapé';
       return `
         <div class="banner-item" data-id="${esc(b.id)}">
           <div class="thumb">${b.imageUrl ? `<img src="${esc(b.imageUrl)}" alt="">` : '<span class="noimg">SEM IMG</span>'}</div>
@@ -4540,6 +4854,7 @@ function escapeHtml(str) {
             <div class="bt">${esc(b.title || 'Sem título')} ${tag}</div>
             <div class="bs">
               <span>📍 ${esc(pls)}</span>
+              <span>📐 ${esc(posLabel)}</span>
               <span>🗓 ${esc(period)}</span>
               <span>👁 ${b.impressions || 0}</span>
               <span>🖱 ${b.clicks || 0}</span>
@@ -4571,7 +4886,8 @@ function escapeHtml(str) {
     });
   }
 
-  let editingImageData = null; // base64 em edição
+  let editingImageData = null; // URL/base64 atual (preview)
+  let editingImageFile = null; // File novo selecionado (vai p/ Storage no salvar)
   function setPlacementsUI(placements) {
     const wrap = $('banner-placements');
     const set = new Set((placements && placements.length) ? placements : ['all']);
@@ -4582,6 +4898,17 @@ function escapeHtml(str) {
   }
   function readPlacementsUI() {
     return [...$('banner-placements').querySelectorAll('input:checked')].map((c) => c.value);
+  }
+  function setPositionUI(position) {
+    const pos = position === 'header' ? 'header' : 'footer';
+    $('banner-position').querySelectorAll('input[type=radio]').forEach((r) => {
+      r.checked = r.value === pos;
+      r.closest('.placement-chip').classList.toggle('checked', r.checked);
+    });
+  }
+  function readPositionUI() {
+    const r = $('banner-position').querySelector('input[type=radio]:checked');
+    return r ? r.value : 'footer';
   }
 
   async function editBanner(id) {
@@ -4594,7 +4921,9 @@ function escapeHtml(str) {
     $('banner-weight').value = b.weight || 1;
     $('banner-active').checked = b.active !== false;
     setPlacementsUI(b.placements);
+    setPositionUI(b.position);
     editingImageData = b.imageUrl || null;
+    editingImageFile = null;
     $('banner-image-preview').innerHTML = editingImageData
       ? `<img src="${esc(editingImageData)}" style="max-height:70px;border-radius:2px;border:1px solid rgba(250,248,244,.2);">` : '';
     $('banner-save-btn').textContent = 'Atualizar banner';
@@ -4606,11 +4935,13 @@ function escapeHtml(str) {
     $('banner-form').reset();
     $('banner-id').value = '';
     editingImageData = null;
+    editingImageFile = null;
     $('banner-image-preview').innerHTML = '';
     $('banner-save-btn').textContent = 'Salvar banner';
     $('banner-cancel-btn').hidden = true;
     $('banner-error').textContent = '';
     setPlacementsUI(['all']);
+    setPositionUI('footer');
     $('banner-active').checked = true;
     $('banner-weight').value = 1;
   }
@@ -4656,7 +4987,9 @@ function escapeHtml(str) {
   // re-render do front (carrosséis/ad-slots) após mudanças
   async function refreshFront() {
     await loadBanners();
+    await loadAdConfig();
     document.querySelectorAll('.banner-carousel[data-carousel]').forEach((el) => { el.dataset.sig = ''; });
+    document.querySelectorAll('.google-ad-slot[data-placement]').forEach((el) => { el.dataset.adsig = ''; });
     renderAll();
   }
 
@@ -4680,6 +5013,7 @@ function escapeHtml(str) {
     $('admin-register-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const err = $('admin-reg-error'); err.textContent = '';
+      if (isVisitorDevice()) { err.textContent = 'Cadastro indisponível em link compartilhado.'; return; }
       if (await adminExists()) { showAuth(true); return; } // trava: já existe
       const name = $('admin-reg-name').value.trim();
       const username = $('admin-reg-user').value.trim().toLowerCase();
@@ -4716,11 +5050,19 @@ function escapeHtml(str) {
       cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
     });
 
-    // preview de imagem
+    // posição (cabeçalho/rodapé) — radios exclusivos
+    $('banner-position').addEventListener('change', (e) => {
+      $('banner-position').querySelectorAll('input[type=radio]').forEach((r) => {
+        r.closest('.placement-chip').classList.toggle('checked', r.checked);
+      });
+    });
+
+    // preview de imagem (guarda o File para enviar ao Storage no salvar)
     $('banner-image').addEventListener('change', async (e) => {
       const f = e.target.files?.[0];
       if (!f) return;
-      editingImageData = await fileToDataURL(f);
+      editingImageFile = f;
+      editingImageData = await fileToDataURL(f); // só preview
       $('banner-image-preview').innerHTML = `<img src="${esc(editingImageData)}" style="max-height:70px;border-radius:2px;border:1px solid rgba(250,248,244,.2);">`;
     });
 
@@ -4735,12 +5077,33 @@ function escapeHtml(str) {
       const start = $('banner-start').value;
       const end = $('banner-end').value;
       if (start && end && start > end) { err.textContent = 'A data de início não pode ser depois do fim.'; return; }
+
+      // imagem: se há um arquivo novo, envia ao Firebase Storage e usa a URL;
+      // senão, mantém a imagem que já existia no banner.
+      let imageUrl = existing?.imageUrl || '';
+      if (editingImageFile) {
+        const saveBtn = $('banner-save-btn');
+        const prevLabel = saveBtn.textContent;
+        saveBtn.disabled = true; saveBtn.textContent = 'Enviando imagem...';
+        try {
+          imageUrl = await (window.AppBridge?.uploadBannerImage
+            ? window.AppBridge.uploadBannerImage(editingImageFile)
+            : fileToDataURL(editingImageFile));
+        } catch (upErr) {
+          console.warn('Falha no upload da imagem do banner, usando base64 local:', upErr?.message || upErr);
+          imageUrl = await fileToDataURL(editingImageFile);
+        } finally {
+          saveBtn.disabled = false; saveBtn.textContent = prevLabel;
+        }
+      }
+
       const banner = {
         id,
         title: $('banner-title').value.trim(),
-        imageUrl: editingImageData || existing?.imageUrl || '',
+        imageUrl,
         linkUrl: $('banner-link').value.trim(),
         placements,
+        position: readPositionUI(),
         startDate: start || '',
         endDate: end || '',
         weight: Math.max(1, parseInt($('banner-weight').value, 10) || 1),
@@ -4756,6 +5119,51 @@ function escapeHtml(str) {
       toast(existing ? 'Banner atualizado.' : 'Banner criado.');
     });
     $('banner-cancel-btn').addEventListener('click', resetBannerForm);
+
+    // ---------- Anúncios do Google (AdSense) ----------
+    $('adsense-position').addEventListener('change', () => {
+      $('adsense-position').querySelectorAll('input[type=radio]').forEach((r) => {
+        r.closest('.placement-chip').classList.toggle('checked', r.checked);
+      });
+    });
+    $('adsense-placements').addEventListener('change', (e) => {
+      const cb = e.target;
+      if (cb.value === 'all' && cb.checked) {
+        $('adsense-placements').querySelectorAll('input').forEach((o) => { if (o !== cb) { o.checked = false; o.closest('.placement-chip').classList.remove('checked'); } });
+      } else if (cb.value !== 'all' && cb.checked) {
+        const allCb = $('adsense-placements').querySelector('input[value="all"]');
+        if (allCb) { allCb.checked = false; allCb.closest('.placement-chip').classList.remove('checked'); }
+      }
+      cb.closest('.placement-chip').classList.toggle('checked', cb.checked);
+    });
+    $('adsense-form').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const err = $('adsense-error'); err.textContent = '';
+      const enabled = $('adsense-enabled').checked;
+      const client = $('adsense-client').value.trim();
+      const slot = $('adsense-slot').value.trim();
+      if (enabled && (!client || !slot)) {
+        err.textContent = 'Para ativar, informe o ID do publisher e o ID do bloco.';
+        return;
+      }
+      if (client && !/^ca-pub-\d+$/.test(client)) {
+        err.textContent = 'O ID do publisher deve ter o formato ca-pub-0000000000000000.';
+        return;
+      }
+      const placements = [...$('adsense-placements').querySelectorAll('input:checked')].map((c) => c.value);
+      const posR = $('adsense-position').querySelector('input[type=radio]:checked');
+      const cfg = {
+        enabled,
+        client,
+        slot,
+        position: posR ? posR.value : 'footer',
+        placements: placements.length ? placements : ['all'],
+        updatedAt: Date.now(),
+      };
+      try { await window.AppBridge?.saveAdConfig(cfg); } catch (_) {}
+      toast('Anúncios do Google salvos.');
+      refreshFront();
+    });
 
     // cadastrar usuário admin (a partir do painel)
     $('admin-user-form').addEventListener('submit', async (e) => {
@@ -4781,6 +5189,9 @@ function escapeHtml(str) {
     trackLogin: (b) => { bumpMetric('logins', 1); },
     trackActive: () => {},
     mount: renderAll,
+    // recarrega banners e config de anúncios da nuvem e re-renderiza tudo.
+    // Chamado pelo app após a nuvem conectar (ver boot()).
+    reload: refreshFront,
   };
 
   async function start() {
@@ -4788,6 +5199,7 @@ function escapeHtml(str) {
       await openDB();
       await countAccessOncePerSession();
       await loadBanners();
+      await loadAdConfig();
       bindAdmin();
       renderAll();
 
