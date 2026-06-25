@@ -10,7 +10,7 @@ const FIREBASE_DISABLED_KEY = 'cartorio-imoveis-firebase-disabled';
 const ADMIN_SESSION_KEY = 'cartorio-imoveis-admin-session';
 
 const DEFAULT_FIREBASE_CONFIG = {
-  apiKey: 'AIzaSyAMkwZMmnCFIIPxDR1naAoUQXU52MEw7wE',
+  apiKey: 'YOUR_FIREBASE_API_KEY_HERE',
   authDomain: 'cartorio-imoveis.firebaseapp.com',
   projectId: 'cartorio-imoveis',
   storageBucket: 'cartorio-imoveis.firebasestorage.app',
